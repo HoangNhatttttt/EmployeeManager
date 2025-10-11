@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 09, 2025 at 05:23 PM
+-- Generation Time: Oct 11, 2025 at 12:47 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -99,9 +99,10 @@ CREATE TABLE `nhanvien` (
   `gioiTinh` varchar(1) NOT NULL,
   `diaChi` varchar(50) NOT NULL,
   `soDienThoai` varchar(10) NOT NULL,
-  `maPhongBan` int(11) NOT NULL,
-  `maChucVu` int(11) NOT NULL,
-  `maHopDong` int(11) NOT NULL,
+  `maLuong` int(11) DEFAULT NULL,
+  `maPhongBan` int(11) DEFAULT NULL,
+  `maChucVu` int(11) DEFAULT NULL,
+  `maHopDong` int(11) DEFAULT NULL,
   `trangThai` varchar(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -188,7 +189,8 @@ ALTER TABLE `nhanvien`
   ADD PRIMARY KEY (`maNhanVien`),
   ADD KEY `maPhongBan` (`maPhongBan`),
   ADD KEY `maChucVu` (`maChucVu`),
-  ADD KEY `maHopDong` (`maHopDong`);
+  ADD KEY `maHopDong` (`maHopDong`),
+  ADD KEY `maLuong` (`maLuong`);
 
 --
 -- Indexes for table `phongban`
@@ -295,7 +297,8 @@ ALTER TABLE `nghiphep`
 ALTER TABLE `nhanvien`
   ADD CONSTRAINT `nhanvien_ibfk_1` FOREIGN KEY (`maPhongBan`) REFERENCES `phongban` (`maPhongBan`),
   ADD CONSTRAINT `nhanvien_ibfk_2` FOREIGN KEY (`maChucVu`) REFERENCES `chucvu` (`maChucVu`),
-  ADD CONSTRAINT `nhanvien_ibfk_3` FOREIGN KEY (`maHopDong`) REFERENCES `hopdong` (`maHopDong`);
+  ADD CONSTRAINT `nhanvien_ibfk_3` FOREIGN KEY (`maHopDong`) REFERENCES `hopdong` (`maHopDong`),
+  ADD CONSTRAINT `nhanvien_ibfk_4` FOREIGN KEY (`maLuong`) REFERENCES `luong` (`maLuong`);
 
 --
 -- Constraints for table `taikhoan`

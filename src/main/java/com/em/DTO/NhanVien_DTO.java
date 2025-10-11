@@ -1,63 +1,64 @@
-package com.demo.em.DTO;
+package com.em.DTO;
 
-import java.sql.Date;
+import java.util.Date;
 
 
-public class Employee_DTO {
-    private int maNhanVien, maPhongBan, maChucVu, maHopDong;
-    private String hoTen, soDienThoai, diaChi, trangThai;
-    private char gioiTinh;
+public class NhanVien_DTO {
+    private int maNhanVien, maLuong, maPhongBan, maChucVu, maHopDong;
+    private String hoTen, soDienThoai, diaChi, trangThai, gioiTinh;
     private Date ngaySinh;
     
     // Constructer rỗng
-    public Employee_DTO(){ }
+    public NhanVien_DTO(){ }
     
     // Constructer dùng để thêm Eployee, không có ID, ID quản lý tự động
-    public Employee_DTO(String hoTen, Date ngaySinh, char gioiTinh, String diaChi, String soDienThoai, int maPhongBan, int maChucVu, int maHopDong, String trangThai){
+    public NhanVien_DTO(String hoTen, Date ngaySinh, String gioiTinh, String diaChi, String soDienThoai){
         this.hoTen = hoTen;
         this.ngaySinh = ngaySinh;
         this.gioiTinh = gioiTinh;
         this.diaChi = diaChi;
         this.soDienThoai = soDienThoai;
-        this.maPhongBan = maPhongBan;
-        this.maChucVu = maChucVu;
-        this.maHopDong = maHopDong;
+        this.trangThai = "Yes";
     }
     
     // Constructer dùng để lấy thông tin từ database, có ID
-    public Employee_DTO(int maNhanVien, String hoTen, Date ngaySinh, char gioiTinh, String diaChi, String soDienThoai, int maPhongBan, int maChucVu, int maHopDong, String trangThai){
+    public NhanVien_DTO(int maNhanVien, String hoTen, Date ngaySinh, String gioiTinh, String diaChi, String soDienThoai, int maLuong, int maPhongBan, int maChucVu, int maHopDong, String trangThai){
         this.maNhanVien = maNhanVien;
         this.hoTen = hoTen;
         this.ngaySinh = ngaySinh;
         this.gioiTinh = gioiTinh;
         this.diaChi = diaChi;
         this.soDienThoai = soDienThoai;
+        this.maLuong = maLuong;
         this.maPhongBan = maPhongBan;
         this.maChucVu = maChucVu;
         this.maHopDong = maHopDong;
+        this.trangThai = trangThai;
     }
     
     //Setter
     public void setMaNhanVien(int maNhanVien){ this.maNhanVien = maNhanVien; }
+    public void setMaLuong(int maLuong){ this.maLuong = maLuong; }
     public void setMaPhongBan(int maPhongBan){ this.maPhongBan = maPhongBan; }
     public void setMaChucVu(int maChucVu){ this.maChucVu = maChucVu; }
     public void setMaHopDong(int maHopDong){ this.maHopDong = maHopDong; }
     public void setHoTen(String hoTen){ this.hoTen = hoTen; }
     public void setSoDienThoai(String soDienThoai){ this.soDienThoai = soDienThoai; }
     public void setDiaChi(String diaChi){ this.diaChi = diaChi; }
-    public void setGioiTinh(char gioiTinh){ this.gioiTinh = gioiTinh; }
+    public void setGioiTinh(String gioiTinh){ this.gioiTinh = gioiTinh; }
     public void setNgaySinh(Date ngaySinh){ this.ngaySinh = ngaySinh; }
     public void setTrangThai(String trangThai){ this.trangThai = trangThai; }
     
     //Getter
     public int getMaNhanVien(){ return this.maNhanVien; }
+    public int getMaLuong(){ return this.maLuong; }
     public int getMaPhongBan(){ return this.maPhongBan; }
     public int getMaChucVu(){ return this.maChucVu; }
     public int getMaHopDong(){ return this.maHopDong; }
     public String getHoTen(){ return this.hoTen = hoTen; }
     public String getSoDienThoai(){ return this.soDienThoai; }
     public String getDiaChi(){ return this.diaChi; }
-    public char getGioiTinh(){ return this.gioiTinh; }
+    public String getGioiTinh(){ return this.gioiTinh; }
     public Date getNgaySinh(){ return this.ngaySinh; }
     public String getTrangThai(){ return this.trangThai; }
     
@@ -68,6 +69,7 @@ public class Employee_DTO {
         System.out.println("Giới tính: " + gioiTinh);
         System.out.println("Địa chỉ: " + diaChi);
         System.out.println("Số điện thoại: " + soDienThoai);
+        System.out.println("Mã lương: " + maLuong);
         System.out.println("Mã phòng ban: " + maPhongBan);
         System.out.println("Mã chức vụ: " + maChucVu);
         System.out.println("Mã hợp đồng: " + maHopDong);

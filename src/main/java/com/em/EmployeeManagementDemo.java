@@ -1,11 +1,11 @@
-package com.demo.em;
+package com.em;
 
-import com.demo.em.GUI.App_UI;
+import com.em.GUI.App_UI;
 
 public class EmployeeManagementDemo {
 
     public static void main(String[] args) {
-        System.out.println("Project running");
+        System.out.println("Hello World!");
         
         
         App_UI ui = new App_UI();

@@ -1,12 +1,11 @@
-package com.demo.em.GUI;
-import com.demo.em.BUS.Employee_BUS;
+package com.em.GUI;
+import com.em.BUS.NhanVien_BUS;
 import javax.swing.*;
-import com.demo.em.BUS.Validates_BUS;
-import com.demo.em.DAO.Employee_DAO;
-import com.demo.em.DTO.Employee_DTO;
+import com.em.BUS.Validates_BUS;
+import com.em.DAO.NhanVien_DAO;
+import com.em.DTO.NhanVien_DTO;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -20,30 +19,38 @@ public class App_UI extends javax.swing.JFrame {
         initComponents();
         
         // Chọn cái nào thì sẽ trả về giá trị đó, trích xuất thông qua ButtonGroup
-        femaleRadioButton.setActionCommand("F");
-        maleRadioButton.setActionCommand("M");
+        gioiTinhNu.setActionCommand("F");
+        gioiTinhNam.setActionCommand("M");
         
-        // JTable cho Employee list
-        InitEmployeeTable();
-        UpdateEmployeeTable();
+        // JTable cho NhanVien list
+        InitNhanVienTable();
+        UpdateNhanVienTable();
         
     }
     // Tạo default table 
     private DefaultTableModel defaultTableModel = new DefaultTableModel();
-    public void InitEmployeeTable(){
+    
+    public void InitComboBox(){
+        
+    }
+    
+    public void InitNhanVienTable(){
         
         // Trỏ default table tới employee table
         employeeTable.setModel(defaultTableModel);
         
         // Thêm cột cho default table --> employee table cũng thêm cột
-        defaultTableModel.addColumn("ID");
-        defaultTableModel.addColumn("First name");
-        defaultTableModel.addColumn("Last name");
-        defaultTableModel.addColumn("Age");
-        defaultTableModel.addColumn("Gender");
-        defaultTableModel.addColumn("Salary");
-        defaultTableModel.addColumn("Job");
-        defaultTableModel.addColumn("Phone");
+        defaultTableModel.addColumn("Mã nhân viên");
+        defaultTableModel.addColumn("Họ tên");
+        defaultTableModel.addColumn("Ngày sinh");
+        defaultTableModel.addColumn("Giới tính");
+        defaultTableModel.addColumn("Địa chỉ");
+        defaultTableModel.addColumn("Số điện thoại");
+        defaultTableModel.addColumn("Mã lương");
+        defaultTableModel.addColumn("Mã phòng ban");
+        defaultTableModel.addColumn("mã chức vụ");
+        defaultTableModel.addColumn("Mã hợp đồng");
+        defaultTableModel.addColumn("Trạng thái");
         
         // Chỉ được chọn 1 dòng/employee trong 1 lúc
         ListSelectionModel listSelectionModel = employeeTable.getSelectionModel();
@@ -59,30 +66,33 @@ public class App_UI extends javax.swing.JFrame {
                 // TH nếu chọn 1 employee/dòng trong JTable rồi JTable reset data --> ValueChanged --> rowIndex = -1 do không có data trong JTable
                 // ==> Gây ra lỗi khi trích xuất dữ liệu từ JTable
                 if(rowIndex != -1){ //TH database không có dữ liệu thì không cần trích xuất dữ liệu từ JTable và không update Information Panel
+                    
                     // Trích xuất dữ liệu các cột của dòng được chọn
-                    String id = employeeTable.getValueAt(rowIndex, 0).toString(); 
-                    String firstName = employeeTable.getValueAt(rowIndex, 1).toString();
-                    String lastName = employeeTable.getValueAt(rowIndex, 2).toString();
-                    String age = employeeTable.getValueAt(rowIndex, 3).toString();
-                    String gender = employeeTable.getValueAt(rowIndex, 4).toString();
-                    String salary = employeeTable.getValueAt(rowIndex, 5).toString();
-                    String jobPosition = employeeTable.getValueAt(rowIndex, 6).toString();
-                    String phoneNumbers = employeeTable.getValueAt(rowIndex, 7).toString();
+                    String maNhanVien = employeeTable.getValueAt(rowIndex, 0).toString(); 
+                    String hoTen = employeeTable.getValueAt(rowIndex, 1).toString();
+                    String ngaySinh = employeeTable.getValueAt(rowIndex, 2).toString();
+                    String gioiTinh = employeeTable.getValueAt(rowIndex, 3).toString();
+                    String diaChi = employeeTable.getValueAt(rowIndex, 4).toString();
+                    String soDienThoai = employeeTable.getValueAt(rowIndex, 5).toString();
+                    String maLuong = employeeTable.getValueAt(rowIndex, 6).toString();
+                    String maPhongBan = employeeTable.getValueAt(rowIndex, 7).toString();
+                    String maChucVu = employeeTable.getValueAt(rowIndex, 8).toString();
+                    String maHopDong = employeeTable.getValueAt(rowIndex, 9).toString();
+                    String trangThai = employeeTable.getValueAt(rowIndex, 10).toString();
 
                     // Hiển thị dữ liệu lên information panel
-                    idTextField.setText(id);
-                    firstNameTextField.setText(firstName);
-                    lastNameTextField.setText(lastName);
-                    ageTextField.setText(age);
-                    salaryTextField.setText(salary);
-                    jobPositionTextField.setText(jobPosition);
-                    phoneNumbersTextField.setText(phoneNumbers);
+                    maNhanVienField.setText(maNhanVien);
+                    hoTenField.setText(hoTen);
+                    diaChiField.setText(diaChi);
+                    soDienThoaiField.setText(soDienThoai);
+                    
+                    
 
                     // Kiểm tra giới tính rồi chọn tương ứng
-                    if(gender.equals("M")) // Khi dùng a == b nghĩa là a và b có phải cùng 1 object (không áp dụng khi kiểm tra số: a==3)
-                        maleRadioButton.setSelected(true);
+                    if(gioiTinh.equals("M"))
+                        gioiTinhNam.setSelected(true);
                     else
-                        femaleRadioButton.setSelected(true);
+                        gioiTinhNu.setSelected(true);
                 }  
             }
         });
@@ -98,28 +108,30 @@ public class App_UI extends javax.swing.JFrame {
         }
     }
     
-    private void UpdateEmployeeTable(){
+    private void UpdateNhanVienTable(){
         try {
             // Trích xuất toàn bộ employee từ database
-            Employee_BUS employee_BUS = new Employee_BUS();
-            ArrayList<Employee_DTO> employeeList = employee_BUS.GetAllEmployees();
+            NhanVien_BUS NhanVien_BUS = new NhanVien_BUS();
+            ArrayList<NhanVien_DTO> nhanVienList = NhanVien_BUS.GetAllNhanVien();
             
             // Hàm sẽ lấy toàn bộ dữ liệu từ database (bao gồm cả dữ liệu có sẵn trong JTable) --> Làm sạch JTable rồi add lại toàn bộ dữ liệu
             defaultTableModel.setRowCount(0); // Xoá toàn bộ dòng trong JTable 
             
-            System.out.println(employeeList.size());
             
             //Add rows
-            for (Employee_DTO employee : employeeList) {
+            for (NhanVien_DTO nhanVien : nhanVienList) {
                 defaultTableModel.addRow(new Object[]{
-                    employee.getId(),
-                    employee.getFirstName(),
-                    employee.getLastName(),
-                    employee.getAge(),
-                    employee.getGender(),
-                    employee.getSalary(),
-                    employee.getJobPosition(),
-                    employee.getPhoneNumbers()
+                    nhanVien.getMaNhanVien(),
+                    nhanVien.getHoTen(),
+                    nhanVien.getNgaySinh(),
+                    nhanVien.getGioiTinh(),
+                    nhanVien.getDiaChi(),
+                    nhanVien.getSoDienThoai(),
+                    nhanVien.getMaLuong(),
+                    nhanVien.getMaPhongBan(),
+                    nhanVien.getMaChucVu(),
+                    nhanVien.getMaHopDong(),
+                    nhanVien.getTrangThai()
                 });
             } 
         }
@@ -138,7 +150,7 @@ public class App_UI extends javax.swing.JFrame {
     private void initComponents() {
 
         genderButtonGroup = new javax.swing.ButtonGroup();
-        menuPanel = new javax.swing.JPanel();
+        bangMenu = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -147,20 +159,20 @@ public class App_UI extends javax.swing.JFrame {
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
-        mainPanel = new javax.swing.JPanel();
+        bangChucNang = new javax.swing.JPanel();
         salaryPanel = new javax.swing.JPanel();
         Label4 = new javax.swing.JLabel();
         Label3 = new javax.swing.JLabel();
         bangThongTin = new javax.swing.JPanel();
-        maNhanVien = new javax.swing.JLabel();
-        hoTen = new javax.swing.JLabel();
-        ngaySinh = new javax.swing.JLabel();
-        gioiTinh = new javax.swing.JLabel();
-        diaChi = new javax.swing.JLabel();
-        soDienThoai = new javax.swing.JLabel();
+        maNhanVienLabel = new javax.swing.JLabel();
+        hoTenLabel = new javax.swing.JLabel();
+        ngaySinhLabel = new javax.swing.JLabel();
+        gioiTinhLabel = new javax.swing.JLabel();
+        diaChiLabel = new javax.swing.JLabel();
+        soDienThoaiLabel = new javax.swing.JLabel();
         maNhanVienField = new javax.swing.JTextField();
         hoTenField = new javax.swing.JTextField();
-        ngaySinhField = new javax.swing.JTextField();
+        ngaySinhChooser = new com.toedter.calendar.JDateChooser();
         gioiTinhNam = new javax.swing.JRadioButton();
         gioiTinhNu = new javax.swing.JRadioButton();
         diaChiField = new javax.swing.JTextField();
@@ -170,9 +182,9 @@ public class App_UI extends javax.swing.JFrame {
         maHopDong = new javax.swing.JLabel();
         trangThai = new javax.swing.JLabel();
         maPhongBanBox = new javax.swing.JComboBox<>();
-        maChucVuBox = new javax.swing.JComboBox<>();
-        maHopDongBox = new javax.swing.JComboBox<>();
         maTrangThaiBox = new javax.swing.JComboBox<>();
+        maChucVuField = new javax.swing.JTextField();
+        maHopDongField = new javax.swing.JTextField();
         bangNhanVien = new javax.swing.JScrollPane();
         employeeTable1 = new javax.swing.JTable();
         bangCongCu = new javax.swing.JPanel();
@@ -220,7 +232,7 @@ public class App_UI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 153, 153));
 
-        menuPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        bangMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jButton1.setText("Nhân viên");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -243,13 +255,13 @@ public class App_UI extends javax.swing.JFrame {
 
         jButton8.setText("jButton8");
 
-        javax.swing.GroupLayout menuPanelLayout = new javax.swing.GroupLayout(menuPanel);
-        menuPanel.setLayout(menuPanelLayout);
-        menuPanelLayout.setHorizontalGroup(
-            menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menuPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout bangMenuLayout = new javax.swing.GroupLayout(bangMenu);
+        bangMenu.setLayout(bangMenuLayout);
+        bangMenuLayout.setHorizontalGroup(
+            bangMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bangMenuLayout.createSequentialGroup()
                 .addGap(14, 14, 14)
-                .addGroup(menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(bangMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton8)
                     .addComponent(jButton7)
                     .addComponent(jButton6)
@@ -260,9 +272,9 @@ public class App_UI extends javax.swing.JFrame {
                     .addComponent(jButton1))
                 .addContainerGap(49, Short.MAX_VALUE))
         );
-        menuPanelLayout.setVerticalGroup(
-            menuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menuPanelLayout.createSequentialGroup()
+        bangMenuLayout.setVerticalGroup(
+            bangMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bangMenuLayout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(jButton1)
                 .addGap(29, 29, 29)
@@ -279,11 +291,11 @@ public class App_UI extends javax.swing.JFrame {
                 .addComponent(jButton7)
                 .addGap(43, 43, 43)
                 .addComponent(jButton8)
-                .addContainerGap(205, Short.MAX_VALUE))
+                .addContainerGap(206, Short.MAX_VALUE))
         );
 
-        mainPanel.setPreferredSize(new java.awt.Dimension(1000, 1000));
-        mainPanel.setLayout(new java.awt.CardLayout());
+        bangChucNang.setPreferredSize(new java.awt.Dimension(1000, 1000));
+        bangChucNang.setLayout(new java.awt.CardLayout());
 
         salaryPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -297,17 +309,17 @@ public class App_UI extends javax.swing.JFrame {
 
         bangThongTin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        maNhanVien.setText("Mã nhân viên");
+        maNhanVienLabel.setText("Mã nhân viên");
 
-        hoTen.setText("Họ và tên");
+        hoTenLabel.setText("Họ và tên");
 
-        ngaySinh.setText("Ngày Sinh");
+        ngaySinhLabel.setText("Ngày Sinh");
 
-        gioiTinh.setText("Giới tính");
+        gioiTinhLabel.setText("Giới tính");
 
-        diaChi.setText("Địa chỉ");
+        diaChiLabel.setText("Địa chỉ");
 
-        soDienThoai.setText("Số điện thoại");
+        soDienThoaiLabel.setText("Số điện thoại");
 
         maNhanVienField.setEditable(false);
 
@@ -327,11 +339,11 @@ public class App_UI extends javax.swing.JFrame {
 
         maPhongBanBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        maChucVuBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        maHopDongBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         maTrangThaiBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Yes", "No", " " }));
+
+        maChucVuField.setEditable(false);
+
+        maHopDongField.setEditable(false);
 
         javax.swing.GroupLayout bangThongTinLayout = new javax.swing.GroupLayout(bangThongTin);
         bangThongTin.setLayout(bangThongTinLayout);
@@ -342,45 +354,42 @@ public class App_UI extends javax.swing.JFrame {
                     .addGroup(bangThongTinLayout.createSequentialGroup()
                         .addGap(50, 50, 50)
                         .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(hoTen)
-                            .addComponent(ngaySinh)
-                            .addComponent(gioiTinh)
-                            .addComponent(diaChi)
-                            .addComponent(soDienThoai)))
+                            .addComponent(hoTenLabel)
+                            .addComponent(ngaySinhLabel)
+                            .addComponent(gioiTinhLabel)
+                            .addComponent(diaChiLabel)
+                            .addComponent(soDienThoaiLabel)))
                     .addGroup(bangThongTinLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(maNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(maNhanVienLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(35, 35, 35)
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(diaChiField)
-                    .addComponent(hoTenField)
-                    .addComponent(ngaySinhField)
-                    .addGroup(bangThongTinLayout.createSequentialGroup()
-                        .addComponent(gioiTinhNam)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
-                        .addComponent(gioiTinhNu))
-                    .addComponent(soDienThoaiField)
-                    .addComponent(maNhanVienField))
+                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(diaChiField)
+                        .addComponent(hoTenField)
+                        .addGroup(bangThongTinLayout.createSequentialGroup()
+                            .addComponent(gioiTinhNam)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
+                            .addComponent(gioiTinhNu))
+                        .addComponent(soDienThoaiField)
+                        .addComponent(maNhanVienField))
+                    .addComponent(ngaySinhChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(57, 57, 57)
                 .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(bangThongTinLayout.createSequentialGroup()
                         .addComponent(trangThai)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(maTrangThaiBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bangThongTinLayout.createSequentialGroup()
-                        .addComponent(maHopDong)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(maHopDongBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(bangThongTinLayout.createSequentialGroup()
                         .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(maPhongBan)
-                            .addGroup(bangThongTinLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(maChucVu)))
+                            .addComponent(maChucVu)
+                            .addComponent(maHopDong))
                         .addGap(65, 65, 65)
-                        .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(maHopDongField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(maPhongBanBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(maChucVuBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(maChucVuField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(96, Short.MAX_VALUE))
         );
         bangThongTinLayout.setVerticalGroup(
@@ -388,23 +397,28 @@ public class App_UI extends javax.swing.JFrame {
             .addGroup(bangThongTinLayout.createSequentialGroup()
                 .addGap(11, 11, 11)
                 .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(maNhanVien)
+                    .addComponent(maNhanVienLabel)
                     .addComponent(maNhanVienField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(maPhongBan)
                     .addComponent(maPhongBanBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(15, 15, 15)
                 .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(hoTen)
+                    .addComponent(hoTenLabel)
                     .addComponent(hoTenField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(maChucVu)
-                    .addComponent(maChucVuBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ngaySinh)
-                    .addComponent(ngaySinhField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maHopDong)
-                    .addComponent(maHopDongBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(maChucVuField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bangThongTinLayout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(ngaySinhLabel)
+                                .addComponent(maHopDong))
+                            .addComponent(ngaySinhChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(bangThongTinLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(maHopDongField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(trangThai)
                     .addComponent(maTrangThaiBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -412,15 +426,15 @@ public class App_UI extends javax.swing.JFrame {
                 .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(gioiTinhNam)
                     .addComponent(gioiTinhNu)
-                    .addComponent(gioiTinh))
+                    .addComponent(gioiTinhLabel))
                 .addGap(15, 15, 15)
                 .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(diaChiField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(diaChi))
+                    .addComponent(diaChiLabel))
                 .addGap(58, 58, 58)
                 .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(soDienThoaiField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(soDienThoai))
+                    .addComponent(soDienThoaiLabel))
                 .addGap(30, 30, 30))
         );
 
@@ -510,7 +524,7 @@ public class App_UI extends javax.swing.JFrame {
 
         salaryPanel.add(bangCongCu, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 40, -1, -1));
 
-        mainPanel.add(salaryPanel, "card3");
+        bangChucNang.add(salaryPanel, "card3");
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -521,7 +535,7 @@ public class App_UI extends javax.swing.JFrame {
         jLabel2.setPreferredSize(new java.awt.Dimension(100, 100));
         jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 380, -1, -1));
 
-        mainPanel.add(jPanel2, "card4");
+        bangChucNang.add(jPanel2, "card4");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -531,10 +545,10 @@ public class App_UI extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 707, Short.MAX_VALUE)
+            .addGap(0, 708, Short.MAX_VALUE)
         );
 
-        mainPanel.add(jPanel3, "card5");
+        bangChucNang.add(jPanel3, "card5");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -544,10 +558,10 @@ public class App_UI extends javax.swing.JFrame {
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 707, Short.MAX_VALUE)
+            .addGap(0, 708, Short.MAX_VALUE)
         );
 
-        mainPanel.add(jPanel4, "card6");
+        bangChucNang.add(jPanel4, "card6");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -557,10 +571,10 @@ public class App_UI extends javax.swing.JFrame {
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 707, Short.MAX_VALUE)
+            .addGap(0, 708, Short.MAX_VALUE)
         );
 
-        mainPanel.add(jPanel5, "card7");
+        bangChucNang.add(jPanel5, "card7");
 
         employeePanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         employeePanel.setPreferredSize(new java.awt.Dimension(1000, 800));
@@ -781,10 +795,10 @@ public class App_UI extends javax.swing.JFrame {
                 .addComponent(Label2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(employeeList, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(147, Short.MAX_VALUE))
+                .addContainerGap(148, Short.MAX_VALUE))
         );
 
-        mainPanel.add(employeePanel, "card2");
+        bangChucNang.add(employeePanel, "card2");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -792,9 +806,9 @@ public class App_UI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(menuPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(bangMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1091, Short.MAX_VALUE)
+                .addComponent(bangChucNang, javax.swing.GroupLayout.DEFAULT_SIZE, 1091, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -802,8 +816,8 @@ public class App_UI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(menuPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(bangMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(bangChucNang, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -819,23 +833,24 @@ public class App_UI extends javax.swing.JFrame {
         }
 
         Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateEmployee(firstNameTextField, lastNameTextField, ageTextField, genderButtonGroup, salaryTextField, jobPositionTextField, phoneNumbersTextField);
+        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField);
 
-        Employee_DTO employee = new Employee_DTO();
+        NhanVien_DTO nhanVien = new NhanVien_DTO();
         if(result == null){
-            employee = validate.ReturnEmployee();
-            employee.setId(Integer.parseInt(id));
+            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField);
+            // Cần add mã phòng ban, mã lương, ...
         }
-
+            
+            
         else{
             JOptionPane.showMessageDialog(this, result, "Validation", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        Employee_BUS employee_BUS = new Employee_BUS();
+        NhanVien_BUS NhanVien_BUS = new NhanVien_BUS();
 
-        if(employee_BUS.UpdateEmployee(employee) == true)
-        JOptionPane.showMessageDialog(null, "Employee edited successfully!");
+        if(NhanVien_BUS.UpdateNhanVien(nhanVien) == true)
+        JOptionPane.showMessageDialog(null, "NhanVien edited successfully!");
         else
         JOptionPane.showMessageDialog(null, "Failed to edit employee!");
     }//GEN-LAST:event_editButton
@@ -846,8 +861,8 @@ public class App_UI extends javax.swing.JFrame {
     }//GEN-LAST:event_newEmployeeButton
 
     private void updateJTableButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateJTableButton
-        UpdateEmployeeTable();
-        JOptionPane.showMessageDialog(null, "Employees list table updated");
+        UpdateNhanVienTable();
+        JOptionPane.showMessageDialog(null, "NhanViens list table updated");
     }//GEN-LAST:event_updateJTableButton
 
     private void deleteButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton
@@ -858,65 +873,44 @@ public class App_UI extends javax.swing.JFrame {
             return;
         }
 
-        Employee_BUS employee_BUS = new Employee_BUS();
-        employee_BUS.DeleteEmployee(Integer.parseInt(id));
-        UpdateEmployeeTable();
+        NhanVien_BUS employee_BUS = new NhanVien_BUS();
+        employee_BUS.DeleteNhanVien(Integer.parseInt(id));
+        UpdateNhanVienTable();
     }//GEN-LAST:event_deleteButton
 
-    private void addButton1addEmployeeButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton1addEmployeeButton
-        // TODO add your handling code here:
-    }//GEN-LAST:event_addButton1addEmployeeButton
-
-    private void updateButton1updateJTableButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton1updateJTableButton
-        // TODO add your handling code here:
-    }//GEN-LAST:event_updateButton1updateJTableButton
-
-    private void newButton1newEmployeeButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton1newEmployeeButton
-        // TODO add your handling code here:
-    }//GEN-LAST:event_newButton1newEmployeeButton
-
-    private void editButton2editButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton2editButton
-        // TODO add your handling code here:
-    }//GEN-LAST:event_editButton2editButton
-
-    private void deleteButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton1
-        // TODO add your handling code here:
-    }//GEN-LAST:event_deleteButton1
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
         
-    private void addEmployeeButton(java.awt.event.ActionEvent evt) {                                                                             
+    private void addNhanVienButton(java.awt.event.ActionEvent evt) {                                                                             
         // TH nếu User nhấn vào employee trên JTable rồi nhấn nút Add --> Thông tin trên Information panel đầy đủ --> Sẽ add lại nhân viên vào database
         // --> Nhấn nút New để xoá hết thông tin trên JTextField rồi nhập vào thông tin mới
         String id = idTextField.getText();
         if (id.isEmpty() == false){
-            String error = "Hit the 'New' button before add Employee";
+            String error = "Hit the 'New' button before add NhanVien";
             JOptionPane.showMessageDialog(this, error, "Add employee", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateEmployee(firstNameTextField, lastNameTextField, ageTextField, genderButtonGroup, salaryTextField, jobPositionTextField, phoneNumbersTextField);
+        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField);
         
-        Employee_DTO employee = new Employee_DTO();
+        NhanVien_DTO employee = new NhanVien_DTO();
+        
         if(result == null)
-            employee = validate.ReturnEmployee();
+            employee = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField);
              
         else{
-            JOptionPane.showMessageDialog(this, result, "Validation", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
-        Employee_DAO employee_DAO = new Employee_DAO();
-        if(employee_DAO.AddEmployee(employee) == true)
-                JOptionPane.showMessageDialog(null, "Employee added successfully!");   
-        else
-           JOptionPane.showMessageDialog(null, "Failed to add employee!"); 
+        NhanVien_DAO employee_DAO = new NhanVien_DAO();
         
-        // Sau khi thêm employee thì update lại table Employee list
-        UpdateEmployeeTable();
+        if(employee_DAO.AddNhanVien(employee) == true)
+                JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Thêm nhân viên!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdateNhanVienTable();
     }                                  
     
     
@@ -929,13 +923,15 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JButton addButton1;
     private javax.swing.JLabel ageLabel;
     private javax.swing.JTextField ageTextField;
+    private javax.swing.JPanel bangChucNang;
     private javax.swing.JPanel bangCongCu;
+    private javax.swing.JPanel bangMenu;
     private javax.swing.JScrollPane bangNhanVien;
     private javax.swing.JPanel bangThongTin;
     private javax.swing.JButton deleteButton;
     private javax.swing.JButton deleteButton1;
-    private javax.swing.JLabel diaChi;
     private javax.swing.JTextField diaChiField;
+    private javax.swing.JLabel diaChiLabel;
     private javax.swing.JButton editButton1;
     private javax.swing.JButton editButton2;
     private javax.swing.JScrollPane employeeList;
@@ -947,11 +943,11 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JTextField firstNameTextField;
     private javax.swing.ButtonGroup genderButtonGroup;
     private javax.swing.JLabel genderLabel;
-    private javax.swing.JLabel gioiTinh;
+    private javax.swing.JLabel gioiTinhLabel;
     private javax.swing.JRadioButton gioiTinhNam;
     private javax.swing.JRadioButton gioiTinhNu;
-    private javax.swing.JLabel hoTen;
     private javax.swing.JTextField hoTenField;
+    private javax.swing.JLabel hoTenLabel;
     private javax.swing.JLabel idLabel;
     private javax.swing.JTextField idTextField;
     private javax.swing.JPanel informationPanel;
@@ -974,28 +970,26 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JLabel lastNameLabel;
     private javax.swing.JTextField lastNameTextField;
     private javax.swing.JLabel maChucVu;
-    private javax.swing.JComboBox<String> maChucVuBox;
+    private javax.swing.JTextField maChucVuField;
     private javax.swing.JLabel maHopDong;
-    private javax.swing.JComboBox<String> maHopDongBox;
-    private javax.swing.JLabel maNhanVien;
+    private javax.swing.JTextField maHopDongField;
     private javax.swing.JTextField maNhanVienField;
+    private javax.swing.JLabel maNhanVienLabel;
     private javax.swing.JLabel maPhongBan;
     private javax.swing.JComboBox<String> maPhongBanBox;
     private javax.swing.JComboBox<String> maTrangThaiBox;
-    private javax.swing.JPanel mainPanel;
     private javax.swing.JRadioButton maleRadioButton;
-    private javax.swing.JPanel menuPanel;
     private javax.swing.JButton newButton;
     private javax.swing.JButton newButton1;
-    private javax.swing.JLabel ngaySinh;
-    private javax.swing.JTextField ngaySinhField;
+    private com.toedter.calendar.JDateChooser ngaySinhChooser;
+    private javax.swing.JLabel ngaySinhLabel;
     private javax.swing.JLabel phoneNumberLabel;
     private javax.swing.JTextField phoneNumbersTextField;
     private javax.swing.JLabel salaryLabel;
     private javax.swing.JPanel salaryPanel;
     private javax.swing.JTextField salaryTextField;
-    private javax.swing.JLabel soDienThoai;
     private javax.swing.JTextField soDienThoaiField;
+    private javax.swing.JLabel soDienThoaiLabel;
     private javax.swing.JLabel trangThai;
     private javax.swing.JButton updateButton;
     private javax.swing.JButton updateButton1;

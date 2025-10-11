@@ -32,9 +32,9 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="menuPanel" min="-2" max="-2" attributes="0"/>
+              <Component id="bangMenu" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="mainPanel" pref="1091" max="32767" attributes="0"/>
+              <Component id="bangChucNang" pref="1091" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -44,8 +44,8 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="menuPanel" max="32767" attributes="0"/>
-                  <Component id="mainPanel" pref="0" max="32767" attributes="0"/>
+                  <Component id="bangMenu" max="32767" attributes="0"/>
+                  <Component id="bangChucNang" pref="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -53,7 +53,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="menuPanel">
+    <Container class="javax.swing.JPanel" name="bangMenu">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -100,7 +100,7 @@
                   <Component id="jButton7" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
                   <Component id="jButton8" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="205" max="32767" attributes="0"/>
+                  <EmptySpace pref="206" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -151,7 +151,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="mainPanel">
+    <Container class="javax.swing.JPanel" name="bangChucNang">
       <Properties>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[1000, 1000]"/>
@@ -219,30 +219,32 @@
                               <Group type="102" attributes="0">
                                   <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="hoTen" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="ngaySinh" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="gioiTinh" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="diaChi" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="soDienThoai" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="hoTenLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="ngaySinhLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="gioiTinhLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="diaChiLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="soDienThoaiLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="maNhanVien" min="-2" pref="104" max="-2" attributes="0"/>
+                                  <Component id="maNhanVienLabel" min="-2" pref="104" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="diaChiField" alignment="0" max="32767" attributes="0"/>
-                              <Component id="hoTenField" alignment="0" max="32767" attributes="0"/>
-                              <Component id="ngaySinhField" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="gioiTinhNam" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="191" max="32767" attributes="0"/>
-                                  <Component id="gioiTinhNu" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="diaChiField" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="hoTenField" alignment="0" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="gioiTinhNam" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="191" max="32767" attributes="0"/>
+                                      <Component id="gioiTinhNu" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="soDienThoaiField" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="maNhanVienField" alignment="0" max="32767" attributes="0"/>
                               </Group>
-                              <Component id="soDienThoaiField" alignment="0" max="32767" attributes="0"/>
-                              <Component id="maNhanVienField" alignment="0" max="32767" attributes="0"/>
+                              <Component id="ngaySinhChooser" min="-2" pref="152" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -251,23 +253,17 @@
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Component id="maTrangThaiBox" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="maHopDong" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="maHopDongBox" min="-2" max="-2" attributes="0"/>
-                              </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="maPhongBan" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                          <Component id="maChucVu" min="-2" max="-2" attributes="0"/>
-                                      </Group>
+                                      <Component id="maPhongBan" min="-2" max="-2" attributes="0"/>
+                                      <Component id="maChucVu" min="-2" max="-2" attributes="0"/>
+                                      <Component id="maHopDong" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="1" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="maHopDongField" min="-2" max="-2" attributes="0"/>
                                       <Component id="maPhongBanBox" min="-2" max="-2" attributes="0"/>
-                                      <Component id="maChucVuBox" min="-2" max="-2" attributes="0"/>
+                                      <Component id="maChucVuField" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -280,26 +276,35 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="maNhanVien" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="maNhanVienLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="maNhanVienField" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="maPhongBan" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="maPhongBanBox" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="hoTen" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="hoTenLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="hoTenField" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="maChucVu" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="maChucVuBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="maChucVuField" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="ngaySinh" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="ngaySinhField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="maHopDong" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="maHopDongBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="ngaySinhLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="maHopDong" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="ngaySinhChooser" min="-2" pref="43" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="maHopDongField" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="trangThai" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="maTrangThaiBox" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -308,17 +313,17 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="gioiTinhNam" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="gioiTinhNu" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="gioiTinh" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="gioiTinhLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="diaChiField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="diaChi" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="diaChiLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="soDienThoaiField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="soDienThoai" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="soDienThoaiLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
                       </Group>
@@ -326,32 +331,32 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="maNhanVien">
+                <Component class="javax.swing.JLabel" name="maNhanVienLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="M&#xe3; nh&#xe2;n vi&#xea;n"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="hoTen">
+                <Component class="javax.swing.JLabel" name="hoTenLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="H&#x1ecd; v&#xe0; t&#xea;n"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="ngaySinh">
+                <Component class="javax.swing.JLabel" name="ngaySinhLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Ng&#xe0;y Sinh"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="gioiTinh">
+                <Component class="javax.swing.JLabel" name="gioiTinhLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Gi&#x1edb;i t&#xed;nh"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="diaChi">
+                <Component class="javax.swing.JLabel" name="diaChiLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="&#x110;&#x1ecb;a ch&#x1ec9;"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="soDienThoai">
+                <Component class="javax.swing.JLabel" name="soDienThoaiLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="S&#x1ed1; &#x111;i&#x1ec7;n tho&#x1ea1;i"/>
                   </Properties>
@@ -363,7 +368,7 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="hoTenField">
                 </Component>
-                <Component class="javax.swing.JTextField" name="ngaySinhField">
+                <Component class="com.toedter.calendar.JDateChooser" name="ngaySinhChooser">
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="gioiTinhNam">
                   <Properties>
@@ -420,36 +425,6 @@
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
                 </Component>
-                <Component class="javax.swing.JComboBox" name="maChucVuBox">
-                  <Properties>
-                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="4">
-                        <StringItem index="0" value="Item 1"/>
-                        <StringItem index="1" value="Item 2"/>
-                        <StringItem index="2" value="Item 3"/>
-                        <StringItem index="3" value="Item 4"/>
-                      </StringArray>
-                    </Property>
-                  </Properties>
-                  <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-                  </AuxValues>
-                </Component>
-                <Component class="javax.swing.JComboBox" name="maHopDongBox">
-                  <Properties>
-                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="4">
-                        <StringItem index="0" value="Item 1"/>
-                        <StringItem index="1" value="Item 2"/>
-                        <StringItem index="2" value="Item 3"/>
-                        <StringItem index="3" value="Item 4"/>
-                      </StringArray>
-                    </Property>
-                  </Properties>
-                  <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-                  </AuxValues>
-                </Component>
                 <Component class="javax.swing.JComboBox" name="maTrangThaiBox">
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
@@ -463,6 +438,16 @@
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
+                </Component>
+                <Component class="javax.swing.JTextField" name="maChucVuField">
+                  <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="maHopDongField">
+                  <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
+                  </Properties>
                 </Component>
               </SubComponents>
             </Container>
@@ -636,7 +621,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="707" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="708" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -656,7 +641,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="707" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="708" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -676,7 +661,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="707" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="708" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -741,7 +726,7 @@
                       <Component id="Label2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="employeeList" min="-2" pref="94" max="-2" attributes="0"/>
-                      <EmptySpace pref="147" max="32767" attributes="0"/>
+                      <EmptySpace pref="148" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

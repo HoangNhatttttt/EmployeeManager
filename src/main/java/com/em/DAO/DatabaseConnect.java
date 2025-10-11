@@ -1,4 +1,4 @@
-package com.demo.em.DAO;
+package com.em.DAO;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
