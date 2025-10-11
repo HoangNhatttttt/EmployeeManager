@@ -62,10 +62,10 @@ public class NhanVien_DTO {
     public Date getNgaySinh(){ return this.ngaySinh; }
     public String getTrangThai(){ return this.trangThai; }
     
-    public void PrintInformation(){
+    public void OutputNhanVien(){
         System.out.println("Mã nhân viên: " + maNhanVien);
         System.out.println("Họ tên: " + hoTen);
-        System.out.println("Ngày sinh: " + ngaySinh);
+        System.out.println("Ngày sinh: " + ngaySinh); // YYYY/MM/DD
         System.out.println("Giới tính: " + gioiTinh);
         System.out.println("Địa chỉ: " + diaChi);
         System.out.println("Số điện thoại: " + soDienThoai);
