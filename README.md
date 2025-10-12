@@ -1,1 +1,1 @@
-resolution: 1280 x 720 \
+resolution: 1280 x 720  
