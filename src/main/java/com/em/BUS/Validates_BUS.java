@@ -1,10 +1,10 @@
 package com.em.BUS;
 import com.em.DTO.NhanVien_DTO;
 import com.toedter.calendar.JDateChooser;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
 public class Validates_BUS{
@@ -45,16 +45,20 @@ public class Validates_BUS{
         return false;               
     }
     
+    //
+    // Nhân viên
+    //
+    
     public String ValidateHoTen(JTextField firstNameField){
-        String firstName = firstNameField.getText();
+        String hoTenVN = firstNameField.getText();
         
-        if(ValidateIsEmpty(firstName) == true)
+        if(ValidateIsEmpty(hoTenVN) == true)
             return "Họ tên không được để trống.";
         
-        if(ValidateHasSpecialCharacter(firstName) == true)
+        if(ValidateHasSpecialCharacter(hoTenVN) == true)
             return "Họ tên không chứa ký tự đặc biệt";
         
-        if(ValidateIsStartWithWhitespace(firstName) == true)
+        if(ValidateIsStartWithWhitespace(hoTenVN) == true)
             return "Không bắt đầu bằng khoảng trắng";
         
         return null;
@@ -145,9 +149,21 @@ public class Validates_BUS{
         return null;
     }
     
+    public String ValidateMaPhongBanNhanVien(JComboBox maPhongBanBox){
+        if(maPhongBanBox.getSelectedIndex() == -1)
+            return "Mã phòng ban không được để trống.";
+        
+        return null;
+    }
     
+    public String ValidateMaChucVuNhanVien(JComboBox maChucVuBox){
+        if(maChucVuBox.getSelectedIndex() == -1)
+            return "Mã chức vụ không được để trống.";
+        
+        return null;
+    }
     
-    public String ValidateNhanVien(JTextField hoTen, JDateChooser ngaySinh, ButtonGroup gioiTinh, JTextField diaChi, JTextField soDienThoai){
+    public String ValidateNhanVien(JTextField hoTen, JDateChooser ngaySinh, ButtonGroup gioiTinh, JTextField diaChi, JTextField soDienThoai, JComboBox maPhongBanBox, JComboBox maChucVuBox, JComboBox trangThaiBox){
         
         String error; // Nếu có error thì error sẽ gán giá trị khác null, không thì được gán giá trị null
         
@@ -178,20 +194,72 @@ public class Validates_BUS{
             soDienThoai.requestFocus();
             return error;
         }
+        
+        error = ValidateMaPhongBanNhanVien(maPhongBanBox);
+        if(error != null){
+            maPhongBanBox.requestFocus();
+            return error;
+        }
+        
+        error = ValidateMaChucVuNhanVien(maChucVuBox);
+        if(error != null){
+            maChucVuBox.requestFocus();
+            return error;
+        }
+        
                      
         return null;
     }
     
-    public NhanVien_DTO ReturnNhanVien(JTextField hoTen, JDateChooser ngaySinh, ButtonGroup gioiTinh, JTextField diaChi, JTextField soDienThoai){
+    public NhanVien_DTO ReturnNhanVien(JTextField hoTen, JDateChooser ngaySinh, ButtonGroup gioiTinh, JTextField diaChi, JTextField soDienThoai, JComboBox maPhongBanBox, JComboBox maChucVuBox, JComboBox trangThaiBox){
        String hoTenNV = CleanString(hoTen.getText());
        Date ngaySinhNV = ngaySinh.getDate();
        String gioiTinhNV = gioiTinh.getSelection().getActionCommand();
        String diaChiNV = CleanString(diaChi.getText());
        String soDienThoaiNV = soDienThoai.getText();
-       
-       NhanVien_DTO nhanVien = new NhanVien_DTO(hoTenNV, ngaySinhNV, gioiTinhNV, diaChiNV, soDienThoaiNV);
+       int maPhongBanNV = Integer.parseInt(maPhongBanBox.getSelectedItem().toString());
+       int maChucVuNV = Integer.parseInt(maChucVuBox.getSelectedItem().toString());
+       String trangThaiNV = trangThaiBox.getSelectedItem().toString();
+       NhanVien_DTO nhanVien = new NhanVien_DTO(hoTenNV, ngaySinhNV, gioiTinhNV, diaChiNV, soDienThoaiNV, maPhongBanNV, maChucVuNV, trangThaiNV);
        
        return nhanVien;
     }
     
+    //
+    // Phòng ban
+    //
+    
+    public String ValidateTenPhongBan(JTextField tenPhongBan){
+        String tenPhongBanText = tenPhongBan.getText();
+          
+        if(ValidateIsEmpty(tenPhongBanText) == true)
+            return "Tên phòng ban không được để trống";
+        
+        if(ValidateHasSpecialCharacter(tenPhongBanText) == true)
+            return "Tên phòng ban không chứa ký tự đặc biệt";
+        
+        if(ValidateIsStartWithWhitespace(tenPhongBanText) == true)
+            return "Tên phòng ban không bắt đầu bằng khoảng trắng";
+        
+        return null;
+    }
+    
+    //
+    // Chức vụ
+    //
+    
+    public String ValidateTenChucVu(JTextField tenChucVu){
+        String tenPhongBanText = tenChucVu.getText();
+          
+        if(ValidateIsEmpty(tenPhongBanText) == true)
+            return "Tên chức vụ không được để trống";
+        
+        if(ValidateHasSpecialCharacter(tenPhongBanText) == true)
+            return "Tên chức vụ không chứa ký tự đặc biệt";
+        
+        if(ValidateIsStartWithWhitespace(tenPhongBanText) == true)
+            return "Tên chức không bắt đầu bằng khoảng trắng";
+        
+        return null;
+    }
 }

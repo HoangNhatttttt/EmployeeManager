@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 11, 2025 at 12:47 PM
+-- Generation Time: Oct 12, 2025 at 12:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -46,6 +46,18 @@ CREATE TABLE `chucvu` (
   `tenChucVu` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `chucvu`
+--
+
+INSERT INTO `chucvu` (`maChucVu`, `tenChucVu`) VALUES
+(1, 'Employee'),
+(2, 'Leader'),
+(3, 'Boss'),
+(4, 'CEO'),
+(5, 'CFO'),
+(6, 'HR');
+
 -- --------------------------------------------------------
 
 --
@@ -54,7 +66,7 @@ CREATE TABLE `chucvu` (
 
 CREATE TABLE `hopdong` (
   `maHopDong` int(11) NOT NULL,
-  `maNhanVien` int(11) NOT NULL,
+  `maNhanVien` int(11) DEFAULT NULL,
   `ngayBatDau` int(11) NOT NULL,
   `ngayKetThuc` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -67,7 +79,7 @@ CREATE TABLE `hopdong` (
 
 CREATE TABLE `luong` (
   `maLuong` int(11) NOT NULL,
-  `maNhanVien` int(11) NOT NULL,
+  `maNhanVien` int(11) DEFAULT NULL,
   `luongCoBan` int(11) NOT NULL,
   `soGioCoBan` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -99,12 +111,17 @@ CREATE TABLE `nhanvien` (
   `gioiTinh` varchar(1) NOT NULL,
   `diaChi` varchar(50) NOT NULL,
   `soDienThoai` varchar(10) NOT NULL,
-  `maLuong` int(11) DEFAULT NULL,
   `maPhongBan` int(11) DEFAULT NULL,
   `maChucVu` int(11) DEFAULT NULL,
-  `maHopDong` int(11) DEFAULT NULL,
   `trangThai` varchar(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `nhanvien`
+--
+
+INSERT INTO `nhanvien` (`maNhanVien`, `hoTen`, `ngaySinh`, `gioiTinh`, `diaChi`, `soDienThoai`, `maPhongBan`, `maChucVu`, `trangThai`) VALUES
+(3, 'dsadadsadsa', '2001-10-17', 'M', 'dadadsad', '0123456678', 7, 3, 'Yes');
 
 -- --------------------------------------------------------
 
@@ -116,6 +133,16 @@ CREATE TABLE `phongban` (
   `maPhongBan` int(11) NOT NULL,
   `tenPhongBan` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `phongban`
+--
+
+INSERT INTO `phongban` (`maPhongBan`, `tenPhongBan`) VALUES
+(6, 'IT'),
+(7, 'Maketing'),
+(8, 'Boss'),
+(9, 'sdsadad');
 
 -- --------------------------------------------------------
 
@@ -188,9 +215,7 @@ ALTER TABLE `nghiphep`
 ALTER TABLE `nhanvien`
   ADD PRIMARY KEY (`maNhanVien`),
   ADD KEY `maPhongBan` (`maPhongBan`),
-  ADD KEY `maChucVu` (`maChucVu`),
-  ADD KEY `maHopDong` (`maHopDong`),
-  ADD KEY `maLuong` (`maLuong`);
+  ADD KEY `maChucVu` (`maChucVu`);
 
 --
 -- Indexes for table `phongban`
@@ -225,7 +250,7 @@ ALTER TABLE `chamcong`
 -- AUTO_INCREMENT for table `chucvu`
 --
 ALTER TABLE `chucvu`
-  MODIFY `maChucVu` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `maChucVu` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `hopdong`
@@ -249,13 +274,13 @@ ALTER TABLE `nghiphep`
 -- AUTO_INCREMENT for table `nhanvien`
 --
 ALTER TABLE `nhanvien`
-  MODIFY `maNhanVien` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `maNhanVien` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `phongban`
 --
 ALTER TABLE `phongban`
-  MODIFY `maPhongBan` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `maPhongBan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `tangca`
@@ -296,9 +321,7 @@ ALTER TABLE `nghiphep`
 --
 ALTER TABLE `nhanvien`
   ADD CONSTRAINT `nhanvien_ibfk_1` FOREIGN KEY (`maPhongBan`) REFERENCES `phongban` (`maPhongBan`),
-  ADD CONSTRAINT `nhanvien_ibfk_2` FOREIGN KEY (`maChucVu`) REFERENCES `chucvu` (`maChucVu`),
-  ADD CONSTRAINT `nhanvien_ibfk_3` FOREIGN KEY (`maHopDong`) REFERENCES `hopdong` (`maHopDong`),
-  ADD CONSTRAINT `nhanvien_ibfk_4` FOREIGN KEY (`maLuong`) REFERENCES `luong` (`maLuong`);
+  ADD CONSTRAINT `nhanvien_ibfk_2` FOREIGN KEY (`maChucVu`) REFERENCES `chucvu` (`maChucVu`);
 
 --
 -- Constraints for table `taikhoan`

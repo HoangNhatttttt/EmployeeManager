@@ -7,8 +7,8 @@ public class ChucVu_DTO{
     
     public ChucVu_DTO() { }
     
-    public ChucVu_DTO(String tenPhongBan){
-        this.tenChucVu = tenPhongBan;
+    public ChucVu_DTO(String tenChucVu){
+        this.tenChucVu = tenChucVu;
     }
     
     public ChucVu_DTO(int maChucVu, String tenChucVu){
@@ -16,8 +16,8 @@ public class ChucVu_DTO{
         this.tenChucVu = tenChucVu;
     }
     
-    public void setMaChucVu(int maPhongBan){ this.maChucVu = maChucVu; } 
-    public void setTenChucVu(String tenPhongBan){ this.tenChucVu = tenChucVu; }   
+    public void setMaChucVu(int maChucVu){ this.maChucVu = maChucVu; } 
+    public void setTenChucVu(String tenChucVu){ this.tenChucVu = tenChucVu; }   
     
     public int getMaChucVu(){ return maChucVu; } 
     public String getTenChucVu(){ return tenChucVu; }   

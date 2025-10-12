@@ -10,7 +10,18 @@ public class NhanVien_BUS{
     public boolean AddNhanVien(NhanVien_DTO employee){     
         return(employeeDAO.AddNhanVien(employee)); // Nếu thành công thì trả về True, thất bại thì trả về False
     }
-        
+    
+    // Cập nhật thông tin Employee lên database sau khi sửa đổi
+    public boolean EditNhanVien(NhanVien_DTO nhanVien) {
+        return employeeDAO.EditNhanVien(nhanVien);
+    }
+    
+    // Xoá employee khỏi database bằng id
+    public boolean DeleteNhanVien(int maNhanVien) {
+        // Thêm hàm check nếu employee được sử dụng bởi foreign key (hoá đơn, ...)
+        return employeeDAO.DeleteNhanVien(maNhanVien);
+    }
+    
     // Trích xuất toàn bộ employee từ database
     public ArrayList<NhanVien_DTO> GetAllNhanVien() {
         return employeeDAO.GetAllNhanVien();
@@ -19,17 +30,5 @@ public class NhanVien_BUS{
     // Trích xuất employee thông qua ID
     public NhanVien_DTO GetNhanVienById(int maNhanVien) {
         return employeeDAO.GetNhanVienById(maNhanVien);
-    }
-    
-    // Cập nhật thông tin Employee lên database sau khi sửa đổi
-    public boolean UpdateNhanVien(NhanVien_DTO nhanVien) {
-        // Cần add validate
-        return employeeDAO.UpdateNhanVien(nhanVien);
-    }
-    
-    // Xoá employee khỏi database bằng id
-    public boolean DeleteNhanVien(int maNhanVien) {
-        // Thêm hàm check nếu employee được sử dụng bởi foreign key (hoá đơn, ...)
-        return employeeDAO.DeleteNhanVien(maNhanVien);
     }
 }

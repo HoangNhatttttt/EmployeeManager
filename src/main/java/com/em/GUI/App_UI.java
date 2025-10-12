@@ -1,12 +1,19 @@
 package com.em.GUI;
+import com.em.BUS.ChucVu_BUS;
 import com.em.BUS.NhanVien_BUS;
+import com.em.BUS.PhongBan_BUS;
 import javax.swing.*;
 import com.em.BUS.Validates_BUS;
-import com.em.DAO.NhanVien_DAO;
+import com.em.DTO.ChucVu_DTO;
 import com.em.DTO.NhanVien_DTO;
+import com.em.DTO.PhongBan_DTO;
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -15,87 +22,30 @@ public class App_UI extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(App_UI.class.getName());
     
+    private CardLayout cardLayout;
     public App_UI() {
+        
         initComponents();
+        cardLayout = (CardLayout) cardPanel.getLayout();
         
         // Chọn cái nào thì sẽ trả về giá trị đó, trích xuất thông qua ButtonGroup
         gioiTinhNu.setActionCommand("F");
         gioiTinhNam.setActionCommand("M");
         
-        // JTable cho NhanVien list
+        // NhanVien Card
         InitNhanVienTable();
         UpdateNhanVienTable();
+        UpdateTenPhongBanBox();
+        UpdateTenChucVuBox();
         
-    }
-    // Tạo default table 
-    private DefaultTableModel defaultTableModel = new DefaultTableModel();
-    
-    public void InitComboBox(){
+        // PhongBan Card
+        InitPhongBanTable();
+        UpdatePhongBanTable();
         
-    }
-    
-    public void InitNhanVienTable(){
-        
-        // Trỏ default table tới employee table
-        employeeTable.setModel(defaultTableModel);
-        
-        // Thêm cột cho default table --> employee table cũng thêm cột
-        defaultTableModel.addColumn("Mã nhân viên");
-        defaultTableModel.addColumn("Họ tên");
-        defaultTableModel.addColumn("Ngày sinh");
-        defaultTableModel.addColumn("Giới tính");
-        defaultTableModel.addColumn("Địa chỉ");
-        defaultTableModel.addColumn("Số điện thoại");
-        defaultTableModel.addColumn("Mã lương");
-        defaultTableModel.addColumn("Mã phòng ban");
-        defaultTableModel.addColumn("mã chức vụ");
-        defaultTableModel.addColumn("Mã hợp đồng");
-        defaultTableModel.addColumn("Trạng thái");
-        
-        // Chỉ được chọn 1 dòng/employee trong 1 lúc
-        ListSelectionModel listSelectionModel = employeeTable.getSelectionModel();
-        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-        //Mỗi lần chọn 1 employee sẽ hiện thông tin employee lên information panel
-        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
-            @Override
-            public void valueChanged(ListSelectionEvent e){
-                // Trích xuất vị trí ô dòng/employee được chọn
+        // ChucVu card
+        InitChucVuTable();
+        UpdateChucVuTable();
                 
-                int rowIndex = employeeTable.getSelectedRow();
-                // TH nếu chọn 1 employee/dòng trong JTable rồi JTable reset data --> ValueChanged --> rowIndex = -1 do không có data trong JTable
-                // ==> Gây ra lỗi khi trích xuất dữ liệu từ JTable
-                if(rowIndex != -1){ //TH database không có dữ liệu thì không cần trích xuất dữ liệu từ JTable và không update Information Panel
-                    
-                    // Trích xuất dữ liệu các cột của dòng được chọn
-                    String maNhanVien = employeeTable.getValueAt(rowIndex, 0).toString(); 
-                    String hoTen = employeeTable.getValueAt(rowIndex, 1).toString();
-                    String ngaySinh = employeeTable.getValueAt(rowIndex, 2).toString();
-                    String gioiTinh = employeeTable.getValueAt(rowIndex, 3).toString();
-                    String diaChi = employeeTable.getValueAt(rowIndex, 4).toString();
-                    String soDienThoai = employeeTable.getValueAt(rowIndex, 5).toString();
-                    String maLuong = employeeTable.getValueAt(rowIndex, 6).toString();
-                    String maPhongBan = employeeTable.getValueAt(rowIndex, 7).toString();
-                    String maChucVu = employeeTable.getValueAt(rowIndex, 8).toString();
-                    String maHopDong = employeeTable.getValueAt(rowIndex, 9).toString();
-                    String trangThai = employeeTable.getValueAt(rowIndex, 10).toString();
-
-                    // Hiển thị dữ liệu lên information panel
-                    maNhanVienField.setText(maNhanVien);
-                    hoTenField.setText(hoTen);
-                    diaChiField.setText(diaChi);
-                    soDienThoaiField.setText(soDienThoai);
-                    
-                    
-
-                    // Kiểm tra giới tính rồi chọn tương ứng
-                    if(gioiTinh.equals("M"))
-                        gioiTinhNam.setSelected(true);
-                    else
-                        gioiTinhNu.setSelected(true);
-                }  
-            }
-        });
     }
     
     public void ClearTextFields(Container container) {
@@ -107,6 +57,82 @@ public class App_UI extends javax.swing.JFrame {
                 ClearTextFields((Container) c);      
         }
     }
+     
+    // Tạo default table 
+    private DefaultTableModel defaultNhanVienTableModel = new DefaultTableModel();
+    
+    //
+    // Nhân viên
+    //
+    
+    public void InitNhanVienTable(){
+        
+        // Trỏ default table tới employee table
+        nhanVienTable.setModel(defaultNhanVienTableModel);
+        
+        // Thêm cột cho default table --> employee table cũng thêm cột
+        defaultNhanVienTableModel.addColumn("Mã nhân viên");
+        defaultNhanVienTableModel.addColumn("Họ tên");
+        defaultNhanVienTableModel.addColumn("Ngày sinh");
+        defaultNhanVienTableModel.addColumn("Giới tính");
+        defaultNhanVienTableModel.addColumn("Địa chỉ");
+        defaultNhanVienTableModel.addColumn("Số điện thoại");
+        defaultNhanVienTableModel.addColumn("Mã phòng ban");
+        defaultNhanVienTableModel.addColumn("mã chức vụ");
+        defaultNhanVienTableModel.addColumn("Trạng thái");
+        
+        // Chỉ được chọn 1 dòng/employee trong 1 lúc
+        ListSelectionModel listSelectionModel = nhanVienTable.getSelectionModel();
+        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        //Mỗi lần chọn 1 employee sẽ hiện thông tin employee lên information panel
+        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
+            @Override
+            public void valueChanged(ListSelectionEvent e){
+                
+                // Trích xuất vị trí ô dòng/employee được chọn
+                int rowIndex = nhanVienTable.getSelectedRow();
+                if(rowIndex != -1){ //TH database không có dữ liệu thì không cần trích xuất dữ liệu từ JTable và không update Information Panel
+                    
+                    // Trích xuất dữ liệu các cột của dòng được chọn
+                    String maNhanVien = nhanVienTable.getValueAt(rowIndex, 0).toString(); 
+                    String hoTen = nhanVienTable.getValueAt(rowIndex, 1).toString();
+                    String ngaySinh = nhanVienTable.getValueAt(rowIndex, 2).toString();
+                    String gioiTinh = nhanVienTable.getValueAt(rowIndex, 3).toString();
+                    String diaChi = nhanVienTable.getValueAt(rowIndex, 4).toString();
+                    String soDienThoai = nhanVienTable.getValueAt(rowIndex, 5).toString();
+                    String maPhongBan = nhanVienTable.getValueAt(rowIndex, 6).toString();
+                    String maChucVu = nhanVienTable.getValueAt(rowIndex, 7).toString();
+                    String trangThai = nhanVienTable.getValueAt(rowIndex, 8).toString();
+
+                    // Hiển thị dữ liệu lên information panel
+                    maNhanVienField.setText(maNhanVien);
+                    hoTenField.setText(hoTen);
+                    
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    try {
+                        Date date = dateFormat.parse(ngaySinh);
+                        ngaySinhChooser.setDateFormatString("dd/MM/yyyy");
+                        ngaySinhChooser.setDate(date);
+                    }                    
+                    catch (ParseException d) {
+                        d.printStackTrace();
+}
+                    
+                    diaChiField.setText(diaChi);
+                    soDienThoaiField.setText(soDienThoai);
+                    
+                    // Kiểm tra giới tính rồi chọn tương ứng
+                    if(gioiTinh.equals("M")) // Khi dùng a == b nghĩa là a và b có phải cùng 1 object (không áp dụng khi kiểm tra số: a==3)
+                        gioiTinhNam.setSelected(true);
+                    else
+                        gioiTinhNu.setSelected(true);
+                }  
+            }
+        });
+    }
+    
+    
     
     private void UpdateNhanVienTable(){
         try {
@@ -115,22 +141,25 @@ public class App_UI extends javax.swing.JFrame {
             ArrayList<NhanVien_DTO> nhanVienList = NhanVien_BUS.GetAllNhanVien();
             
             // Hàm sẽ lấy toàn bộ dữ liệu từ database (bao gồm cả dữ liệu có sẵn trong JTable) --> Làm sạch JTable rồi add lại toàn bộ dữ liệu
-            defaultTableModel.setRowCount(0); // Xoá toàn bộ dòng trong JTable 
+            defaultNhanVienTableModel.setRowCount(0); // Xoá toàn bộ dòng trong JTable 
             
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             
             //Add rows
             for (NhanVien_DTO nhanVien : nhanVienList) {
-                defaultTableModel.addRow(new Object[]{
+                
+                String ngaySinhFormatted = "";
+                ngaySinhFormatted = dateFormat.format(nhanVien.getNgaySinh());
+                
+                defaultNhanVienTableModel.addRow(new Object[]{
                     nhanVien.getMaNhanVien(),
                     nhanVien.getHoTen(),
-                    nhanVien.getNgaySinh(),
+                    ngaySinhFormatted,
                     nhanVien.getGioiTinh(),
                     nhanVien.getDiaChi(),
                     nhanVien.getSoDienThoai(),
-                    nhanVien.getMaLuong(),
                     nhanVien.getMaPhongBan(),
                     nhanVien.getMaChucVu(),
-                    nhanVien.getMaHopDong(),
                     nhanVien.getTrangThai()
                 });
             } 
@@ -138,10 +167,127 @@ public class App_UI extends javax.swing.JFrame {
         
         catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                "Error loading employee data: " + e.getMessage(),
-                "Error",
+                "Lỗi trích xuất thông tin nhân viên: " + e.getMessage(),
+                "Lỗi",
                 JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
+        }
+    }
+    
+    private void NewNhanVien(){
+        ClearTextFields(NhanVienCard);
+    }
+    
+    private void AddNhanVien() {                                                                             
+        // TH nếu User nhấn vào employee trên JTable rồi nhấn nút Add --> Thông tin trên Information panel đầy đủ --> Sẽ add lại nhân viên vào database
+        // --> Nhấn nút New để xoá hết thông tin trên JTextField rồi nhập vào thông tin mới
+        String maNhanVien = maNhanVienField.getText();
+        if (maNhanVien.isEmpty() == false){
+            String error = "Bấm nút 'New' trước khi thêm nhân viên.";
+            JOptionPane.showMessageDialog(this, error, "Add nhân viên", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+        
+        NhanVien_DTO nhanVien = new NhanVien_DTO();
+        
+        if(result == null)
+            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+             
+        else{
+            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+        
+        if(nhanVien_BUS.AddNhanVien(nhanVien) == true)
+                JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Thêm nhân viên không thành công!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdateNhanVienTable();
+    }
+    
+    private void EditNhanVien(){
+        String maNhanVien = maNhanVienField.getText();
+        if (maNhanVien.isEmpty() == true){
+            String error = "Chọn nhân viên trong danh sách trước khi sửa";
+            JOptionPane.showMessageDialog(this, error, "Edit nhân viên", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+        
+        NhanVien_DTO nhanVien = new NhanVien_DTO();
+        
+        if(result == null){
+            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+            nhanVien.setMaNhanVien(Integer.parseInt(maNhanVien));
+        }
+            
+             
+        else{
+            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+        
+        if(nhanVien_BUS.EditNhanVien(nhanVien) == true)
+                JOptionPane.showMessageDialog(null, "Sửa nhân viên thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Sửa nhân viên không thành công!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdateNhanVienTable();
+    }
+    
+    private void DeleteNhanVien(){
+        String maNhanVien = maNhanVienField.getText();
+        if (maNhanVien.isEmpty() == true){
+            String error = "Chọn nhân viên trong danh sách trước khi xoá";
+            JOptionPane.showMessageDialog(this, error, "Delete nhân viên", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Show confirmation dialog
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc muốn xoá nhân viên ?",
+            "Xác nhận xoá",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+    
+        if (confirm == JOptionPane.YES_OPTION) {
+            // User clicked YES - proceed with deletion
+            NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+
+            if (nhanVien_BUS.DeleteNhanVien(Integer.parseInt(maNhanVien)) == true) {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá nhân viên thành công.", 
+                    "Thành công", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                
+                UpdateNhanVienTable();
+            } 
+            
+            else {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá nhân viên thất bại.", 
+                    "Lỗi", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } 
+        
+        else {
+            // User clicked NO or closed dialog - do nothing
+            return;
         }
     }
 
@@ -151,25 +297,23 @@ public class App_UI extends javax.swing.JFrame {
 
         genderButtonGroup = new javax.swing.ButtonGroup();
         bangMenu = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
-        bangChucNang = new javax.swing.JPanel();
-        salaryPanel = new javax.swing.JPanel();
-        Label4 = new javax.swing.JLabel();
-        Label3 = new javax.swing.JLabel();
-        bangThongTin = new javax.swing.JPanel();
-        maNhanVienLabel = new javax.swing.JLabel();
-        hoTenLabel = new javax.swing.JLabel();
-        ngaySinhLabel = new javax.swing.JLabel();
-        gioiTinhLabel = new javax.swing.JLabel();
-        diaChiLabel = new javax.swing.JLabel();
-        soDienThoaiLabel = new javax.swing.JLabel();
+        menuButton1 = new javax.swing.JButton();
+        menuButton2 = new javax.swing.JButton();
+        menuButton3 = new javax.swing.JButton();
+        menuButton4 = new javax.swing.JButton();
+        menuButton5 = new javax.swing.JButton();
+        menuButton6 = new javax.swing.JButton();
+        menuButton7 = new javax.swing.JButton();
+        menuButton8 = new javax.swing.JButton();
+        cardPanel = new javax.swing.JPanel();
+        NhanVienCard = new javax.swing.JPanel();
+        bangNhanVien = new javax.swing.JPanel();
+        JLabel1 = new javax.swing.JLabel();
+        JLabel2 = new javax.swing.JLabel();
+        JLabel3 = new javax.swing.JLabel();
+        JLabel4 = new javax.swing.JLabel();
+        JLabel5 = new javax.swing.JLabel();
+        JLabel6 = new javax.swing.JLabel();
         maNhanVienField = new javax.swing.JTextField();
         hoTenField = new javax.swing.JTextField();
         ngaySinhChooser = new com.toedter.calendar.JDateChooser();
@@ -177,83 +321,106 @@ public class App_UI extends javax.swing.JFrame {
         gioiTinhNu = new javax.swing.JRadioButton();
         diaChiField = new javax.swing.JTextField();
         soDienThoaiField = new javax.swing.JTextField();
-        maPhongBan = new javax.swing.JLabel();
-        maChucVu = new javax.swing.JLabel();
-        maHopDong = new javax.swing.JLabel();
-        trangThai = new javax.swing.JLabel();
+        JLabel7 = new javax.swing.JLabel();
+        JLabel8 = new javax.swing.JLabel();
+        JLabel10 = new javax.swing.JLabel();
         maPhongBanBox = new javax.swing.JComboBox<>();
-        maTrangThaiBox = new javax.swing.JComboBox<>();
-        maChucVuField = new javax.swing.JTextField();
-        maHopDongField = new javax.swing.JTextField();
-        bangNhanVien = new javax.swing.JScrollPane();
-        employeeTable1 = new javax.swing.JTable();
-        bangCongCu = new javax.swing.JPanel();
+        maChucVuBox = new javax.swing.JComboBox<>();
+        trangThaiBox = new javax.swing.JComboBox<>();
+        tenPhongBanField2 = new javax.swing.JTextField();
+        tenChucVuField2 = new javax.swing.JTextField();
+        danhSachNhanVien = new javax.swing.JScrollPane();
+        nhanVienTable = new javax.swing.JTable();
+        menuNhanVien = new javax.swing.JPanel();
         addButton1 = new javax.swing.JButton();
         deleteButton1 = new javax.swing.JButton();
         updateButton1 = new javax.swing.JButton();
         newButton1 = new javax.swing.JButton();
-        editButton2 = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        jButton9 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        employeePanel = new javax.swing.JPanel();
-        employeeList = new javax.swing.JScrollPane();
-        employeeTable = new javax.swing.JTable();
-        Label2 = new javax.swing.JLabel();
-        Label1 = new javax.swing.JLabel();
-        informationPanel = new javax.swing.JPanel();
-        idLabel = new javax.swing.JLabel();
-        firstNameLabel = new javax.swing.JLabel();
-        lastNameLabel = new javax.swing.JLabel();
-        ageLabel = new javax.swing.JLabel();
-        genderLabel = new javax.swing.JLabel();
-        salaryLabel = new javax.swing.JLabel();
-        jobPositionLabel = new javax.swing.JLabel();
-        phoneNumberLabel = new javax.swing.JLabel();
-        idTextField = new javax.swing.JTextField();
-        firstNameTextField = new javax.swing.JTextField();
-        lastNameTextField = new javax.swing.JTextField();
-        ageTextField = new javax.swing.JTextField();
-        maleRadioButton = new javax.swing.JRadioButton();
-        femaleRadioButton = new javax.swing.JRadioButton();
-        salaryTextField = new javax.swing.JTextField();
-        jobPositionTextField = new javax.swing.JTextField();
-        phoneNumbersTextField = new javax.swing.JTextField();
-        utilitiesPanel = new javax.swing.JPanel();
-        addButton = new javax.swing.JButton();
-        deleteButton = new javax.swing.JButton();
-        updateButton = new javax.swing.JButton();
-        newButton = new javax.swing.JButton();
         editButton1 = new javax.swing.JButton();
+        PhongBanCard = new javax.swing.JPanel();
+        bangPhongBan = new javax.swing.JPanel();
+        JLabel11 = new javax.swing.JLabel();
+        JLabel12 = new javax.swing.JLabel();
+        maPhongBanField = new javax.swing.JTextField();
+        tenPhongBanField = new javax.swing.JTextField();
+        danhSachPhongBan = new javax.swing.JScrollPane();
+        phongBanTable = new javax.swing.JTable();
+        menuPhongBan = new javax.swing.JPanel();
+        addButton2 = new javax.swing.JButton();
+        deleteButton2 = new javax.swing.JButton();
+        updateButton2 = new javax.swing.JButton();
+        newButton2 = new javax.swing.JButton();
+        editButton2 = new javax.swing.JButton();
+        ChucVuCard = new javax.swing.JPanel();
+        bangChucVu = new javax.swing.JPanel();
+        JLabel13 = new javax.swing.JLabel();
+        JLabel14 = new javax.swing.JLabel();
+        maChucVuField = new javax.swing.JTextField();
+        tenChucVuField = new javax.swing.JTextField();
+        danhSachChucVu = new javax.swing.JScrollPane();
+        chucVuTable = new javax.swing.JTable();
+        menuChucVu = new javax.swing.JPanel();
+        addButton3 = new javax.swing.JButton();
+        deleteButton3 = new javax.swing.JButton();
+        updateButton3 = new javax.swing.JButton();
+        newButton3 = new javax.swing.JButton();
+        editButton3 = new javax.swing.JButton();
+        HopDongCard = new javax.swing.JPanel();
+        bangHopDong = new javax.swing.JPanel();
+        JLabel15 = new javax.swing.JLabel();
+        JLabel16 = new javax.swing.JLabel();
+        maPhongBanField2 = new javax.swing.JTextField();
+        tenPhongBanField3 = new javax.swing.JTextField();
+        danhSachHopDong = new javax.swing.JScrollPane();
+        hopDongTable = new javax.swing.JTable();
+        menuHopDong = new javax.swing.JPanel();
+        addButton4 = new javax.swing.JButton();
+        deleteButton4 = new javax.swing.JButton();
+        updateButton4 = new javax.swing.JButton();
+        newButton4 = new javax.swing.JButton();
+        editButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 153, 153));
 
         bangMenu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jButton1.setText("Nhân viên");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        menuButton1.setText("Nhân viên");
+        menuButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                NhanVienCardButton(evt);
             }
         });
 
-        jButton2.setText("Luong");
+        menuButton2.setText("Phòng ban");
+        menuButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PhongBanCardButton(evt);
+            }
+        });
 
-        jButton3.setText("jButton3");
+        menuButton3.setText("Chức vụ");
+        menuButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ChucVuCardButton(evt);
+            }
+        });
 
-        jButton4.setText("jButton4");
+        menuButton4.setText("Hợp đồng");
+        menuButton4.setToolTipText("");
+        menuButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HopDongCardButton(evt);
+            }
+        });
 
-        jButton5.setText("jButton5");
+        menuButton5.setText("jButton5");
 
-        jButton6.setText("jButton6");
+        menuButton6.setText("jButton6");
 
-        jButton7.setText("jButton7");
+        menuButton7.setText("jButton7");
 
-        jButton8.setText("jButton8");
+        menuButton8.setText("jButton8");
 
         javax.swing.GroupLayout bangMenuLayout = new javax.swing.GroupLayout(bangMenu);
         bangMenu.setLayout(bangMenuLayout);
@@ -262,64 +429,64 @@ public class App_UI extends javax.swing.JFrame {
             .addGroup(bangMenuLayout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addGroup(bangMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton8)
-                    .addComponent(jButton7)
-                    .addComponent(jButton6)
-                    .addComponent(jButton5)
-                    .addComponent(jButton4)
-                    .addComponent(jButton3)
-                    .addComponent(jButton2)
-                    .addComponent(jButton1))
-                .addContainerGap(49, Short.MAX_VALUE))
+                    .addComponent(menuButton8)
+                    .addComponent(menuButton7)
+                    .addComponent(menuButton6)
+                    .addComponent(menuButton5)
+                    .addComponent(menuButton4)
+                    .addComponent(menuButton3)
+                    .addComponent(menuButton2)
+                    .addComponent(menuButton1))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         bangMenuLayout.setVerticalGroup(
             bangMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bangMenuLayout.createSequentialGroup()
                 .addGap(28, 28, 28)
-                .addComponent(jButton1)
+                .addComponent(menuButton1)
                 .addGap(29, 29, 29)
-                .addComponent(jButton2)
+                .addComponent(menuButton2)
                 .addGap(35, 35, 35)
-                .addComponent(jButton3)
+                .addComponent(menuButton3)
                 .addGap(42, 42, 42)
-                .addComponent(jButton4)
+                .addComponent(menuButton4)
                 .addGap(31, 31, 31)
-                .addComponent(jButton5)
+                .addComponent(menuButton5)
                 .addGap(35, 35, 35)
-                .addComponent(jButton6)
+                .addComponent(menuButton6)
                 .addGap(33, 33, 33)
-                .addComponent(jButton7)
+                .addComponent(menuButton7)
                 .addGap(43, 43, 43)
-                .addComponent(jButton8)
-                .addContainerGap(206, Short.MAX_VALUE))
+                .addComponent(menuButton8)
+                .addContainerGap(187, Short.MAX_VALUE))
         );
 
-        bangChucNang.setPreferredSize(new java.awt.Dimension(1000, 1000));
-        bangChucNang.setLayout(new java.awt.CardLayout());
+        menuButton1.getAccessibleContext().setAccessibleName("");
+        menuButton2.getAccessibleContext().setAccessibleName("");
+        menuButton2.getAccessibleContext().setAccessibleDescription("");
+        menuButton3.getAccessibleContext().setAccessibleName("");
+        menuButton4.getAccessibleContext().setAccessibleName("");
+        menuButton5.getAccessibleContext().setAccessibleName("");
+        menuButton6.getAccessibleContext().setAccessibleName("");
+        menuButton7.getAccessibleContext().setAccessibleName("");
+        menuButton8.getAccessibleContext().setAccessibleName("");
 
-        salaryPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        cardPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        cardPanel.setLayout(new java.awt.CardLayout());
 
-        Label4.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        Label4.setText("Danh sách nhân viên");
-        salaryPanel.add(Label4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 410, -1, -1));
+        bangNhanVien.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        Label3.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        Label3.setText("Thông tin nhân viên");
-        salaryPanel.add(Label3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        JLabel1.setText("Mã nhân viên");
 
-        bangThongTin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        JLabel2.setText("Họ và tên");
 
-        maNhanVienLabel.setText("Mã nhân viên");
+        JLabel3.setText("Ngày Sinh");
 
-        hoTenLabel.setText("Họ và tên");
+        JLabel4.setText("Giới tính");
 
-        ngaySinhLabel.setText("Ngày Sinh");
+        JLabel5.setText("Địa chỉ");
 
-        gioiTinhLabel.setText("Giới tính");
-
-        diaChiLabel.setText("Địa chỉ");
-
-        soDienThoaiLabel.setText("Số điện thoại");
+        JLabel6.setText("Số điện thoại");
 
         maNhanVienField.setEditable(false);
 
@@ -329,118 +496,135 @@ public class App_UI extends javax.swing.JFrame {
         genderButtonGroup.add(gioiTinhNu);
         gioiTinhNu.setText("Female");
 
-        maPhongBan.setText("Mã phòng ban");
+        JLabel7.setText("Mã phòng ban");
 
-        maChucVu.setText("Mã chức vụ");
+        JLabel8.setText("Mã chức vụ");
 
-        maHopDong.setText("Mã hợp đồng");
+        JLabel10.setText("Trạng thái");
 
-        trangThai.setText("Trạng thái");
+        maPhongBanBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateTenPhongBanBox(evt);
+            }
+        });
 
-        maPhongBanBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        maChucVuBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateTenChucVuBox(evt);
+            }
+        });
 
-        maTrangThaiBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Yes", "No", " " }));
+        trangThaiBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Yes", "No", " " }));
 
-        maChucVuField.setEditable(false);
+        tenPhongBanField2.setPreferredSize(new java.awt.Dimension(82, 28));
 
-        maHopDongField.setEditable(false);
+        tenChucVuField2.setPreferredSize(new java.awt.Dimension(82, 28));
 
-        javax.swing.GroupLayout bangThongTinLayout = new javax.swing.GroupLayout(bangThongTin);
-        bangThongTin.setLayout(bangThongTinLayout);
-        bangThongTinLayout.setHorizontalGroup(
-            bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(bangThongTinLayout.createSequentialGroup()
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(bangThongTinLayout.createSequentialGroup()
-                        .addGap(50, 50, 50)
-                        .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(hoTenLabel)
-                            .addComponent(ngaySinhLabel)
-                            .addComponent(gioiTinhLabel)
-                            .addComponent(diaChiLabel)
-                            .addComponent(soDienThoaiLabel)))
-                    .addGroup(bangThongTinLayout.createSequentialGroup()
+        javax.swing.GroupLayout bangNhanVienLayout = new javax.swing.GroupLayout(bangNhanVien);
+        bangNhanVien.setLayout(bangNhanVienLayout);
+        bangNhanVienLayout.setHorizontalGroup(
+            bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bangNhanVienLayout.createSequentialGroup()
+                .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bangNhanVienLayout.createSequentialGroup()
+                        .addGap(48, 48, 48)
+                        .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(JLabel2)
+                                .addComponent(JLabel4)
+                                .addComponent(JLabel5)
+                                .addComponent(JLabel6))
+                            .addGroup(bangNhanVienLayout.createSequentialGroup()
+                                .addComponent(JLabel3)
+                                .addGap(20, 20, 20)))
+                        .addGap(35, 35, 35))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bangNhanVienLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(maNhanVienLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(35, 35, 35)
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(JLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(diaChiField)
                         .addComponent(hoTenField)
-                        .addGroup(bangThongTinLayout.createSequentialGroup()
+                        .addGroup(bangNhanVienLayout.createSequentialGroup()
                             .addComponent(gioiTinhNam)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
                             .addComponent(gioiTinhNu))
                         .addComponent(soDienThoaiField)
                         .addComponent(maNhanVienField))
                     .addComponent(ngaySinhChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(57, 57, 57)
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(bangThongTinLayout.createSequentialGroup()
-                        .addComponent(trangThai)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(maTrangThaiBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(bangThongTinLayout.createSequentialGroup()
-                        .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(maPhongBan)
-                            .addComponent(maChucVu)
-                            .addComponent(maHopDong))
-                        .addGap(65, 65, 65)
-                        .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(maHopDongField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(maPhongBanBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(maChucVuField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(96, Short.MAX_VALUE))
-        );
-        bangThongTinLayout.setVerticalGroup(
-            bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(bangThongTinLayout.createSequentialGroup()
-                .addGap(11, 11, 11)
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(maNhanVienLabel)
-                    .addComponent(maNhanVienField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maPhongBan)
-                    .addComponent(maPhongBanBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(hoTenLabel)
-                    .addComponent(hoTenField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maChucVu)
-                    .addComponent(maChucVuField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(bangThongTinLayout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(ngaySinhLabel)
-                                .addComponent(maHopDong))
-                            .addComponent(ngaySinhChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(bangThongTinLayout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(JLabel8)
+                    .addComponent(JLabel7)
+                    .addComponent(JLabel10))
+                .addGap(27, 27, 27)
+                .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(bangNhanVienLayout.createSequentialGroup()
+                        .addComponent(maChucVuBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(maHopDongField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(trangThai)
-                    .addComponent(maTrangThaiBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(tenChucVuField2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(bangNhanVienLayout.createSequentialGroup()
+                        .addComponent(maPhongBanBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(tenPhongBanField2, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(trangThaiBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 14, Short.MAX_VALUE))
+        );
+        bangNhanVienLayout.setVerticalGroup(
+            bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bangNhanVienLayout.createSequentialGroup()
+                .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bangNhanVienLayout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(JLabel1)
+                            .addComponent(maNhanVienField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(maPhongBanBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tenPhongBanField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bangNhanVienLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(JLabel7)))
+                .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(bangNhanVienLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(maChucVuBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tenChucVuField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(55, 55, 55)
+                        .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(JLabel10)
+                            .addComponent(trangThaiBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(bangNhanVienLayout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(JLabel2)
+                            .addComponent(hoTenField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(JLabel8))
+                        .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(bangNhanVienLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(ngaySinhChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(bangNhanVienLayout.createSequentialGroup()
+                                .addGap(30, 30, 30)
+                                .addComponent(JLabel3)))))
                 .addGap(16, 16, 16)
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(gioiTinhNam)
                     .addComponent(gioiTinhNu)
-                    .addComponent(gioiTinhLabel))
+                    .addComponent(JLabel4))
                 .addGap(15, 15, 15)
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(diaChiField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(diaChiLabel))
+                    .addComponent(JLabel5))
                 .addGap(58, 58, 58)
-                .addGroup(bangThongTinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(bangNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(soDienThoaiField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(soDienThoaiLabel))
+                    .addComponent(JLabel6))
                 .addGap(30, 30, 30))
         );
 
-        salaryPanel.add(bangThongTin, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 890, -1));
-
-        employeeTable1.setModel(new javax.swing.table.DefaultTableModel(
+        nhanVienTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -451,16 +635,14 @@ public class App_UI extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        bangNhanVien.setViewportView(employeeTable1);
+        danhSachNhanVien.setViewportView(nhanVienTable);
 
-        salaryPanel.add(bangNhanVien, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 440, 1070, 250));
-
-        bangCongCu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        menuNhanVien.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         addButton1.setText("Add");
         addButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButton1addEmployeeButton(evt);
+                addButton1(evt);
             }
         });
 
@@ -474,112 +656,124 @@ public class App_UI extends javax.swing.JFrame {
         updateButton1.setText("Update");
         updateButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                updateButton1updateJTableButton(evt);
+                updateNhanVienTableButton(evt);
             }
         });
 
         newButton1.setText("New");
         newButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newButton1newEmployeeButton(evt);
+                newButton1(evt);
             }
         });
 
-        editButton2.setText("Edit");
-        editButton2.addActionListener(new java.awt.event.ActionListener() {
+        editButton1.setText("Edit");
+        editButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButton2editButton(evt);
+                editButton1(evt);
             }
         });
 
-        javax.swing.GroupLayout bangCongCuLayout = new javax.swing.GroupLayout(bangCongCu);
-        bangCongCu.setLayout(bangCongCuLayout);
-        bangCongCuLayout.setHorizontalGroup(
-            bangCongCuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bangCongCuLayout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addGroup(bangCongCuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+        javax.swing.GroupLayout menuNhanVienLayout = new javax.swing.GroupLayout(menuNhanVien);
+        menuNhanVien.setLayout(menuNhanVienLayout);
+        menuNhanVienLayout.setHorizontalGroup(
+            menuNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuNhanVienLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(menuNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(newButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deleteButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(updateButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(addButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(15, 15, 15))
+            .addGroup(menuNhanVienLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(menuNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(updateButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        bangCongCuLayout.setVerticalGroup(
-            bangCongCuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bangCongCuLayout.createSequentialGroup()
+        menuNhanVienLayout.setVerticalGroup(
+            menuNhanVienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuNhanVienLayout.createSequentialGroup()
                 .addGap(49, 49, 49)
                 .addComponent(newButton1)
                 .addGap(57, 57, 57)
                 .addComponent(addButton1)
-                .addGap(34, 34, 34)
-                .addComponent(updateButton1)
-                .addGap(30, 30, 30)
-                .addComponent(editButton2)
-                .addGap(29, 29, 29)
+                .addGap(18, 18, 18)
+                .addComponent(editButton1)
+                .addGap(18, 18, 18)
                 .addComponent(deleteButton1)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                .addComponent(updateButton1)
+                .addGap(15, 15, 15))
         );
 
-        salaryPanel.add(bangCongCu, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 40, -1, -1));
-
-        bangChucNang.add(salaryPanel, "card3");
-
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jButton9.setText("jButton9");
-        jPanel2.add(jButton9, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 200, -1, -1));
-
-        jLabel2.setText("jLabel2");
-        jLabel2.setPreferredSize(new java.awt.Dimension(100, 100));
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 380, -1, -1));
-
-        bangChucNang.add(jPanel2, "card4");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1091, Short.MAX_VALUE)
+        javax.swing.GroupLayout NhanVienCardLayout = new javax.swing.GroupLayout(NhanVienCard);
+        NhanVienCard.setLayout(NhanVienCardLayout);
+        NhanVienCardLayout.setHorizontalGroup(
+            NhanVienCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, NhanVienCardLayout.createSequentialGroup()
+                .addContainerGap(35, Short.MAX_VALUE)
+                .addGroup(NhanVienCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(danhSachNhanVien)
+                    .addGroup(NhanVienCardLayout.createSequentialGroup()
+                        .addComponent(bangNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(menuNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 708, Short.MAX_VALUE)
-        );
-
-        bangChucNang.add(jPanel3, "card5");
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1091, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 708, Short.MAX_VALUE)
+        NhanVienCardLayout.setVerticalGroup(
+            NhanVienCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(NhanVienCardLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(NhanVienCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(menuNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bangNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(danhSachNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
-        bangChucNang.add(jPanel4, "card6");
+        cardPanel.add(NhanVienCard, "nhanVienCard");
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1091, Short.MAX_VALUE)
+        bangPhongBan.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        JLabel11.setText("Mã phòng ban");
+
+        JLabel12.setText("Tên phòng ban");
+
+        maPhongBanField.setEditable(false);
+
+        javax.swing.GroupLayout bangPhongBanLayout = new javax.swing.GroupLayout(bangPhongBan);
+        bangPhongBan.setLayout(bangPhongBanLayout);
+        bangPhongBanLayout.setHorizontalGroup(
+            bangPhongBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bangPhongBanLayout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addGroup(bangPhongBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(JLabel12)
+                    .addComponent(JLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(44, 44, 44)
+                .addGroup(bangPhongBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(tenPhongBanField, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                    .addComponent(maPhongBanField))
+                .addContainerGap(418, Short.MAX_VALUE))
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 708, Short.MAX_VALUE)
+        bangPhongBanLayout.setVerticalGroup(
+            bangPhongBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bangPhongBanLayout.createSequentialGroup()
+                .addGap(11, 11, 11)
+                .addGroup(bangPhongBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(JLabel11)
+                    .addComponent(maPhongBanField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addGroup(bangPhongBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(JLabel12)
+                    .addComponent(tenPhongBanField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(289, 289, 289))
         );
 
-        bangChucNang.add(jPanel5, "card7");
-
-        employeePanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        employeePanel.setPreferredSize(new java.awt.Dimension(1000, 800));
-
-        employeeTable.setModel(new javax.swing.table.DefaultTableModel(
+        phongBanTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -590,215 +784,404 @@ public class App_UI extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        employeeList.setViewportView(employeeTable);
+        danhSachPhongBan.setViewportView(phongBanTable);
 
-        Label2.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        Label2.setText("Employee list");
+        menuPhongBan.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        Label1.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        Label1.setText("Employee information:");
+        addButton2.setText("Add");
+        addButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButton2(evt);
+            }
+        });
 
-        informationPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        deleteButton2.setText("Delete");
+        deleteButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButton2(evt);
+            }
+        });
 
-        idLabel.setText("ID");
+        updateButton2.setText("Update");
+        updateButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateButton2(evt);
+            }
+        });
 
-        firstNameLabel.setText("First name:");
+        newButton2.setText("New");
+        newButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newButton2(evt);
+            }
+        });
 
-        lastNameLabel.setText("Last name:");
+        editButton2.setText("Edit");
+        editButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButton2(evt);
+            }
+        });
 
-        ageLabel.setText("Age:");
-
-        genderLabel.setText("Gender");
-
-        salaryLabel.setText("Salary:");
-
-        jobPositionLabel.setText("Job position:");
-
-        phoneNumberLabel.setText("Phone numbers:");
-
-        idTextField.setEditable(false);
-
-        genderButtonGroup.add(maleRadioButton);
-        maleRadioButton.setText("Male");
-
-        genderButtonGroup.add(femaleRadioButton);
-        femaleRadioButton.setText("Female");
-
-        javax.swing.GroupLayout informationPanelLayout = new javax.swing.GroupLayout(informationPanel);
-        informationPanel.setLayout(informationPanelLayout);
-        informationPanelLayout.setHorizontalGroup(
-            informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(informationPanelLayout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addGroup(informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(firstNameLabel)
-                    .addComponent(idLabel)
-                    .addComponent(lastNameLabel)
-                    .addComponent(ageLabel)
-                    .addComponent(genderLabel)
-                    .addComponent(salaryLabel)
-                    .addComponent(jobPositionLabel)
-                    .addComponent(phoneNumberLabel))
-                .addGap(35, 35, 35)
-                .addGroup(informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(salaryTextField)
-                    .addComponent(firstNameTextField)
-                    .addComponent(lastNameTextField)
-                    .addComponent(ageTextField)
-                    .addGroup(informationPanelLayout.createSequentialGroup()
-                        .addComponent(maleRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
-                        .addComponent(femaleRadioButton))
-                    .addComponent(jobPositionTextField)
-                    .addComponent(phoneNumbersTextField)
-                    .addComponent(idTextField))
+        javax.swing.GroupLayout menuPhongBanLayout = new javax.swing.GroupLayout(menuPhongBan);
+        menuPhongBan.setLayout(menuPhongBanLayout);
+        menuPhongBanLayout.setHorizontalGroup(
+            menuPhongBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuPhongBanLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(menuPhongBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(newButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15))
+            .addGroup(menuPhongBanLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(menuPhongBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(updateButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        informationPanelLayout.setVerticalGroup(
-            informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(informationPanelLayout.createSequentialGroup()
-                .addGap(11, 11, 11)
-                .addGroup(informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(idLabel)
-                    .addComponent(idTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
-                .addGroup(informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(firstNameLabel)
-                    .addComponent(firstNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
-                .addGroup(informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lastNameLabel)
-                    .addComponent(lastNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
-                .addGroup(informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ageLabel)
-                    .addComponent(ageTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
-                .addGroup(informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(maleRadioButton)
-                    .addComponent(genderLabel)
-                    .addComponent(femaleRadioButton))
-                .addGap(15, 15, 15)
-                .addGroup(informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(salaryLabel)
-                    .addComponent(salaryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
-                .addGroup(informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jobPositionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jobPositionLabel))
-                .addGap(15, 15, 15)
-                .addGroup(informationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(phoneNumbersTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(phoneNumberLabel))
-                .addGap(30, 30, 30))
-        );
-
-        utilitiesPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        addButton.setText("Add");
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addEmployeeButton(evt);
-            }
-        });
-
-        deleteButton.setText("Delete");
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButton(evt);
-            }
-        });
-
-        updateButton.setText("Update");
-        updateButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                updateJTableButton(evt);
-            }
-        });
-
-        newButton.setText("New");
-        newButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newEmployeeButton(evt);
-            }
-        });
-
-        editButton1.setText("Edit");
-        editButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButton(evt);
-            }
-        });
-
-        javax.swing.GroupLayout utilitiesPanelLayout = new javax.swing.GroupLayout(utilitiesPanel);
-        utilitiesPanel.setLayout(utilitiesPanelLayout);
-        utilitiesPanelLayout.setHorizontalGroup(
-            utilitiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, utilitiesPanelLayout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addGroup(utilitiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(newButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+        menuPhongBanLayout.setVerticalGroup(
+            menuPhongBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuPhongBanLayout.createSequentialGroup()
+                .addGap(49, 49, 49)
+                .addComponent(newButton2)
+                .addGap(57, 57, 57)
+                .addComponent(addButton2)
+                .addGap(18, 18, 18)
+                .addComponent(editButton2)
+                .addGap(18, 18, 18)
+                .addComponent(deleteButton2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                .addComponent(updateButton2)
                 .addGap(15, 15, 15))
         );
-        utilitiesPanelLayout.setVerticalGroup(
-            utilitiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, utilitiesPanelLayout.createSequentialGroup()
-                .addGap(49, 49, 49)
-                .addComponent(newButton)
-                .addGap(57, 57, 57)
-                .addComponent(addButton)
-                .addGap(34, 34, 34)
-                .addComponent(updateButton)
-                .addGap(30, 30, 30)
-                .addComponent(editButton1)
-                .addGap(29, 29, 29)
-                .addComponent(deleteButton)
-                .addContainerGap(27, Short.MAX_VALUE))
-        );
 
-        javax.swing.GroupLayout employeePanelLayout = new javax.swing.GroupLayout(employeePanel);
-        employeePanel.setLayout(employeePanelLayout);
-        employeePanelLayout.setHorizontalGroup(
-            employeePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(employeePanelLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addGroup(employeePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(employeePanelLayout.createSequentialGroup()
-                        .addComponent(Label1, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(employeePanelLayout.createSequentialGroup()
-                        .addComponent(Label2, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, employeePanelLayout.createSequentialGroup()
-                        .addGroup(employeePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(employeeList, javax.swing.GroupLayout.DEFAULT_SIZE, 1042, Short.MAX_VALUE)
-                            .addGroup(employeePanelLayout.createSequentialGroup()
-                                .addComponent(informationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(utilitiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(22, 22, 22))))
+        javax.swing.GroupLayout PhongBanCardLayout = new javax.swing.GroupLayout(PhongBanCard);
+        PhongBanCard.setLayout(PhongBanCardLayout);
+        PhongBanCardLayout.setHorizontalGroup(
+            PhongBanCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PhongBanCardLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(PhongBanCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(danhSachPhongBan)
+                    .addGroup(PhongBanCardLayout.createSequentialGroup()
+                        .addComponent(bangPhongBan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(menuPhongBan, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20))
         );
-        employeePanelLayout.setVerticalGroup(
-            employeePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(employeePanelLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(Label1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+        PhongBanCardLayout.setVerticalGroup(
+            PhongBanCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PhongBanCardLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(PhongBanCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(menuPhongBan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bangPhongBan, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(employeePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(informationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(utilitiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Label2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(employeeList, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(148, Short.MAX_VALUE))
+                .addComponent(danhSachPhongBan, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
-        bangChucNang.add(employeePanel, "card2");
+        cardPanel.add(PhongBanCard, "phongBanCard");
+
+        bangChucVu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        JLabel13.setText("Mã chức vụ");
+
+        JLabel14.setText("Tên chức vụ");
+
+        maChucVuField.setEditable(false);
+
+        javax.swing.GroupLayout bangChucVuLayout = new javax.swing.GroupLayout(bangChucVu);
+        bangChucVu.setLayout(bangChucVuLayout);
+        bangChucVuLayout.setHorizontalGroup(
+            bangChucVuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bangChucVuLayout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addGroup(bangChucVuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(JLabel14)
+                    .addComponent(JLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(44, 44, 44)
+                .addGroup(bangChucVuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(tenChucVuField, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                    .addComponent(maChucVuField))
+                .addContainerGap(418, Short.MAX_VALUE))
+        );
+        bangChucVuLayout.setVerticalGroup(
+            bangChucVuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bangChucVuLayout.createSequentialGroup()
+                .addGap(11, 11, 11)
+                .addGroup(bangChucVuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(JLabel13)
+                    .addComponent(maChucVuField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addGroup(bangChucVuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(JLabel14)
+                    .addComponent(tenChucVuField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(289, 289, 289))
+        );
+
+        chucVuTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        danhSachChucVu.setViewportView(chucVuTable);
+
+        menuChucVu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        addButton3.setText("Add");
+        addButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButton3(evt);
+            }
+        });
+
+        deleteButton3.setText("Delete");
+        deleteButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButton3(evt);
+            }
+        });
+
+        updateButton3.setText("Update");
+        updateButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateButton3(evt);
+            }
+        });
+
+        newButton3.setText("New");
+        newButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newButton3(evt);
+            }
+        });
+
+        editButton3.setText("Edit");
+        editButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButton3(evt);
+            }
+        });
+
+        javax.swing.GroupLayout menuChucVuLayout = new javax.swing.GroupLayout(menuChucVu);
+        menuChucVu.setLayout(menuChucVuLayout);
+        menuChucVuLayout.setHorizontalGroup(
+            menuChucVuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuChucVuLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(menuChucVuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(newButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15))
+            .addGroup(menuChucVuLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(menuChucVuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(updateButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        menuChucVuLayout.setVerticalGroup(
+            menuChucVuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuChucVuLayout.createSequentialGroup()
+                .addGap(49, 49, 49)
+                .addComponent(newButton3)
+                .addGap(57, 57, 57)
+                .addComponent(addButton3)
+                .addGap(18, 18, 18)
+                .addComponent(editButton3)
+                .addGap(18, 18, 18)
+                .addComponent(deleteButton3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                .addComponent(updateButton3)
+                .addGap(15, 15, 15))
+        );
+
+        javax.swing.GroupLayout ChucVuCardLayout = new javax.swing.GroupLayout(ChucVuCard);
+        ChucVuCard.setLayout(ChucVuCardLayout);
+        ChucVuCardLayout.setHorizontalGroup(
+            ChucVuCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ChucVuCardLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(ChucVuCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(danhSachChucVu)
+                    .addGroup(ChucVuCardLayout.createSequentialGroup()
+                        .addComponent(bangChucVu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(menuChucVu, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20))
+        );
+        ChucVuCardLayout.setVerticalGroup(
+            ChucVuCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ChucVuCardLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(ChucVuCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(menuChucVu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bangChucVu, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(danhSachChucVu, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        cardPanel.add(ChucVuCard, "chucVuCard");
+
+        bangHopDong.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        JLabel15.setText("Mã phòng ban");
+
+        JLabel16.setText("Tên phòng ban");
+
+        maPhongBanField2.setEditable(false);
+
+        javax.swing.GroupLayout bangHopDongLayout = new javax.swing.GroupLayout(bangHopDong);
+        bangHopDong.setLayout(bangHopDongLayout);
+        bangHopDongLayout.setHorizontalGroup(
+            bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bangHopDongLayout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(JLabel16)
+                    .addComponent(JLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(44, 44, 44)
+                .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(tenPhongBanField3, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                    .addComponent(maPhongBanField2))
+                .addContainerGap(418, Short.MAX_VALUE))
+        );
+        bangHopDongLayout.setVerticalGroup(
+            bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bangHopDongLayout.createSequentialGroup()
+                .addGap(11, 11, 11)
+                .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(JLabel15)
+                    .addComponent(maPhongBanField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(JLabel16)
+                    .addComponent(tenPhongBanField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(289, 289, 289))
+        );
+
+        hopDongTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        danhSachHopDong.setViewportView(hopDongTable);
+
+        menuHopDong.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        addButton4.setText("Add");
+        addButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButton4(evt);
+            }
+        });
+
+        deleteButton4.setText("Delete");
+        deleteButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButton4(evt);
+            }
+        });
+
+        updateButton4.setText("Update");
+        updateButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateButton4(evt);
+            }
+        });
+
+        newButton4.setText("New");
+        newButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newButton4(evt);
+            }
+        });
+
+        editButton4.setText("Edit");
+        editButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButton4(evt);
+            }
+        });
+
+        javax.swing.GroupLayout menuHopDongLayout = new javax.swing.GroupLayout(menuHopDong);
+        menuHopDong.setLayout(menuHopDongLayout);
+        menuHopDongLayout.setHorizontalGroup(
+            menuHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuHopDongLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(menuHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(newButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15))
+            .addGroup(menuHopDongLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(menuHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(updateButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        menuHopDongLayout.setVerticalGroup(
+            menuHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, menuHopDongLayout.createSequentialGroup()
+                .addGap(49, 49, 49)
+                .addComponent(newButton4)
+                .addGap(57, 57, 57)
+                .addComponent(addButton4)
+                .addGap(18, 18, 18)
+                .addComponent(editButton4)
+                .addGap(18, 18, 18)
+                .addComponent(deleteButton4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                .addComponent(updateButton4)
+                .addGap(15, 15, 15))
+        );
+
+        javax.swing.GroupLayout HopDongCardLayout = new javax.swing.GroupLayout(HopDongCard);
+        HopDongCard.setLayout(HopDongCardLayout);
+        HopDongCardLayout.setHorizontalGroup(
+            HopDongCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, HopDongCardLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(HopDongCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(danhSachHopDong)
+                    .addGroup(HopDongCardLayout.createSequentialGroup()
+                        .addComponent(bangHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(menuHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20))
+        );
+        HopDongCardLayout.setVerticalGroup(
+            HopDongCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HopDongCardLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(HopDongCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(menuHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bangHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(danhSachHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        cardPanel.add(HopDongCard, "hopDongCard");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -807,192 +1190,617 @@ public class App_UI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bangMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(bangChucNang, javax.swing.GroupLayout.DEFAULT_SIZE, 1091, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap(1133, Short.MAX_VALUE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addContainerGap(157, Short.MAX_VALUE)
+                    .addComponent(cardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(16, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bangMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bangChucNang, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGap(17, 17, 17)
+                .addComponent(bangMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(16, 16, 16)
+                    .addComponent(cardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 689, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(15, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void editButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton
-        String id = idTextField.getText();
-        if(id.isEmpty()){
-            String error = "Choose employee in JTable first before edit";
-            JOptionPane.showMessageDialog(this, error, "Edit employee", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+    
+    
+    private void newButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton1
+        NewNhanVien();
+    }//GEN-LAST:event_newButton1
 
-        Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField);
+    private void addButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton1
+        AddNhanVien();
+    }//GEN-LAST:event_addButton1
 
-        NhanVien_DTO nhanVien = new NhanVien_DTO();
-        if(result == null){
-            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField);
-            // Cần add mã phòng ban, mã lương, ...
-        }
-            
-            
-        else{
-            JOptionPane.showMessageDialog(this, result, "Validation", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+    private void editButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton1
+        EditNhanVien();
+    }//GEN-LAST:event_editButton1
 
-        NhanVien_BUS NhanVien_BUS = new NhanVien_BUS();
-
-        if(NhanVien_BUS.UpdateNhanVien(nhanVien) == true)
-        JOptionPane.showMessageDialog(null, "NhanVien edited successfully!");
-        else
-        JOptionPane.showMessageDialog(null, "Failed to edit employee!");
-    }//GEN-LAST:event_editButton
-
-    private void newEmployeeButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newEmployeeButton
-        ClearTextFields(informationPanel);
-
-    }//GEN-LAST:event_newEmployeeButton
-
-    private void updateJTableButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateJTableButton
+    private void deleteButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton1
+        DeleteNhanVien();
+    }//GEN-LAST:event_deleteButton1
+	
+	private void updateNhanVienTableButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateNhanVienTableButton
         UpdateNhanVienTable();
-        JOptionPane.showMessageDialog(null, "NhanViens list table updated");
-    }//GEN-LAST:event_updateJTableButton
+    }//GEN-LAST:event_updateNhanVienTableButton
 
-    private void deleteButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton
-        String id = idTextField.getText();
-        if(id.isEmpty()){
-            String error = "Choose employee in JTable first before delete";
-            JOptionPane.showMessageDialog(this, error, "Delete employee", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        NhanVien_BUS employee_BUS = new NhanVien_BUS();
-        employee_BUS.DeleteNhanVien(Integer.parseInt(id));
-        UpdateNhanVienTable();
-    }//GEN-LAST:event_deleteButton
-
-        
-    private void addNhanVienButton(java.awt.event.ActionEvent evt) {                                                                             
-        // TH nếu User nhấn vào employee trên JTable rồi nhấn nút Add --> Thông tin trên Information panel đầy đủ --> Sẽ add lại nhân viên vào database
-        // --> Nhấn nút New để xoá hết thông tin trên JTextField rồi nhập vào thông tin mới
-        String id = idTextField.getText();
-        if (id.isEmpty() == false){
-            String error = "Hit the 'New' button before add NhanVien";
-            JOptionPane.showMessageDialog(this, error, "Add employee", JOptionPane.WARNING_MESSAGE);
+    //
+    //Phòng ban  
+    //
+      
+    private void AddPhongBan() {                                                                             
+        String maPhongBan = maPhongBanField.getText();
+        if (maPhongBan.isEmpty() == false){
+            String error = "Bấm nút 'New' trước khi thêm phòng ban.";
+            JOptionPane.showMessageDialog(this, error, "Add phòng ban", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField);
+        String result = validate.ValidateTenPhongBan(tenPhongBanField);
         
-        NhanVien_DTO employee = new NhanVien_DTO();
+        PhongBan_DTO phongBan = new PhongBan_DTO();
         
         if(result == null)
-            employee = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField);
+            phongBan.setTenPhongBan(tenPhongBanField.getText().trim());
              
+        else{
+            JOptionPane.showMessageDialog(this, result, "Phòng ban Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
+        
+        if(phongBan_BUS.AddPhongBan(phongBan) == true)
+                JOptionPane.showMessageDialog(null, "Thêm phòng thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Thêm phòng ban không thành công!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdatePhongBanTable();
+    }
+    
+    private void EditPhongBan(){
+        String maPhongBan = maNhanVienField.getText();
+        if (maPhongBan.isEmpty() == true){
+            String error = "Chọn phòng ban trong danh sách trước khi sửa";
+            JOptionPane.showMessageDialog(this, error, "Edit nhân viên", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateTenPhongBan(tenPhongBanField);
+        
+        PhongBan_DTO phongBan = new PhongBan_DTO();
+        
+        if(result == null){
+            phongBan.setTenPhongBan(tenPhongBanField.getText().trim());
+            phongBan.setMaPhongBan(Integer.parseInt(maPhongBan));
+        }
+  
         else{
             JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
-        NhanVien_DAO employee_DAO = new NhanVien_DAO();
+        PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
         
-        if(employee_DAO.AddNhanVien(employee) == true)
-                JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công!");   
+        if(phongBan_BUS.EditPhongBan(phongBan) == true)
+                JOptionPane.showMessageDialog(null, "Sửa phòng ban thành công!");   
         else
-           JOptionPane.showMessageDialog(null, "Thêm nhân viên!"); 
+           JOptionPane.showMessageDialog(null, "Sửa phòng ban không thành công!"); 
         
         // Sau khi thêm employee thì update lại table NhanVien list
-        UpdateNhanVienTable();
-    }                                  
+        UpdatePhongBanTable();
+    }
     
+    private void DeletePhongBan(){
+        String maPhongBan = maPhongBanField.getText();
+        if (maPhongBan.isEmpty() == true){
+            String error = "Chọn phòng ban trong danh sách trước khi xoá";
+            JOptionPane.showMessageDialog(this, error, "Delete phòng ban", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Show confirmation dialog
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc muốn xoá phòng ban ?",
+            "Xác nhận xoá",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+    
+        if (confirm == JOptionPane.YES_OPTION) {
+            // User clicked YES - proceed with deletion
+            PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
+
+            if (phongBan_BUS.DeletePhongBan(Integer.parseInt(maPhongBan)) == true) {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá phòng ban thành công.", 
+                    "Thành công", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                
+                UpdatePhongBanTable();
+            } 
+            
+            else {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá phòng ban thất bại.", 
+                    "Lỗi", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } 
+        
+        else {
+            // User clicked NO or closed dialog - do nothing
+            return;
+        }
+    }
+      
+    private void NewPhongBan(){
+        ClearTextFields(PhongBanCard);
+    }
+    
+    private DefaultTableModel defaultPhongBanTableModel = new DefaultTableModel();
+    public void InitPhongBanTable(){
+        
+        phongBanTable.setModel(defaultPhongBanTableModel);
+        
+        defaultPhongBanTableModel.addColumn("Mã phòng ban");
+        defaultPhongBanTableModel.addColumn("Tên phòng ban");
+
+        ListSelectionModel listSelectionModel = phongBanTable.getSelectionModel();
+        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
+            @Override
+            public void valueChanged(ListSelectionEvent e){
+               
+                int rowIndex = phongBanTable.getSelectedRow();
+                if(rowIndex != -1){ 
+                    String maPhongBan = phongBanTable.getValueAt(rowIndex, 0).toString(); 
+                    String tenPhongBan = phongBanTable.getValueAt(rowIndex, 1).toString();
+
+                    maPhongBanField.setText(maPhongBan);
+                    tenPhongBanField.setText(tenPhongBan);
+                }  
+            }
+        });
+    }
+    
+    
+    private void UpdatePhongBanTable(){
+        try {
+            PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
+            ArrayList<PhongBan_DTO> phongBanList = phongBan_BUS.GetAllPhongBan();
+            
+            defaultPhongBanTableModel.setRowCount(0);
+            
+            for (PhongBan_DTO phongBan : phongBanList) {      
+                defaultPhongBanTableModel.addRow(new Object[]{
+                    phongBan.getMaPhongBan(),
+                    phongBan.getTenPhongBan(),
+                });
+            } 
+        }
+        
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Lỗi trích xuất thông tin phòng ban: " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    
+    
+    private void UpdateTenPhongBanBox(){
+        
+        PhongBan_BUS phongBanBUS = new PhongBan_BUS();
+        ArrayList<PhongBan_DTO> phongBanList = phongBanBUS.GetAllPhongBan(); // Trích xuất toàn bộ phòng ban
+    
+        maPhongBanBox.removeAllItems(); // Xoá danh sách cũ
+    
+        for (PhongBan_DTO phongBan : phongBanList)  // Tuỳ theo maPhongBan, hiện tên phòng ban
+            maPhongBanBox.addItem(Integer.toString(phongBan.getMaPhongBan()));
+        
+        maPhongBanBox.setSelectedIndex(-1);
+        tenPhongBanField2.setText("");
+    }
+  
+    private void addButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton2
+        AddPhongBan();
+    }//GEN-LAST:event_addButton2
+
+    private void deleteButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton2
+        DeletePhongBan();
+    }//GEN-LAST:event_deleteButton2
+
+    private void updateButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton2
+        UpdatePhongBanTable();
+    }//GEN-LAST:event_updateButton2
+
+    private void newButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton2
+        NewPhongBan();
+    }//GEN-LAST:event_newButton2
+
+    private void editButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton2
+        EditPhongBan();
+    }//GEN-LAST:event_editButton2
+
+    private void PhongBanCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PhongBanCardButton
+        cardLayout.show(cardPanel, "phongBanCard");
+    }//GEN-LAST:event_PhongBanCardButton
+
+    private void NhanVienCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NhanVienCardButton
+        cardLayout.show(cardPanel, "nhanVienCard");
+        UpdateTenPhongBanBox();
+        UpdateTenChucVuBox();
+
+    }//GEN-LAST:event_NhanVienCardButton
+
+    private void UpdateTenPhongBanBox(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateTenPhongBanBox
+        if(maPhongBanBox.getSelectedIndex() != -1){
+            int selectedPhongBan = Integer.parseInt(maPhongBanBox.getSelectedItem().toString());
+            PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
+            PhongBan_DTO phongBan = new PhongBan_DTO();
+         
+            
+            phongBan = phongBan_BUS.GetPhongBanByID(selectedPhongBan);
+        
+            tenPhongBanField2.setText(phongBan.getTenPhongBan());
+        }
+	}//GEN-LAST:event_UpdateTenPhongBanBox
+    
+    //
+    // Chức vụ
+    //
+    
+    private void AddChucVu() {                                                                             
+        String maChucVu = maChucVuField.getText();
+        if (maChucVu.isEmpty() == false){
+            String error = "Bấm nút 'New' trước khi thêm phòng ban.";
+            JOptionPane.showMessageDialog(this, error, "Add phòng ban", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateTenChucVu(tenChucVuField);
+        
+        ChucVu_DTO phongBan = new ChucVu_DTO();
+        
+        if(result == null)
+            phongBan.setTenChucVu(tenChucVuField.getText().trim());
+             
+        else{
+            JOptionPane.showMessageDialog(this, result, "Phòng ban Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        ChucVu_BUS phongBan_BUS = new ChucVu_BUS();
+        
+        if(phongBan_BUS.AddChucVu(phongBan) == true)
+                JOptionPane.showMessageDialog(null, "Thêm phòng thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Thêm phòng ban không thành công!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdateChucVuTable();
+    }
+    
+    private void EditChucVu(){
+        String maChucVu = maNhanVienField.getText();
+        if (maChucVu.isEmpty() == true){
+            String error = "Chọn phòng ban trong danh sách trước khi sửa";
+            JOptionPane.showMessageDialog(this, error, "Edit nhân viên", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateTenChucVu(tenChucVuField);
+        
+        ChucVu_DTO phongBan = new ChucVu_DTO();
+        
+        if(result == null){
+            phongBan.setTenChucVu(tenChucVuField.getText().trim());
+            phongBan.setMaChucVu(Integer.parseInt(maChucVu));
+        }
+  
+        else{
+            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        ChucVu_BUS phongBan_BUS = new ChucVu_BUS();
+        
+        if(phongBan_BUS.EditChucVu(phongBan) == true)
+                JOptionPane.showMessageDialog(null, "Sửa phòng ban thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Sửa phòng ban không thành công!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdateChucVuTable();
+    }
+    
+    private void DeleteChucVu(){
+        String maChucVu = maChucVuField.getText();
+        if (maChucVu.isEmpty() == true){
+            String error = "Chọn phòng ban trong danh sách trước khi xoá";
+            JOptionPane.showMessageDialog(this, error, "Delete phòng ban", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Show confirmation dialog
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc muốn xoá phòng ban ?",
+            "Xác nhận xoá",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+    
+        if (confirm == JOptionPane.YES_OPTION) {
+            // User clicked YES - proceed with deletion
+            ChucVu_BUS phongBan_BUS = new ChucVu_BUS();
+
+            if (phongBan_BUS.DeleteChucVu(Integer.parseInt(maChucVu)) == true) {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá phòng ban thành công.", 
+                    "Thành công", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                
+                UpdateChucVuTable();
+            } 
+            
+            else {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá phòng ban thất bại.", 
+                    "Lỗi", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } 
+        
+        else {
+            // User clicked NO or closed dialog - do nothing
+            return;
+        }
+    }
+      
+    private void NewChucVu(){
+        ClearTextFields(ChucVuCard);
+    }
+    
+    private DefaultTableModel defaultChucVuTableModel = new DefaultTableModel();
+    public void InitChucVuTable(){
+        
+        chucVuTable.setModel(defaultChucVuTableModel);
+        
+        defaultChucVuTableModel.addColumn("Mã chức vụ");
+        defaultChucVuTableModel.addColumn("Tên chức vụ");
+
+        ListSelectionModel listSelectionModel = chucVuTable.getSelectionModel();
+        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
+            @Override
+            public void valueChanged(ListSelectionEvent e){
+               
+                int rowIndex = chucVuTable.getSelectedRow();
+                if(rowIndex != -1){ 
+                    String maChucVu = chucVuTable.getValueAt(rowIndex, 0).toString(); 
+                    String tenChucVu = chucVuTable.getValueAt(rowIndex, 1).toString();
+
+                    maChucVuField.setText(maChucVu);
+                    tenChucVuField.setText(tenChucVu);
+                }  
+            }
+        });
+    }
+    
+    
+    private void UpdateChucVuTable(){
+        try {
+            ChucVu_BUS chucVu_BUS = new ChucVu_BUS();
+            ArrayList<ChucVu_DTO> chucVuList = chucVu_BUS.GetAllChucVu();
+            
+            defaultChucVuTableModel.setRowCount(0);
+            
+            for (ChucVu_DTO chucVu : chucVuList) {      
+                defaultChucVuTableModel.addRow(new Object[]{
+                    chucVu.getMaChucVu(),
+                    chucVu.getTenChucVu(),
+                });
+            } 
+        }
+        
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Lỗi trích xuất thông tin chức vụ: " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    
+    
+    private void UpdateTenChucVuBox(){
+        
+        ChucVu_BUS chucVuBUS = new ChucVu_BUS();
+        ArrayList<ChucVu_DTO> chucVuList = chucVuBUS.GetAllChucVu(); // Trích xuất toàn bộ phòng ban
+    
+        maChucVuBox.removeAllItems(); // Xoá danh sách cũ
+    
+        for (ChucVu_DTO chucVu : chucVuList)  // Tuỳ theo maChucVu, hiện tên chức vụ
+            maChucVuBox.addItem(Integer.toString(chucVu.getMaChucVu()));
+        
+        maChucVuBox.setSelectedIndex(-1);
+        tenChucVuField2.setText("");
+    }
+  
+    
+    private void addButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton3
+        AddChucVu();
+    }//GEN-LAST:event_addButton3
+
+    private void deleteButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton3
+        DeleteChucVu();
+    }//GEN-LAST:event_deleteButton3
+
+    private void updateButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton3
+        UpdateChucVuTable();
+    }//GEN-LAST:event_updateButton3
+
+    private void newButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton3
+        NewChucVu();
+    }//GEN-LAST:event_newButton3
+
+    private void editButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton3
+        EditChucVu();
+    }//GEN-LAST:event_editButton3
+    
+    //
+    // Hợp đồng
+    //
+    
+    
+    private void addButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton4
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addButton4
+
+    private void deleteButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton4
+        // TODO add your handling code here:
+    }//GEN-LAST:event_deleteButton4
+
+    private void updateButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton4
+        // TODO add your handling code here:
+    }//GEN-LAST:event_updateButton4
+
+    private void newButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton4
+        // TODO add your handling code here:
+    }//GEN-LAST:event_newButton4
+
+    private void editButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton4
+        // TODO add your handling code here:
+    }//GEN-LAST:event_editButton4
+
+    private void ChucVuCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChucVuCardButton
+        cardLayout.show(cardPanel, "chucVuCard");
+    }//GEN-LAST:event_ChucVuCardButton
+
+    private void HopDongCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HopDongCardButton
+        cardLayout.show(cardPanel, "hopDongCard");
+    }//GEN-LAST:event_HopDongCardButton
+
+    private void UpdateTenChucVuBox(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateTenChucVuBox
+        if(maChucVuBox.getSelectedIndex() != -1){
+            int selectedPhongBan = Integer.parseInt(maChucVuBox.getSelectedItem().toString());
+            ChucVu_BUS chucVu_BUS = new ChucVu_BUS();
+            ChucVu_DTO chucVu = new ChucVu_DTO();
+         
+            
+            chucVu = chucVu_BUS.GetChucVuByID(selectedPhongBan);
+        
+            tenChucVuField2.setText(chucVu.getTenChucVu());
+        }
+    }//GEN-LAST:event_UpdateTenChucVuBox
+        
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel Label1;
-    private javax.swing.JLabel Label2;
-    private javax.swing.JLabel Label3;
-    private javax.swing.JLabel Label4;
-    private javax.swing.JButton addButton;
+    private javax.swing.JPanel ChucVuCard;
+    private javax.swing.JPanel HopDongCard;
+    private javax.swing.JLabel JLabel1;
+    private javax.swing.JLabel JLabel10;
+    private javax.swing.JLabel JLabel11;
+    private javax.swing.JLabel JLabel12;
+    private javax.swing.JLabel JLabel13;
+    private javax.swing.JLabel JLabel14;
+    private javax.swing.JLabel JLabel15;
+    private javax.swing.JLabel JLabel16;
+    private javax.swing.JLabel JLabel2;
+    private javax.swing.JLabel JLabel3;
+    private javax.swing.JLabel JLabel4;
+    private javax.swing.JLabel JLabel5;
+    private javax.swing.JLabel JLabel6;
+    private javax.swing.JLabel JLabel7;
+    private javax.swing.JLabel JLabel8;
+    private javax.swing.JPanel NhanVienCard;
+    private javax.swing.JPanel PhongBanCard;
     private javax.swing.JButton addButton1;
-    private javax.swing.JLabel ageLabel;
-    private javax.swing.JTextField ageTextField;
-    private javax.swing.JPanel bangChucNang;
-    private javax.swing.JPanel bangCongCu;
+    private javax.swing.JButton addButton2;
+    private javax.swing.JButton addButton3;
+    private javax.swing.JButton addButton4;
+    private javax.swing.JPanel bangChucVu;
+    private javax.swing.JPanel bangHopDong;
     private javax.swing.JPanel bangMenu;
-    private javax.swing.JScrollPane bangNhanVien;
-    private javax.swing.JPanel bangThongTin;
-    private javax.swing.JButton deleteButton;
+    private javax.swing.JPanel bangNhanVien;
+    private javax.swing.JPanel bangPhongBan;
+    private javax.swing.JPanel cardPanel;
+    private javax.swing.JTable chucVuTable;
+    private javax.swing.JScrollPane danhSachChucVu;
+    private javax.swing.JScrollPane danhSachHopDong;
+    private javax.swing.JScrollPane danhSachNhanVien;
+    private javax.swing.JScrollPane danhSachPhongBan;
     private javax.swing.JButton deleteButton1;
+    private javax.swing.JButton deleteButton2;
+    private javax.swing.JButton deleteButton3;
+    private javax.swing.JButton deleteButton4;
     private javax.swing.JTextField diaChiField;
-    private javax.swing.JLabel diaChiLabel;
     private javax.swing.JButton editButton1;
     private javax.swing.JButton editButton2;
-    private javax.swing.JScrollPane employeeList;
-    private javax.swing.JPanel employeePanel;
-    private javax.swing.JTable employeeTable;
-    private javax.swing.JTable employeeTable1;
-    private javax.swing.JRadioButton femaleRadioButton;
-    private javax.swing.JLabel firstNameLabel;
-    private javax.swing.JTextField firstNameTextField;
+    private javax.swing.JButton editButton3;
+    private javax.swing.JButton editButton4;
     private javax.swing.ButtonGroup genderButtonGroup;
-    private javax.swing.JLabel genderLabel;
-    private javax.swing.JLabel gioiTinhLabel;
     private javax.swing.JRadioButton gioiTinhNam;
     private javax.swing.JRadioButton gioiTinhNu;
     private javax.swing.JTextField hoTenField;
-    private javax.swing.JLabel hoTenLabel;
-    private javax.swing.JLabel idLabel;
-    private javax.swing.JTextField idTextField;
-    private javax.swing.JPanel informationPanel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JLabel jobPositionLabel;
-    private javax.swing.JTextField jobPositionTextField;
-    private javax.swing.JLabel lastNameLabel;
-    private javax.swing.JTextField lastNameTextField;
-    private javax.swing.JLabel maChucVu;
+    private javax.swing.JTable hopDongTable;
+    private javax.swing.JComboBox<String> maChucVuBox;
     private javax.swing.JTextField maChucVuField;
-    private javax.swing.JLabel maHopDong;
-    private javax.swing.JTextField maHopDongField;
     private javax.swing.JTextField maNhanVienField;
-    private javax.swing.JLabel maNhanVienLabel;
-    private javax.swing.JLabel maPhongBan;
     private javax.swing.JComboBox<String> maPhongBanBox;
-    private javax.swing.JComboBox<String> maTrangThaiBox;
-    private javax.swing.JRadioButton maleRadioButton;
-    private javax.swing.JButton newButton;
+    private javax.swing.JTextField maPhongBanField;
+    private javax.swing.JTextField maPhongBanField2;
+    private javax.swing.JButton menuButton1;
+    private javax.swing.JButton menuButton2;
+    private javax.swing.JButton menuButton3;
+    private javax.swing.JButton menuButton4;
+    private javax.swing.JButton menuButton5;
+    private javax.swing.JButton menuButton6;
+    private javax.swing.JButton menuButton7;
+    private javax.swing.JButton menuButton8;
+    private javax.swing.JPanel menuChucVu;
+    private javax.swing.JPanel menuHopDong;
+    private javax.swing.JPanel menuNhanVien;
+    private javax.swing.JPanel menuPhongBan;
     private javax.swing.JButton newButton1;
+    private javax.swing.JButton newButton2;
+    private javax.swing.JButton newButton3;
+    private javax.swing.JButton newButton4;
     private com.toedter.calendar.JDateChooser ngaySinhChooser;
-    private javax.swing.JLabel ngaySinhLabel;
-    private javax.swing.JLabel phoneNumberLabel;
-    private javax.swing.JTextField phoneNumbersTextField;
-    private javax.swing.JLabel salaryLabel;
-    private javax.swing.JPanel salaryPanel;
-    private javax.swing.JTextField salaryTextField;
+    private javax.swing.JTable nhanVienTable;
+    private javax.swing.JTable phongBanTable;
     private javax.swing.JTextField soDienThoaiField;
-    private javax.swing.JLabel soDienThoaiLabel;
-    private javax.swing.JLabel trangThai;
-    private javax.swing.JButton updateButton;
+    private javax.swing.JTextField tenChucVuField;
+    private javax.swing.JTextField tenChucVuField2;
+    private javax.swing.JTextField tenPhongBanField;
+    private javax.swing.JTextField tenPhongBanField2;
+    private javax.swing.JTextField tenPhongBanField3;
+    private javax.swing.JComboBox<String> trangThaiBox;
     private javax.swing.JButton updateButton1;
-    private javax.swing.JPanel utilitiesPanel;
+    private javax.swing.JButton updateButton2;
+    private javax.swing.JButton updateButton3;
+    private javax.swing.JButton updateButton4;
     // End of variables declaration//GEN-END:variables
 }
