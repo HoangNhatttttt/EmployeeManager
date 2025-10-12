@@ -1,6 +1,6 @@
 package com.em.DAO;
 
-import com.em.DTO.PhongBan_DTO;
+import com.em.DTO.HopDong_DTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,19 +10,25 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class HopDong_DAO{
-    public boolean AddPhongBan(PhongBan_DTO phongBan) {
-        String sql = "INSERT INTO phongban (tenPhongBan) VALUES (?)";
+    
+    public boolean AddHopDong(HopDong_DTO hopDong) {
+        String sql = "INSERT INTO hopdong (maNhanVien, ngayBatDau, ngayKetThuc) VALUES (?, ?, ?)";
         
         try (Connection connection = DatabaseConnect.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
-              
-            preparedStatement.setString(1, phongBan.getTenPhongBan());
+            
+            java.sql.Date sqlNgaybatDau = new java.sql.Date(hopDong.getNgayBatDau().getTime());
+            java.sql.Date sqlNgayKetThuc = new java.sql.Date(hopDong.getNgayKetThuc().getTime());
+            
+            preparedStatement.setInt(1, hopDong.getMaNhanVien());
+            preparedStatement.setDate(2, sqlNgaybatDau);
+            preparedStatement.setDate(3, sqlNgayKetThuc);
                         
             int rowsInserted = preparedStatement.executeUpdate(); 
             if (rowsInserted > 0) { 
                 try (ResultSet resultSet = preparedStatement.getGeneratedKeys()){ 
                     if (resultSet.next() == true) 
-                        phongBan.setMaPhongBan(resultSet.getInt(1)); 
+                        hopDong.setMaHopDong(resultSet.getInt(1)); 
                 }
             }
             
@@ -37,14 +43,19 @@ public class HopDong_DAO{
         }
     }
     
-    public boolean EditPhongBan(PhongBan_DTO phongBan) {   
-        String sql = "UPDATE phongban SET tenPhongBan = ? WHERE maPhongBan = ?";
+    public boolean EditHopDong(HopDong_DTO hopDong) {   
+        String sql = "UPDATE hopdong SET maNhanVien = ?, ngayBatDau = ?, ngayKetThuc = ? WHERE maHopDong = ?";
         
         try (Connection connection = DatabaseConnect.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             
-            preparedStatement.setString(1, phongBan.getTenPhongBan());
-            preparedStatement.setInt(2, phongBan.getMaPhongBan());
+            java.sql.Date sqlNgaybatDau = new java.sql.Date( hopDong.getNgayBatDau().getTime());
+            java.sql.Date sqlNgayKetThuc = new java.sql.Date( hopDong.getNgayKetThuc().getTime());
+            
+            preparedStatement.setInt(1, hopDong.getMaNhanVien());
+            preparedStatement.setDate(2, sqlNgaybatDau);
+            preparedStatement.setDate(3, sqlNgayKetThuc);  
+            preparedStatement.setInt(4, hopDong.getMaHopDong());
 
             int rowsUpdated = preparedStatement.executeUpdate();
             
@@ -58,13 +69,13 @@ public class HopDong_DAO{
         }
     }
     
-    public boolean DeletePhongBan(int maPhongBan) {
-        String sql = "DELETE FROM phongban WHERE maPhongBan = ?";
+    public boolean DeleteHopDong(int maHopDong) {
+        String sql = "DELETE FROM hopdong WHERE maHopDong = ?";
         
         try (Connection connection = DatabaseConnect.getConnection();
-             PreparedStatement data = connection.prepareStatement(sql)) {
+        PreparedStatement data = connection.prepareStatement(sql)) {
             
-            data.setInt(1, maPhongBan);
+            data.setInt(1, maHopDong);
             int rowsDeleted = data.executeUpdate();
             return rowsDeleted > 0;
             
@@ -74,49 +85,54 @@ public class HopDong_DAO{
         }
     }
     
-    public ArrayList<PhongBan_DTO> GetAllPhongBan() {
-        ArrayList<PhongBan_DTO> phongBanList = new ArrayList<>();
-        String sql = "SELECT * FROM PhongBan";    
+    public ArrayList<HopDong_DTO> GetAllHopDong() {
+        ArrayList<HopDong_DTO> hopDongList = new ArrayList<>();
+        String sql = "SELECT * FROM HopDong";    
         
         try (Connection connect = DatabaseConnect.getConnection();
             Statement statement = connect.createStatement();
             ResultSet resultSet = statement.executeQuery(sql)) {
             
             while (resultSet.next()){ 
-                PhongBan_DTO phongBan = new PhongBan_DTO();
-                phongBan.setMaPhongBan(resultSet.getInt("maPhongBan"));
-                phongBan.setTenPhongBan(resultSet.getString("tenPhongBan"));
+                HopDong_DTO hopDong = new HopDong_DTO();
                 
-                phongBanList.add(phongBan);
+                hopDong.setMaHopDong(resultSet.getInt("maHopDong"));
+                hopDong.setMaNhanVien(resultSet.getInt("maNhanVien"));
+                hopDong.setNgayBatDau(resultSet.getDate("ngayBatDau"));
+                hopDong.setNgayKetThuc(resultSet.getDate("ngayKetThuc"));
+                
+                hopDongList.add(hopDong);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         
-        return phongBanList;
+        return hopDongList;
     }
     
-    public PhongBan_DTO GetPhongBanByID(int maPhongBan) {
-        String sql = "SELECT * FROM phongban WHERE maPhongBan = ?";
+    public HopDong_DTO GetHopDongByID(int maHopDong) {
+        String sql = "SELECT * FROM hopdong WHERE maHopDong = ?";
         
-        PhongBan_DTO phongBan = new PhongBan_DTO();
+        HopDong_DTO hopDong = new HopDong_DTO();
         
         try (Connection connection = DatabaseConnect.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             
-            preparedStatement.setInt(1, maPhongBan);
+            preparedStatement.setInt(1, maHopDong);
             ResultSet resultSet = preparedStatement.executeQuery();
                  
             if (resultSet.next()) {
                 
-                phongBan.setMaPhongBan(resultSet.getInt("maPhongBan"));
-                phongBan.setTenPhongBan(resultSet.getString("tenPhongBan"));
+                hopDong.setMaHopDong(resultSet.getInt("maHopDong"));
+                hopDong.setMaNhanVien(resultSet.getInt("maNhanVien"));
+                hopDong.setNgayBatDau(resultSet.getDate("ngayBatDau"));
+                hopDong.setNgayKetThuc(resultSet.getDate("ngayKetThuc"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         
-        return phongBan;
+        return hopDong;
     }
         
 }

@@ -1,30 +1,30 @@
 package com.em.BUS;
 
-import com.em.DAO.PhongBan_DAO;
-import com.em.DTO.PhongBan_DTO;
+import com.em.DAO.HopDong_DAO;
+import com.em.DTO.HopDong_DTO;
 import java.util.ArrayList;
 
 public class HopDong_BUS{
     
-    private PhongBan_DAO phongBan_DAO = new PhongBan_DAO();
+    private HopDong_DAO hopDong_DAO = new HopDong_DAO();
     
-    public boolean AddPhongBan(PhongBan_DTO phongBan){     
-        return(phongBan_DAO.AddPhongBan(phongBan));
+    public boolean AddHopDong(HopDong_DTO hopDong){     
+        return(hopDong_DAO.AddHopDong(hopDong));
     }
     
-    public boolean EditPhongBan(PhongBan_DTO phongBan) {
-        return phongBan_DAO.EditPhongBan(phongBan);
+    public boolean EditHopDong(HopDong_DTO hopDong) {
+        return hopDong_DAO.EditHopDong(hopDong);
     }
     
-    public boolean DeletePhongBan(int maPhongBan) {
-        return phongBan_DAO.DeletePhongBan(maPhongBan);
+    public boolean DeleteHopDong(int maHopDong) {
+        return hopDong_DAO.DeleteHopDong(maHopDong);
     }
     
-    public ArrayList<PhongBan_DTO> GetAllPhongBan() {
-        return phongBan_DAO.GetAllPhongBan();
+    public ArrayList<HopDong_DTO> GetAllHopDong() {
+        return hopDong_DAO.GetAllHopDong();
     }
     
-    public PhongBan_DTO GetPhongBanByID(int maNhanVien) {
-        return phongBan_DAO.GetPhongBanByID(maNhanVien);
+    public HopDong_DTO GetHopDongByID(int maNhanVien) {
+        return hopDong_DAO.GetHopDongByID(maNhanVien);
     }
 }

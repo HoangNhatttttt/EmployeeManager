@@ -1,10 +1,12 @@
 package com.em.GUI;
 import com.em.BUS.ChucVu_BUS;
+import com.em.BUS.HopDong_BUS;
 import com.em.BUS.NhanVien_BUS;
 import com.em.BUS.PhongBan_BUS;
 import javax.swing.*;
 import com.em.BUS.Validates_BUS;
 import com.em.DTO.ChucVu_DTO;
+import com.em.DTO.HopDong_DTO;
 import com.em.DTO.NhanVien_DTO;
 import com.em.DTO.PhongBan_DTO;
 import java.awt.CardLayout;
@@ -42,752 +44,16 @@ public class App_UI extends javax.swing.JFrame {
         InitPhongBanTable();
         UpdatePhongBanTable();
         
-        // ChucVu card
+        // ChucVu Card
         InitChucVuTable();
         UpdateChucVuTable();
+        
+        // HopDong Card
+        InitHopDongTable();
+        UpdateHopDongTable();
                 
     }
-    
-    public void ClearTextFields(Container container) {
-        for (Component c : container.getComponents()) {
-            if (c instanceof JTextField) 
-                ((JTextField) c).setText("");
-
-            else if (c instanceof Container) 
-                ClearTextFields((Container) c);      
-        }
-    }
-     
-    //!
-    //! Nhân viên
-    //!
-
-    // Tạo default table 
-    private DefaultTableModel defaultNhanVienTableModel = new DefaultTableModel();
-    
-    public void InitNhanVienTable(){
-        
-        // Trỏ default table tới employee table
-        nhanVienTable.setModel(defaultNhanVienTableModel);
-        
-        // Thêm cột cho default table --> employee table cũng thêm cột
-        defaultNhanVienTableModel.addColumn("Mã nhân viên");
-        defaultNhanVienTableModel.addColumn("Họ tên");
-        defaultNhanVienTableModel.addColumn("Ngày sinh");
-        defaultNhanVienTableModel.addColumn("Giới tính");
-        defaultNhanVienTableModel.addColumn("Địa chỉ");
-        defaultNhanVienTableModel.addColumn("Số điện thoại");
-        defaultNhanVienTableModel.addColumn("Mã phòng ban");
-        defaultNhanVienTableModel.addColumn("mã chức vụ");
-        defaultNhanVienTableModel.addColumn("Trạng thái");
-        
-        // Chỉ được chọn 1 dòng/employee trong 1 lúc
-        ListSelectionModel listSelectionModel = nhanVienTable.getSelectionModel();
-        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-        //Mỗi lần chọn 1 employee sẽ hiện thông tin employee lên information panel
-        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
-            @Override
-            public void valueChanged(ListSelectionEvent e){
-                
-                // Trích xuất vị trí ô dòng/employee được chọn
-                int rowIndex = nhanVienTable.getSelectedRow();
-                // TH nếu chọn 1 employee/dòng trong JTable rồi JTable reset data --> ValueChanged --> rowIndex = -1 do không có data trong JTable
-                // ==> Gây ra lỗi khi trích xuất dữ liệu từ JTable
-                if(rowIndex != -1){ //TH database không có dữ liệu thì không cần trích xuất dữ liệu từ JTable và không update Information Panel
-                    
-                    // Trích xuất dữ liệu các cột của dòng được chọn
-                    String maNhanVien = nhanVienTable.getValueAt(rowIndex, 0).toString(); 
-                    String hoTen = nhanVienTable.getValueAt(rowIndex, 1).toString();
-                    String ngaySinh = nhanVienTable.getValueAt(rowIndex, 2).toString();
-                    String gioiTinh = nhanVienTable.getValueAt(rowIndex, 3).toString();
-                    String diaChi = nhanVienTable.getValueAt(rowIndex, 4).toString();
-                    String soDienThoai = nhanVienTable.getValueAt(rowIndex, 5).toString();
-                    String maPhongBan = nhanVienTable.getValueAt(rowIndex, 6).toString();
-                    String maChucVu = nhanVienTable.getValueAt(rowIndex, 7).toString();
-                    String trangThai = nhanVienTable.getValueAt(rowIndex, 8).toString();
-
-                    // Hiển thị dữ liệu lên information panel
-                    maNhanVienField.setText(maNhanVien);
-                    hoTenField.setText(hoTen);
-                    
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                    try {
-                        Date date = dateFormat.parse(ngaySinh);
-                        ngaySinhChooser.setDateFormatString("dd/MM/yyyy");
-                        ngaySinhChooser.setDate(date);
-                    }                    
-                    catch (ParseException d) {
-                        d.printStackTrace();
-}
-                    
-                    diaChiField.setText(diaChi);
-                    soDienThoaiField.setText(soDienThoai);
-                    
-                    // Kiểm tra giới tính rồi chọn tương ứng
-                    if(gioiTinh.equals("M")) // Khi dùng a == b nghĩa là a và b có phải cùng 1 object (không áp dụng khi kiểm tra số: a==3)
-                        gioiTinhNam.setSelected(true);
-                    else
-                        gioiTinhNu.setSelected(true);
-                }  
-            }
-        });
-    }
-    
-    private void UpdateNhanVienTable(){
-        try {
-            // Trích xuất toàn bộ employee từ database
-            NhanVien_BUS NhanVien_BUS = new NhanVien_BUS();
-            ArrayList<NhanVien_DTO> nhanVienList = NhanVien_BUS.GetAllNhanVien();
             
-            // Hàm sẽ lấy toàn bộ dữ liệu từ database (bao gồm cả dữ liệu có sẵn trong JTable) --> Làm sạch JTable rồi add lại toàn bộ dữ liệu
-            defaultNhanVienTableModel.setRowCount(0); // Xoá toàn bộ dòng trong JTable 
-            
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            
-            //Add rows
-            for (NhanVien_DTO nhanVien : nhanVienList) {
-                
-                String ngaySinhFormatted = "";
-                ngaySinhFormatted = dateFormat.format(nhanVien.getNgaySinh());
-                
-                defaultNhanVienTableModel.addRow(new Object[]{
-                    nhanVien.getMaNhanVien(),
-                    nhanVien.getHoTen(),
-                    ngaySinhFormatted,
-                    nhanVien.getGioiTinh(),
-                    nhanVien.getDiaChi(),
-                    nhanVien.getSoDienThoai(),
-                    nhanVien.getMaPhongBan(),
-                    nhanVien.getMaChucVu(),
-                    nhanVien.getTrangThai()
-                });
-            } 
-        }
-        
-        catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                "Lỗi trích xuất thông tin nhân viên: " + e.getMessage(),
-                "Lỗi",
-                JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-    
-    private void NewNhanVien(){
-        ClearTextFields(NhanVienCard);
-    }
-    
-    private void AddNhanVien() {                                                                             
-        // TH nếu User nhấn vào employee trên JTable rồi nhấn nút Add --> Thông tin trên Information panel đầy đủ --> Sẽ add lại nhân viên vào database
-        // --> Nhấn nút New để xoá hết thông tin trên JTextField rồi nhập vào thông tin mới
-        String maNhanVien = maNhanVienField.getText();
-        if (maNhanVien.isEmpty() == false){
-            String error = "Bấm nút 'New' trước khi thêm nhân viên.";
-            JOptionPane.showMessageDialog(this, error, "Add nhân viên", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
-        
-        NhanVien_DTO nhanVien = new NhanVien_DTO();
-        
-        if(result == null)
-            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
-             
-        else{
-            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
-        
-        if(nhanVien_BUS.AddNhanVien(nhanVien) == true)
-                JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công!");   
-        else
-           JOptionPane.showMessageDialog(null, "Thêm nhân viên không thành công!"); 
-        
-        // Sau khi thêm employee thì update lại table NhanVien list
-        UpdateNhanVienTable();
-    }
-    
-    private void EditNhanVien(){
-        String maNhanVien = maNhanVienField.getText();
-        if (maNhanVien.isEmpty() == true){
-            String error = "Chọn nhân viên trong danh sách trước khi sửa";
-            JOptionPane.showMessageDialog(this, error, "Edit nhân viên", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
-        
-        NhanVien_DTO nhanVien = new NhanVien_DTO();
-        
-        if(result == null){
-            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
-            nhanVien.setMaNhanVien(Integer.parseInt(maNhanVien));
-        }
-            
-             
-        else{
-            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
-        
-        if(nhanVien_BUS.EditNhanVien(nhanVien) == true)
-                JOptionPane.showMessageDialog(null, "Sửa nhân viên thành công!");   
-        else
-           JOptionPane.showMessageDialog(null, "Sửa nhân viên không thành công!"); 
-        
-        // Sau khi thêm employee thì update lại table NhanVien list
-        UpdateNhanVienTable();
-    }
-    
-    private void DeleteNhanVien(){
-        String maNhanVien = maNhanVienField.getText();
-        if (maNhanVien.isEmpty() == true){
-            String error = "Chọn nhân viên trong danh sách trước khi xoá";
-            JOptionPane.showMessageDialog(this, error, "Delete nhân viên", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // Show confirmation dialog
-        int confirm = JOptionPane.showConfirmDialog(
-            this,
-            "Bạn có chắc muốn xoá nhân viên ?",
-            "Xác nhận xoá",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-        );
-    
-        if (confirm == JOptionPane.YES_OPTION) {
-            // User clicked YES - proceed with deletion
-            NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
-
-            if (nhanVien_BUS.DeleteNhanVien(Integer.parseInt(maNhanVien)) == true) {
-                JOptionPane.showMessageDialog(this, 
-                    "Xoá nhân viên thành công.", 
-                    "Thành công", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                
-                UpdateNhanVienTable();
-            } 
-            
-            else {
-                JOptionPane.showMessageDialog(this, 
-                    "Xoá nhân viên thất bại.", 
-                    "Lỗi", 
-                    JOptionPane.ERROR_MESSAGE);
-            }
-        } 
-        
-        else {
-            // User clicked NO or closed dialog - do nothing
-            return;
-        }
-    }
-
-    private void NhanVienCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NhanVienCardButton
-        cardLayout.show(cardPanel, "nhanVienCard");
-        UpdateTenPhongBanBox();
-        UpdateTenChucVuBox();
-
-    }//GEN-LAST:event_NhanVienCardButton
-
-    private void newButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton1
-        NewNhanVien();
-    }//GEN-LAST:event_newButton1
-
-    private void addButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton1
-        AddNhanVien();
-    }//GEN-LAST:event_addButton1
-
-    private void editButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton1
-        EditNhanVien();
-    }//GEN-LAST:event_editButton1
-
-    private void deleteButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton1
-        DeleteNhanVien();
-    }//GEN-LAST:event_deleteButton1
-	
-	private void updateNhanVienTableButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateNhanVienTableButton
-        UpdateNhanVienTable();
-    }//GEN-LAST:event_updateNhanVienTableButton
-
-    private void UpdateTenPhongBanBox(){
-        
-        PhongBan_BUS phongBanBUS = new PhongBan_BUS();
-        ArrayList<PhongBan_DTO> phongBanList = phongBanBUS.GetAllPhongBan(); // Trích xuất toàn bộ phòng ban
-    
-        maPhongBanBox.removeAllItems(); // Xoá danh sách cũ
-    
-        for (PhongBan_DTO phongBan : phongBanList)  // Tuỳ theo maPhongBan, hiện tên phòng ban
-            maPhongBanBox.addItem(Integer.toString(phongBan.getMaPhongBan()));
-        
-        maPhongBanBox.setSelectedIndex(-1);
-        tenPhongBanField2.setText("");
-    }
-
-    private void UpdateTenPhongBanBox(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateTenPhongBanBox
-        if(maPhongBanBox.getSelectedIndex() != -1){
-            int selectedPhongBan = Integer.parseInt(maPhongBanBox.getSelectedItem().toString());
-            PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
-            PhongBan_DTO phongBan = new PhongBan_DTO();
-         
-            
-            phongBan = phongBan_BUS.GetPhongBanByID(selectedPhongBan);
-        
-            tenPhongBanField2.setText(phongBan.getTenPhongBan());
-        }
-	}//GEN-LAST:event_UpdateTenPhongBanBox
-
-    private void UpdateTenChucVuBox(){
-        
-        ChucVu_BUS chucVuBUS = new ChucVu_BUS();
-        ArrayList<ChucVu_DTO> chucVuList = chucVuBUS.GetAllChucVu(); // Trích xuất toàn bộ phòng ban
-    
-        maChucVuBox.removeAllItems(); // Xoá danh sách cũ
-    
-        for (ChucVu_DTO chucVu : chucVuList)  // Tuỳ theo maChucVu, hiện tên chức vụ
-            maChucVuBox.addItem(Integer.toString(chucVu.getMaChucVu()));
-        
-        maChucVuBox.setSelectedIndex(-1);
-        tenChucVuField2.setText("");
-    }
-
-    private void UpdateTenChucVuBox(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateTenChucVuBox
-        if(maChucVuBox.getSelectedIndex() != -1){
-            int selectedPhongBan = Integer.parseInt(maChucVuBox.getSelectedItem().toString());
-            ChucVu_BUS chucVu_BUS = new ChucVu_BUS();
-            ChucVu_DTO chucVu = new ChucVu_DTO();
-         
-            
-            chucVu = chucVu_BUS.GetChucVuByID(selectedPhongBan);
-        
-            tenChucVuField2.setText(chucVu.getTenChucVu());
-        }
-    }//GEN-LAST:event_UpdateTenChucVuBox
-
-
-    //!
-    //! Phòng ban  
-    //!
-
-    private DefaultTableModel defaultPhongBanTableModel = new DefaultTableModel();
-    public void InitPhongBanTable(){
-        
-        phongBanTable.setModel(defaultPhongBanTableModel);
-        
-        defaultPhongBanTableModel.addColumn("Mã phòng ban");
-        defaultPhongBanTableModel.addColumn("Tên phòng ban");
-
-        ListSelectionModel listSelectionModel = phongBanTable.getSelectionModel();
-        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
-            @Override
-            public void valueChanged(ListSelectionEvent e){
-               
-                int rowIndex = phongBanTable.getSelectedRow();
-                if(rowIndex != -1){ 
-                    String maPhongBan = phongBanTable.getValueAt(rowIndex, 0).toString(); 
-                    String tenPhongBan = phongBanTable.getValueAt(rowIndex, 1).toString();
-
-                    maPhongBanField.setText(maPhongBan);
-                    tenPhongBanField.setText(tenPhongBan);
-                }  
-            }
-        });
-    }
-     
-    private void UpdatePhongBanTable(){
-        try {
-            PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
-            ArrayList<PhongBan_DTO> phongBanList = phongBan_BUS.GetAllPhongBan();
-            
-            defaultPhongBanTableModel.setRowCount(0);
-            
-            for (PhongBan_DTO phongBan : phongBanList) {      
-                defaultPhongBanTableModel.addRow(new Object[]{
-                    phongBan.getMaPhongBan(),
-                    phongBan.getTenPhongBan(),
-                });
-            } 
-        }
-        
-        catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                "Lỗi trích xuất thông tin phòng ban: " + e.getMessage(),
-                "Lỗi",
-                JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-    
-    private void NewPhongBan(){
-        ClearTextFields(PhongBanCard);
-    }
-
-    private void AddPhongBan() {                                                                             
-        String maPhongBan = maPhongBanField.getText();
-        if (maPhongBan.isEmpty() == false){
-            String error = "Bấm nút 'New' trước khi thêm phòng ban.";
-            JOptionPane.showMessageDialog(this, error, "Add phòng ban", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateTenPhongBan(tenPhongBanField);
-        
-        PhongBan_DTO phongBan = new PhongBan_DTO();
-        
-        if(result == null)
-            phongBan.setTenPhongBan(tenPhongBanField.getText().trim());
-             
-        else{
-            JOptionPane.showMessageDialog(this, result, "Phòng ban Validation", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
-        
-        if(phongBan_BUS.AddPhongBan(phongBan) == true)
-                JOptionPane.showMessageDialog(null, "Thêm phòng thành công!");   
-        else
-           JOptionPane.showMessageDialog(null, "Thêm phòng ban không thành công!"); 
-        
-        // Sau khi thêm employee thì update lại table NhanVien list
-        UpdatePhongBanTable();
-    }
-    
-    private void EditPhongBan(){
-        String maPhongBan = maNhanVienField.getText();
-        if (maPhongBan.isEmpty() == true){
-            String error = "Chọn phòng ban trong danh sách trước khi sửa";
-            JOptionPane.showMessageDialog(this, error, "Edit nhân viên", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateTenPhongBan(tenPhongBanField);
-        
-        PhongBan_DTO phongBan = new PhongBan_DTO();
-        
-        if(result == null){
-            phongBan.setTenPhongBan(tenPhongBanField.getText().trim());
-            phongBan.setMaPhongBan(Integer.parseInt(maPhongBan));
-        }
-  
-        else{
-            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
-        
-        if(phongBan_BUS.EditPhongBan(phongBan) == true)
-                JOptionPane.showMessageDialog(null, "Sửa phòng ban thành công!");   
-        else
-           JOptionPane.showMessageDialog(null, "Sửa phòng ban không thành công!"); 
-        
-        // Sau khi thêm employee thì update lại table NhanVien list
-        UpdatePhongBanTable();
-    }
-    
-    private void DeletePhongBan(){
-        String maPhongBan = maPhongBanField.getText();
-        if (maPhongBan.isEmpty() == true){
-            String error = "Chọn phòng ban trong danh sách trước khi xoá";
-            JOptionPane.showMessageDialog(this, error, "Delete phòng ban", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // Show confirmation dialog
-        int confirm = JOptionPane.showConfirmDialog(
-            this,
-            "Bạn có chắc muốn xoá phòng ban ?",
-            "Xác nhận xoá",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-        );
-    
-        if (confirm == JOptionPane.YES_OPTION) {
-            // User clicked YES - proceed with deletion
-            PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
-
-            if (phongBan_BUS.DeletePhongBan(Integer.parseInt(maPhongBan)) == true) {
-                JOptionPane.showMessageDialog(this, 
-                    "Xoá phòng ban thành công.", 
-                    "Thành công", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                
-                UpdatePhongBanTable();
-            } 
-            
-            else {
-                JOptionPane.showMessageDialog(this, 
-                    "Xoá phòng ban thất bại.", 
-                    "Lỗi", 
-                    JOptionPane.ERROR_MESSAGE);
-            }
-        } 
-        
-        else {
-            // User clicked NO or closed dialog - do nothing
-            return;
-        }
-    }
-
-    private void PhongBanCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PhongBanCardButton
-        cardLayout.show(cardPanel, "phongBanCard");
-    }//GEN-LAST:event_PhongBanCardButton
- 
-    private void addButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton2
-        AddPhongBan();
-    }//GEN-LAST:event_addButton2
-
-    private void deleteButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton2
-        DeletePhongBan();
-    }//GEN-LAST:event_deleteButton2
-
-    private void updateButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton2
-        UpdatePhongBanTable();
-    }//GEN-LAST:event_updateButton2
-
-    private void newButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton2
-        NewPhongBan();
-    }//GEN-LAST:event_newButton2
-
-    private void editButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton2
-        EditPhongBan();
-    }//GEN-LAST:event_editButton2
-
-    //!
-    //! Chức vụ
-    //!
-    
-    private void NewChucVu(){
-        ClearTextFields(ChucVuCard);
-    }
-    
-    private DefaultTableModel defaultChucVuTableModel = new DefaultTableModel();
-    public void InitChucVuTable(){
-        
-        chucVuTable.setModel(defaultChucVuTableModel);
-        
-        defaultChucVuTableModel.addColumn("Mã chức vụ");
-        defaultChucVuTableModel.addColumn("Tên chức vụ");
-
-        ListSelectionModel listSelectionModel = chucVuTable.getSelectionModel();
-        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
-            @Override
-            public void valueChanged(ListSelectionEvent e){
-               
-                int rowIndex = chucVuTable.getSelectedRow();
-                if(rowIndex != -1){ 
-                    String maChucVu = chucVuTable.getValueAt(rowIndex, 0).toString(); 
-                    String tenChucVu = chucVuTable.getValueAt(rowIndex, 1).toString();
-
-                    maChucVuField.setText(maChucVu);
-                    tenChucVuField.setText(tenChucVu);
-                }  
-            }
-        });
-    }
-
-    private void AddChucVu() {                                                                             
-        String maChucVu = maChucVuField.getText();
-        if (maChucVu.isEmpty() == false){
-            String error = "Bấm nút 'New' trước khi thêm phòng ban.";
-            JOptionPane.showMessageDialog(this, error, "Add phòng ban", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateTenChucVu(tenChucVuField);
-        
-        ChucVu_DTO phongBan = new ChucVu_DTO();
-        
-        if(result == null)
-            phongBan.setTenChucVu(tenChucVuField.getText().trim());
-             
-        else{
-            JOptionPane.showMessageDialog(this, result, "Phòng ban Validation", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        ChucVu_BUS phongBan_BUS = new ChucVu_BUS();
-        
-        if(phongBan_BUS.AddChucVu(phongBan) == true)
-                JOptionPane.showMessageDialog(null, "Thêm phòng thành công!");   
-        else
-           JOptionPane.showMessageDialog(null, "Thêm phòng ban không thành công!"); 
-        
-        // Sau khi thêm employee thì update lại table NhanVien list
-        UpdateChucVuTable();
-    }
-    
-    private void EditChucVu(){
-        String maChucVu = maNhanVienField.getText();
-        if (maChucVu.isEmpty() == true){
-            String error = "Chọn phòng ban trong danh sách trước khi sửa";
-            JOptionPane.showMessageDialog(this, error, "Edit nhân viên", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateTenChucVu(tenChucVuField);
-        
-        ChucVu_DTO phongBan = new ChucVu_DTO();
-        
-        if(result == null){
-            phongBan.setTenChucVu(tenChucVuField.getText().trim());
-            phongBan.setMaChucVu(Integer.parseInt(maChucVu));
-        }
-  
-        else{
-            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        ChucVu_BUS phongBan_BUS = new ChucVu_BUS();
-        
-        if(phongBan_BUS.EditChucVu(phongBan) == true)
-                JOptionPane.showMessageDialog(null, "Sửa phòng ban thành công!");   
-        else
-           JOptionPane.showMessageDialog(null, "Sửa phòng ban không thành công!"); 
-        
-        // Sau khi thêm employee thì update lại table NhanVien list
-        UpdateChucVuTable();
-    }
-    
-    private void DeleteChucVu(){
-        String maChucVu = maChucVuField.getText();
-        if (maChucVu.isEmpty() == true){
-            String error = "Chọn phòng ban trong danh sách trước khi xoá";
-            JOptionPane.showMessageDialog(this, error, "Delete phòng ban", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // Show confirmation dialog
-        int confirm = JOptionPane.showConfirmDialog(
-            this,
-            "Bạn có chắc muốn xoá phòng ban ?",
-            "Xác nhận xoá",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-        );
-    
-        if (confirm == JOptionPane.YES_OPTION) {
-            // User clicked YES - proceed with deletion
-            ChucVu_BUS phongBan_BUS = new ChucVu_BUS();
-
-            if (phongBan_BUS.DeleteChucVu(Integer.parseInt(maChucVu)) == true) {
-                JOptionPane.showMessageDialog(this, 
-                    "Xoá phòng ban thành công.", 
-                    "Thành công", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                
-                UpdateChucVuTable();
-            } 
-            
-            else {
-                JOptionPane.showMessageDialog(this, 
-                    "Xoá phòng ban thất bại.", 
-                    "Lỗi", 
-                    JOptionPane.ERROR_MESSAGE);
-            }
-        } 
-        
-        else {
-            // User clicked NO or closed dialog - do nothing
-            return;
-        }
-    }
-      
-    private void UpdateChucVuTable(){
-        try {
-            ChucVu_BUS chucVu_BUS = new ChucVu_BUS();
-            ArrayList<ChucVu_DTO> chucVuList = chucVu_BUS.GetAllChucVu();
-            
-            defaultChucVuTableModel.setRowCount(0);
-            
-            for (ChucVu_DTO chucVu : chucVuList) {      
-                defaultChucVuTableModel.addRow(new Object[]{
-                    chucVu.getMaChucVu(),
-                    chucVu.getTenChucVu(),
-                });
-            } 
-        }
-        
-        catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                "Lỗi trích xuất thông tin chức vụ: " + e.getMessage(),
-                "Lỗi",
-                JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-
-    private void ChucVuCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChucVuCardButton
-        cardLayout.show(cardPanel, "chucVuCard");
-    }//GEN-LAST:event_ChucVuCardButton
-    
-    private void addButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton3
-        AddChucVu();
-    }//GEN-LAST:event_addButton3
-
-    private void deleteButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton3
-        DeleteChucVu();
-    }//GEN-LAST:event_deleteButton3
-
-    private void updateButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton3
-        UpdateChucVuTable();
-    }//GEN-LAST:event_updateButton3
-
-    private void newButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton3
-        NewChucVu();
-    }//GEN-LAST:event_newButton3
-
-    private void editButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton3
-        EditChucVu();
-    }//GEN-LAST:event_editButton3
-    
-    //!
-    //! Hợp đồng
-    //!
-    
-    private void HopDongCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HopDongCardButton
-        cardLayout.show(cardPanel, "hopDongCard");
-    }//GEN-LAST:event_HopDongCardButton
-
-    private void newButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton4
-        // TODO add your handling code here:
-    }//GEN-LAST:event_newButton4
-    
-    private void addButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton4
-        // TODO add your handling code here:
-    }//GEN-LAST:event_addButton4
-
-    private void editButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton4
-        // TODO add your handling code here:
-    }//GEN-LAST:event_editButton4
-
-    private void deleteButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton4
-        // TODO add your handling code here:
-    }//GEN-LAST:event_deleteButton4
-
-    private void updateButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton4
-        // TODO add your handling code here:
-    }//GEN-LAST:event_updateButton4
-
-        
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -872,6 +138,8 @@ public class App_UI extends javax.swing.JFrame {
         maNhanVienBox = new javax.swing.JComboBox<>();
         ngayBatDauChooser = new com.toedter.calendar.JDateChooser();
         ngayKetThucChooser = new com.toedter.calendar.JDateChooser();
+        jLabel19 = new javax.swing.JLabel();
+        tenNhanVienField = new javax.swing.JTextField();
         danhSachHopDong = new javax.swing.JScrollPane();
         hopDongTable = new javax.swing.JTable();
         menuHopDong = new javax.swing.JPanel();
@@ -1548,6 +816,19 @@ public class App_UI extends javax.swing.JFrame {
         maHopDongField.setEditable(false);
 
         maNhanVienBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        maNhanVienBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateTenMaNhanVienBox(evt);
+            }
+        });
+
+        ngayBatDauChooser.setPreferredSize(new java.awt.Dimension(100, 28));
+
+        ngayKetThucChooser.setPreferredSize(new java.awt.Dimension(100, 28));
+
+        jLabel19.setText("Tên nhân viên");
+
+        tenNhanVienField.setEditable(false);
 
         javax.swing.GroupLayout bangHopDongLayout = new javax.swing.GroupLayout(bangHopDong);
         bangHopDong.setLayout(bangHopDongLayout);
@@ -1561,16 +842,18 @@ public class App_UI extends javax.swing.JFrame {
                     .addComponent(jLabel17)
                     .addComponent(jLabel18))
                 .addGap(32, 32, 32)
-                .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(maHopDongField, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(maNhanVienBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(maHopDongField, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(bangHopDongLayout.createSequentialGroup()
-                        .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(ngayKetThucChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ngayBatDauChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(234, 234, 234)))
-                .addContainerGap(418, Short.MAX_VALUE))
+                        .addComponent(maNhanVienBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(64, 64, 64)
+                        .addComponent(jLabel19)
+                        .addGap(33, 33, 33)
+                        .addComponent(tenNhanVienField, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(ngayKetThucChooser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                        .addComponent(ngayBatDauChooser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(108, Short.MAX_VALUE))
         );
         bangHopDongLayout.setVerticalGroup(
             bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1582,7 +865,9 @@ public class App_UI extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JLabel16)
-                    .addComponent(maNhanVienBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(maNhanVienBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel19)
+                    .addComponent(tenNhanVienField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(28, 28, 28)
                 .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel17)
@@ -1684,21 +969,21 @@ public class App_UI extends javax.swing.JFrame {
             HopDongCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, HopDongCardLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(HopDongCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(danhSachHopDong)
+                .addGroup(HopDongCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(danhSachHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 1052, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(HopDongCardLayout.createSequentialGroup()
                         .addComponent(bangHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGap(34, 34, 34)
                         .addComponent(menuHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(20, 20, 20))
+                .addGap(314, 314, 314))
         );
         HopDongCardLayout.setVerticalGroup(
             HopDongCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(HopDongCardLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(HopDongCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(menuHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bangHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bangHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(menuHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(danhSachHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1787,6 +1072,7 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JTable hopDongTable;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JComboBox<String> maChucVuBox;
     private javax.swing.JTextField maChucVuField;
     private javax.swing.JTextField maHopDongField;
@@ -1818,6 +1104,7 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JTextField soDienThoaiField;
     private javax.swing.JTextField tenChucVuField;
     private javax.swing.JTextField tenChucVuField2;
+    private javax.swing.JTextField tenNhanVienField;
     private javax.swing.JTextField tenPhongBanField;
     private javax.swing.JTextField tenPhongBanField2;
     private javax.swing.JComboBox<String> trangThaiBox;
@@ -1826,4 +1113,994 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JButton updateButton3;
     private javax.swing.JButton updateButton4;
     // End of variables declaration//GEN-END:variables
+
+    public void ClearTextFields(Container container) {
+        for (Component c : container.getComponents()) {
+            if (c instanceof JTextField) 
+                ((JTextField) c).setText("");
+
+            else if (c instanceof Container) 
+                ClearTextFields((Container) c);      
+        }
+    }
+    
+    //!
+    //! Nhân viên
+    //!
+
+    // Tạo default table 
+    private DefaultTableModel defaultNhanVienTableModel = new DefaultTableModel();
+    
+    public void InitNhanVienTable(){
+        
+        // Trỏ default table tới employee table
+        nhanVienTable.setModel(defaultNhanVienTableModel);
+        
+        // Thêm cột cho default table --> employee table cũng thêm cột
+        defaultNhanVienTableModel.addColumn("Mã nhân viên");
+        defaultNhanVienTableModel.addColumn("Họ tên");
+        defaultNhanVienTableModel.addColumn("Ngày sinh");
+        defaultNhanVienTableModel.addColumn("Giới tính");
+        defaultNhanVienTableModel.addColumn("Địa chỉ");
+        defaultNhanVienTableModel.addColumn("Số điện thoại");
+        defaultNhanVienTableModel.addColumn("Mã phòng ban");
+        defaultNhanVienTableModel.addColumn("mã chức vụ");
+        defaultNhanVienTableModel.addColumn("Trạng thái");
+        
+        // Chỉ được chọn 1 dòng/employee trong 1 lúc
+        ListSelectionModel listSelectionModel = nhanVienTable.getSelectionModel();
+        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        //Mỗi lần chọn 1 employee sẽ hiện thông tin employee lên information panel
+        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
+            @Override
+            public void valueChanged(ListSelectionEvent e){
+                
+                // Trích xuất vị trí ô dòng/employee được chọn
+                int rowIndex = nhanVienTable.getSelectedRow();
+                // TH nếu chọn 1 employee/dòng trong JTable rồi JTable reset data --> ValueChanged --> rowIndex = -1 do không có data trong JTable
+                // ==> Gây ra lỗi khi trích xuất dữ liệu từ JTable
+                if(rowIndex != -1){ //TH database không có dữ liệu thì không cần trích xuất dữ liệu từ JTable và không update Information Panel
+                    
+                    // Trích xuất dữ liệu các cột của dòng được chọn
+                    String maNhanVien = nhanVienTable.getValueAt(rowIndex, 0).toString(); 
+                    String hoTen = nhanVienTable.getValueAt(rowIndex, 1).toString();
+                    String ngaySinh = nhanVienTable.getValueAt(rowIndex, 2).toString();
+                    String gioiTinh = nhanVienTable.getValueAt(rowIndex, 3).toString();
+                    String diaChi = nhanVienTable.getValueAt(rowIndex, 4).toString();
+                    String soDienThoai = nhanVienTable.getValueAt(rowIndex, 5).toString();
+                    String maPhongBan = nhanVienTable.getValueAt(rowIndex, 6).toString();
+                    String maChucVu = nhanVienTable.getValueAt(rowIndex, 7).toString();
+                    String trangThai = nhanVienTable.getValueAt(rowIndex, 8).toString();
+
+                    // Hiển thị dữ liệu lên information panel
+                    maNhanVienField.setText(maNhanVien);
+                    hoTenField.setText(hoTen);
+                    
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    try {
+                        Date date = dateFormat.parse(ngaySinh);
+                        ngaySinhChooser.setDateFormatString("dd/MM/yyyy");
+                        ngaySinhChooser.setDate(date);
+                    }                    
+                    catch (ParseException d) {
+                        d.printStackTrace();
+}
+                    
+                    diaChiField.setText(diaChi);
+                    soDienThoaiField.setText(soDienThoai);
+                    maPhongBanBox.setSelectedItem(maPhongBan);
+                    maChucVuBox.setSelectedItem(maChucVu);
+                    trangThaiBox.setSelectedItem(trangThai);
+                    
+                    // Kiểm tra giới tính rồi chọn tương ứng
+                    if(gioiTinh.equals("M")) // Khi dùng a == b nghĩa là a và b có phải cùng 1 object (không áp dụng khi kiểm tra số: a==3)
+                        gioiTinhNam.setSelected(true);
+                    else
+                        gioiTinhNu.setSelected(true);
+                }  
+            }
+        });
+    }
+    
+    private boolean UpdateNhanVienTable(){
+        try {
+            // Trích xuất toàn bộ employee từ database
+            NhanVien_BUS NhanVien_BUS = new NhanVien_BUS();
+            ArrayList<NhanVien_DTO> nhanVienList = NhanVien_BUS.GetAllNhanVien();
+            
+            // Hàm sẽ lấy toàn bộ dữ liệu từ database (bao gồm cả dữ liệu có sẵn trong JTable) --> Làm sạch JTable rồi add lại toàn bộ dữ liệu
+            defaultNhanVienTableModel.setRowCount(0); // Xoá toàn bộ dòng trong JTable 
+            
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            
+            //Add rows
+            for (NhanVien_DTO nhanVien : nhanVienList) {
+                
+                String ngaySinhFormatted = "";
+                ngaySinhFormatted = dateFormat.format(nhanVien.getNgaySinh());
+                
+                defaultNhanVienTableModel.addRow(new Object[]{
+                    nhanVien.getMaNhanVien(),
+                    nhanVien.getHoTen(),
+                    ngaySinhFormatted,
+                    nhanVien.getGioiTinh(),
+                    nhanVien.getDiaChi(),
+                    nhanVien.getSoDienThoai(),
+                    nhanVien.getMaPhongBan(),
+                    nhanVien.getMaChucVu(),
+                    nhanVien.getTrangThai()
+                });
+            }
+        }
+        
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Lỗi trích xuất thông tin nhân viên: " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private void NewNhanVien(){
+        ClearTextFields(NhanVienCard);
+    }
+    
+    private void AddNhanVien() {                                                                             
+        // TH nếu User nhấn vào employee trên JTable rồi nhấn nút Add --> Thông tin trên Information panel đầy đủ --> Sẽ add lại nhân viên vào database
+        // --> Nhấn nút New để xoá hết thông tin trên JTextField rồi nhập vào thông tin mới
+        String maNhanVien = maNhanVienField.getText();
+        if (maNhanVien.isEmpty() == false){
+            String error = "Bấm nút 'New' trước khi thêm nhân viên.";
+            JOptionPane.showMessageDialog(this, error, "Add nhân viên", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+        
+        NhanVien_DTO nhanVien = new NhanVien_DTO();
+        
+        if(result == null)
+            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+             
+        else{
+            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+        
+        if(nhanVien_BUS.AddNhanVien(nhanVien) == true)
+                JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Thêm nhân viên không thành công!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdateNhanVienTable();
+    }
+    
+    private void EditNhanVien(){
+        String maNhanVien = maNhanVienField.getText();
+        if (maNhanVien.isEmpty() == true){
+            String error = "Chọn nhân viên trong danh sách trước khi sửa";
+            JOptionPane.showMessageDialog(this, error, "Edit nhân viên", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+        
+        NhanVien_DTO nhanVien = new NhanVien_DTO();
+        
+        if(result == null){
+            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+            nhanVien.setMaNhanVien(Integer.parseInt(maNhanVien));
+        }
+            
+             
+        else{
+            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+        
+        if(nhanVien_BUS.EditNhanVien(nhanVien) == true)
+                JOptionPane.showMessageDialog(null, "Sửa nhân viên thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Sửa nhân viên không thành công!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdateNhanVienTable();
+    }
+    
+    private void DeleteNhanVien(){
+        String maNhanVien = maNhanVienField.getText();
+        if (maNhanVien.isEmpty() == true){
+            String error = "Chọn nhân viên trong danh sách trước khi xoá";
+            JOptionPane.showMessageDialog(this, error, "Delete nhân viên", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Show confirmation dialog
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc muốn xoá nhân viên ?",
+            "Xác nhận xoá",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+    
+        if (confirm == JOptionPane.YES_OPTION) {
+            // User clicked YES - proceed with deletion
+            NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+
+            if (nhanVien_BUS.DeleteNhanVien(Integer.parseInt(maNhanVien)) == true) {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá nhân viên thành công.", 
+                    "Thành công", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                
+                UpdateNhanVienTable();
+            } 
+            
+            else {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá nhân viên thất bại.", 
+                    "Lỗi", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } 
+        
+        else {
+            // User clicked NO or closed dialog - do nothing
+            return;
+        }
+    }
+
+    private void NhanVienCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NhanVienCardButton
+        cardLayout.show(cardPanel, "nhanVienCard");
+        UpdateTenPhongBanBox();
+        UpdateTenChucVuBox();
+
+    }//GEN-LAST:event_NhanVienCardButton
+
+    private void newButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton1
+        NewNhanVien();
+    }//GEN-LAST:event_newButton1
+
+    private void addButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton1
+        AddNhanVien();
+    }//GEN-LAST:event_addButton1
+
+    private void editButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton1
+        EditNhanVien();
+    }//GEN-LAST:event_editButton1
+
+    private void deleteButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton1
+        DeleteNhanVien();
+    }//GEN-LAST:event_deleteButton1
+	
+	private void updateNhanVienTableButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateNhanVienTableButton
+        if(UpdateNhanVienTable()){
+            String text = "Update thành công";
+            JOptionPane.showMessageDialog(this, text, "Update", JOptionPane.WIDTH);
+        }
+    }//GEN-LAST:event_updateNhanVienTableButton
+
+    private void UpdateTenPhongBanBox(){
+        
+        PhongBan_BUS phongBanBUS = new PhongBan_BUS();
+        ArrayList<PhongBan_DTO> phongBanList = phongBanBUS.GetAllPhongBan(); // Trích xuất toàn bộ phòng ban
+    
+        maPhongBanBox.removeAllItems(); // Xoá danh sách cũ
+    
+        for (PhongBan_DTO phongBan : phongBanList)  // Tuỳ theo maPhongBan, hiện tên phòng ban
+            maPhongBanBox.addItem(Integer.toString(phongBan.getMaPhongBan()));
+        
+        maPhongBanBox.setSelectedIndex(-1);
+        tenPhongBanField2.setText("");
+    }
+
+    private void UpdateTenPhongBanBox(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateTenPhongBanBox
+        if(maPhongBanBox.getSelectedIndex() != -1){
+            int selectedPhongBan = Integer.parseInt(maPhongBanBox.getSelectedItem().toString());
+            PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
+            PhongBan_DTO phongBan = new PhongBan_DTO();
+         
+            
+            phongBan = phongBan_BUS.GetPhongBanByID(selectedPhongBan);
+        
+            tenPhongBanField2.setText(phongBan.getTenPhongBan());
+        }
+	}//GEN-LAST:event_UpdateTenPhongBanBox
+
+    private void UpdateTenChucVuBox(){
+        
+        ChucVu_BUS chucVuBUS = new ChucVu_BUS();
+        ArrayList<ChucVu_DTO> chucVuList = chucVuBUS.GetAllChucVu(); // Trích xuất toàn bộ phòng ban
+    
+        maChucVuBox.removeAllItems(); // Xoá danh sách cũ
+    
+        for (ChucVu_DTO chucVu : chucVuList)  // Tuỳ theo maChucVu, hiện tên chức vụ
+            maChucVuBox.addItem(Integer.toString(chucVu.getMaChucVu()));
+        
+        maChucVuBox.setSelectedIndex(-1);
+        tenChucVuField2.setText("");
+    }
+
+    private void UpdateTenChucVuBox(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateTenChucVuBox
+        if(maChucVuBox.getSelectedIndex() != -1){
+            int selectedPhongBan = Integer.parseInt(maChucVuBox.getSelectedItem().toString());
+            ChucVu_BUS chucVu_BUS = new ChucVu_BUS();
+            ChucVu_DTO chucVu = new ChucVu_DTO();
+         
+            
+            chucVu = chucVu_BUS.GetChucVuByID(selectedPhongBan);
+        
+            tenChucVuField2.setText(chucVu.getTenChucVu());
+        }
+    }//GEN-LAST:event_UpdateTenChucVuBox
+
+
+    //!
+    //! Phòng ban  
+    //!
+
+    private DefaultTableModel defaultPhongBanTableModel = new DefaultTableModel();
+    public void InitPhongBanTable(){
+        
+        phongBanTable.setModel(defaultPhongBanTableModel);
+        
+        defaultPhongBanTableModel.addColumn("Mã phòng ban");
+        defaultPhongBanTableModel.addColumn("Tên phòng ban");
+
+        ListSelectionModel listSelectionModel = phongBanTable.getSelectionModel();
+        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
+            @Override
+            public void valueChanged(ListSelectionEvent e){
+               
+                int rowIndex = phongBanTable.getSelectedRow();
+                if(rowIndex != -1){ 
+                    String maPhongBan = phongBanTable.getValueAt(rowIndex, 0).toString(); 
+                    String tenPhongBan = phongBanTable.getValueAt(rowIndex, 1).toString();
+
+                    maPhongBanField.setText(maPhongBan);
+                    tenPhongBanField.setText(tenPhongBan);
+                }  
+            }
+        });
+    }
+     
+    private boolean UpdatePhongBanTable(){
+        try {
+            PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
+            ArrayList<PhongBan_DTO> phongBanList = phongBan_BUS.GetAllPhongBan();
+            
+            defaultPhongBanTableModel.setRowCount(0);
+            
+            for (PhongBan_DTO phongBan : phongBanList) {      
+                defaultPhongBanTableModel.addRow(new Object[]{
+                    phongBan.getMaPhongBan(),
+                    phongBan.getTenPhongBan(),
+                });
+            } 
+        }
+        
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Lỗi trích xuất thông tin phòng ban: " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private void NewPhongBan(){
+        ClearTextFields(PhongBanCard);
+    }
+
+    private void AddPhongBan() {                                                                             
+        String maPhongBan = maPhongBanField.getText();
+        if (maPhongBan.isEmpty() == false){
+            String error = "Bấm nút 'New' trước khi thêm phòng ban.";
+            JOptionPane.showMessageDialog(this, error, "Add phòng ban", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateTenPhongBan(tenPhongBanField);
+        
+        PhongBan_DTO phongBan = new PhongBan_DTO();
+        
+        if(result == null)
+            phongBan.setTenPhongBan(tenPhongBanField.getText().trim());
+             
+        else{
+            JOptionPane.showMessageDialog(this, result, "Phòng ban Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
+        
+        if(phongBan_BUS.AddPhongBan(phongBan) == true)
+                JOptionPane.showMessageDialog(null, "Thêm phòng thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Thêm phòng ban không thành công!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdatePhongBanTable();
+    }
+    
+    private void EditPhongBan(){
+        String maPhongBan = maNhanVienField.getText();
+        if (maPhongBan.isEmpty() == true){
+            String error = "Chọn phòng ban trong danh sách trước khi sửa";
+            JOptionPane.showMessageDialog(this, error, "Edit nhân viên", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateTenPhongBan(tenPhongBanField);
+        
+        PhongBan_DTO phongBan = new PhongBan_DTO();
+        
+        if(result == null){
+            phongBan.setTenPhongBan(tenPhongBanField.getText().trim());
+            phongBan.setMaPhongBan(Integer.parseInt(maPhongBan));
+        }
+  
+        else{
+            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
+        
+        if(phongBan_BUS.EditPhongBan(phongBan) == true)
+                JOptionPane.showMessageDialog(null, "Sửa phòng ban thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Sửa phòng ban không thành công!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdatePhongBanTable();
+    }
+    
+    private void DeletePhongBan(){
+        String maPhongBan = maPhongBanField.getText();
+        if (maPhongBan.isEmpty() == true){
+            String error = "Chọn phòng ban trong danh sách trước khi xoá";
+            JOptionPane.showMessageDialog(this, error, "Delete phòng ban", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Show confirmation dialog
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc muốn xoá phòng ban ?",
+            "Xác nhận xoá",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+    
+        if (confirm == JOptionPane.YES_OPTION) {
+            // User clicked YES - proceed with deletion
+            PhongBan_BUS phongBan_BUS = new PhongBan_BUS();
+
+            if (phongBan_BUS.DeletePhongBan(Integer.parseInt(maPhongBan)) == true) {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá phòng ban thành công.", 
+                    "Thành công", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                
+                UpdatePhongBanTable();
+            } 
+            
+            else {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá phòng ban thất bại.", 
+                    "Lỗi", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } 
+        
+        else {
+            // User clicked NO or closed dialog - do nothing
+            return;
+        }
+    }
+
+    private void PhongBanCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PhongBanCardButton
+        cardLayout.show(cardPanel, "phongBanCard");
+    }//GEN-LAST:event_PhongBanCardButton
+ 
+    private void addButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton2
+        AddPhongBan();
+    }//GEN-LAST:event_addButton2
+
+    private void deleteButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton2
+        DeletePhongBan();
+    }//GEN-LAST:event_deleteButton2
+
+    private void updateButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton2
+        if(UpdatePhongBanTable()){
+            String text = "Update thành công";
+            JOptionPane.showMessageDialog(this, text, "Update", JOptionPane.WIDTH);
+        }
+    }//GEN-LAST:event_updateButton2
+
+    private void newButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton2
+        NewPhongBan();
+    }//GEN-LAST:event_newButton2
+
+    private void editButton2(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton2
+        EditPhongBan();
+    }//GEN-LAST:event_editButton2
+
+    //!
+    //! Chức vụ
+    //!
+    
+    private void NewChucVu(){
+        ClearTextFields(ChucVuCard);
+    }
+    
+    private DefaultTableModel defaultChucVuTableModel = new DefaultTableModel();
+    public void InitChucVuTable(){
+        
+        chucVuTable.setModel(defaultChucVuTableModel);
+        
+        defaultChucVuTableModel.addColumn("Mã chức vụ");
+        defaultChucVuTableModel.addColumn("Tên chức vụ");
+
+        ListSelectionModel listSelectionModel = chucVuTable.getSelectionModel();
+        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
+            @Override
+            public void valueChanged(ListSelectionEvent e){
+               
+                int rowIndex = chucVuTable.getSelectedRow();
+                if(rowIndex != -1){ 
+                    String maChucVu = chucVuTable.getValueAt(rowIndex, 0).toString(); 
+                    String tenChucVu = chucVuTable.getValueAt(rowIndex, 1).toString();
+                    
+                    maChucVuField.setText(maChucVu);
+                    tenChucVuField.setText(tenChucVu);
+                }  
+            }
+        });
+    }
+
+    private void AddChucVu() {                                                                             
+        String maChucVu = maChucVuField.getText();
+        if (maChucVu.isEmpty() == false){
+            String error = "Bấm nút 'New' trước khi thêm phòng ban.";
+            JOptionPane.showMessageDialog(this, error, "Add phòng ban", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateTenChucVu(tenChucVuField);
+        
+        ChucVu_DTO phongBan = new ChucVu_DTO();
+        
+        if(result == null)
+            phongBan.setTenChucVu(tenChucVuField.getText().trim());
+             
+        else{
+            JOptionPane.showMessageDialog(this, result, "Phòng ban Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        ChucVu_BUS phongBan_BUS = new ChucVu_BUS();
+        
+        if(phongBan_BUS.AddChucVu(phongBan) == true)
+                JOptionPane.showMessageDialog(null, "Thêm phòng thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Thêm phòng ban không thành công!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdateChucVuTable();
+    }
+    
+    private void EditChucVu(){
+        String maChucVu = maNhanVienField.getText();
+        if (maChucVu.isEmpty() == true){
+            String error = "Chọn phòng ban trong danh sách trước khi sửa";
+            JOptionPane.showMessageDialog(this, error, "Edit nhân viên", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateTenChucVu(tenChucVuField);
+        
+        ChucVu_DTO phongBan = new ChucVu_DTO();
+        
+        if(result == null){
+            phongBan.setTenChucVu(tenChucVuField.getText().trim());
+            phongBan.setMaChucVu(Integer.parseInt(maChucVu));
+        }
+  
+        else{
+            JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        ChucVu_BUS phongBan_BUS = new ChucVu_BUS();
+        
+        if(phongBan_BUS.EditChucVu(phongBan) == true)
+                JOptionPane.showMessageDialog(null, "Sửa phòng ban thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Sửa phòng ban không thành công!"); 
+        
+        // Sau khi thêm employee thì update lại table NhanVien list
+        UpdateChucVuTable();
+    }
+    
+    private void DeleteChucVu(){
+        String maChucVu = maChucVuField.getText();
+        if (maChucVu.isEmpty() == true){
+            String error = "Chọn phòng ban trong danh sách trước khi xoá";
+            JOptionPane.showMessageDialog(this, error, "Delete phòng ban", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Show confirmation dialog
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc muốn xoá phòng ban ?",
+            "Xác nhận xoá",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+    
+        if (confirm == JOptionPane.YES_OPTION) {
+            // User clicked YES - proceed with deletion
+            ChucVu_BUS phongBan_BUS = new ChucVu_BUS();
+
+            if (phongBan_BUS.DeleteChucVu(Integer.parseInt(maChucVu)) == true) {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá phòng ban thành công.", 
+                    "Thành công", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                
+                UpdateChucVuTable();
+            } 
+            
+            else {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá phòng ban thất bại.", 
+                    "Lỗi", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } 
+        
+        else {
+            // User clicked NO or closed dialog - do nothing
+            return;
+        }
+    }
+      
+    private boolean UpdateChucVuTable(){
+        try {
+            ChucVu_BUS chucVu_BUS = new ChucVu_BUS();
+            ArrayList<ChucVu_DTO> chucVuList = chucVu_BUS.GetAllChucVu();
+            
+            defaultChucVuTableModel.setRowCount(0);
+            
+            for (ChucVu_DTO chucVu : chucVuList) {      
+                defaultChucVuTableModel.addRow(new Object[]{
+                    chucVu.getMaChucVu(),
+                    chucVu.getTenChucVu(),
+                });
+            } 
+        }
+        
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Lỗi trích xuất thông tin chức vụ: " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            
+            return false;
+        }
+        
+        return true;
+    }
+
+    private void ChucVuCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChucVuCardButton
+        cardLayout.show(cardPanel, "chucVuCard");
+    }//GEN-LAST:event_ChucVuCardButton
+    
+    private void addButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton3
+        AddChucVu();
+    }//GEN-LAST:event_addButton3
+
+    private void deleteButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton3
+        DeleteChucVu();
+    }//GEN-LAST:event_deleteButton3
+
+    private void updateButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton3
+        if(UpdateChucVuTable()){
+            String text = "Update thành công";
+            JOptionPane.showMessageDialog(this, text, "Update", JOptionPane.WIDTH);
+        }
+    }//GEN-LAST:event_updateButton3
+
+    private void newButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton3
+        NewChucVu();
+    }//GEN-LAST:event_newButton3
+
+    private void editButton3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton3
+        EditChucVu();
+    }//GEN-LAST:event_editButton3
+    
+    //!
+    //! Hợp đồng
+    //!
+    
+    private DefaultTableModel defaultHopDongTableModel = new DefaultTableModel();
+    public void InitHopDongTable(){
+        
+        hopDongTable.setModel(defaultHopDongTableModel);
+        
+        defaultHopDongTableModel.addColumn("Mã hợp đồng");
+        defaultHopDongTableModel.addColumn("Mã nhân viên");
+        defaultHopDongTableModel.addColumn("Ngày bắt đầu");
+        defaultHopDongTableModel.addColumn("Ngày kết thúc");
+
+        ListSelectionModel listSelectionModel = hopDongTable.getSelectionModel();
+        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
+            @Override
+            public void valueChanged(ListSelectionEvent e){
+               
+                int rowIndex = hopDongTable.getSelectedRow();
+                if(rowIndex != -1){ 
+                    String maHopDong = hopDongTable.getValueAt(rowIndex, 0).toString();
+                    String maNhanVien = hopDongTable.getValueAt(rowIndex, 1).toString();
+                    String ngayBatDau = hopDongTable.getValueAt(rowIndex, 2).toString();
+                    String ngayKetThuc = hopDongTable.getValueAt(rowIndex, 3).toString();
+                    
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    
+                    try {
+                        Date ngayBatDauFormat = dateFormat.parse(ngayBatDau);
+                        Date ngayKetThucFormat = dateFormat.parse(ngayKetThuc);
+                        
+                        ngayBatDauChooser.setDateFormatString("dd/MM/yyyy");
+                        ngayBatDauChooser.setDate(ngayBatDauFormat);
+                        
+                        ngayKetThucChooser.setDateFormatString("dd/MM/yyyy");
+                        ngayKetThucChooser.setDate(ngayKetThucFormat);
+                    }                    
+                    catch (ParseException d) {
+                        d.printStackTrace();               
+                    }  
+                    
+                    maHopDongField.setText(maHopDong);
+                    maNhanVienBox.setSelectedItem(maNhanVien);  
+                }
+            }
+        });
+    } 
+    private boolean UpdateHopDongTable(){
+        try {
+            HopDong_BUS hopDong_BUS = new HopDong_BUS();
+            ArrayList<HopDong_DTO> hopDongList = hopDong_BUS.GetAllHopDong();
+            
+            defaultHopDongTableModel.setRowCount(0);            
+            for (HopDong_DTO hopDong : hopDongList) {
+                
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                
+                String ngayBatDauFormatted = "";
+                String ngayKetThucFormatted = "";
+                ngayBatDauFormatted = dateFormat.format(hopDong.getNgayBatDau());
+                ngayKetThucFormatted = dateFormat.format(hopDong.getNgayKetThuc());
+                
+                defaultHopDongTableModel.addRow(new Object[]{
+                    hopDong.getMaHopDong(),
+                    hopDong.getMaNhanVien(),
+                    ngayBatDauFormatted,
+                    ngayKetThucFormatted,
+                });
+            }
+        }
+        
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Lỗi trích xuất thông tin phòng ban: " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private void NewHopDong(){
+        ClearTextFields(HopDongCard);
+    }
+
+    private void AddHopDong() {                                                                             
+        String maHopDong = maHopDongField.getText();
+        if (maHopDong.isEmpty() == false){
+            String error = "Bấm nút 'New' trước khi thêm hợp đồng.";
+            JOptionPane.showMessageDialog(this, error, "Add hợp đồng", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateHopDong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+        
+        HopDong_DTO hopDong = new HopDong_DTO();
+        
+        if(result == null)
+            hopDong = validate.ReturnHopDong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+      
+        else{
+            JOptionPane.showMessageDialog(this, result, "Hợp đồng Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        HopDong_BUS hopDong_BUS = new HopDong_BUS();
+        
+        if(hopDong_BUS.AddHopDong(hopDong) == true)
+                JOptionPane.showMessageDialog(null, "Thêm phòng thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Thêm phòng ban không thành công!"); 
+        
+
+        UpdateHopDongTable();
+    }
+    
+    private void EditHopDong(){
+        String maHopDong = maHopDongField.getText();
+        if (maHopDong.isEmpty() == false){
+            String error = "Bấm nút 'New' trước khi thêm hợp đồng.";
+            JOptionPane.showMessageDialog(this, error, "Add hợp đồng", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateHopDong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+        
+        HopDong_DTO hopDong = new HopDong_DTO();
+        
+        if(result == null)
+            hopDong = validate.ReturnHopDong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+      
+        else{
+            JOptionPane.showMessageDialog(this, result, "Hợp đồng Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        HopDong_BUS hopDong_BUS = new HopDong_BUS();
+        
+        if(hopDong_BUS.EditHopDong(hopDong) == true)
+            JOptionPane.showMessageDialog(null, "Sửa hợp đồng thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Sửa hợp đồng không thành công!"); 
+        
+
+        UpdateHopDongTable();
+    }
+    
+    private void DeleteHopDong(){
+        String maHopDong = maHopDongField.getText();
+        if (maHopDong.isEmpty() == true){
+            String error = "Chọn phòng ban trong danh sách trước khi xoá";
+            JOptionPane.showMessageDialog(this, error, "Delete phòng ban", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Show confirmation dialog
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc muốn xoá phòng ban ?",
+            "Xác nhận xoá",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+    
+        if (confirm == JOptionPane.YES_OPTION) {
+            // User clicked YES - proceed with deletion
+            HopDong_BUS hopDong_BUS = new HopDong_BUS();
+
+            if (hopDong_BUS.DeleteHopDong(Integer.parseInt(maHopDong)) == true) {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá hợp đồng thành công.", 
+                    "Thành công", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                
+                UpdateHopDongTable();
+            } 
+            
+            else {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá hợp đồng thất bại.", 
+                    "Lỗi", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } 
+        
+        else {
+            // User clicked NO or closed dialog - do nothing
+            return;
+        }
+    }
+    
+    private void HopDongCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HopDongCardButton
+        cardLayout.show(cardPanel, "hopDongCard");
+        UpdateTenMaNhanVienBox();
+    }//GEN-LAST:event_HopDongCardButton
+
+    private void newButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton4
+        NewHopDong();
+    }//GEN-LAST:event_newButton4
+    
+    private void addButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton4
+        AddHopDong();
+    }//GEN-LAST:event_addButton4
+
+    private void editButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton4
+        EditHopDong();
+    }//GEN-LAST:event_editButton4
+
+    private void deleteButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton4
+        DeleteHopDong();
+    }//GEN-LAST:event_deleteButton4
+
+    private void updateButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton4
+        if(UpdateHopDongTable()){
+            String text = "Update thành công";
+            JOptionPane.showMessageDialog(this, text, "Update", JOptionPane.WIDTH);
+        }  
+    }//GEN-LAST:event_updateButton4
+
+    
+    private void UpdateTenMaNhanVienBox() {                                        
+        NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+        ArrayList<NhanVien_DTO> nhanVienList = nhanVien_BUS.GetAllNhanVien();
+    
+        maNhanVienBox.removeAllItems();
+    
+        for (NhanVien_DTO nhanVien : nhanVienList)
+            maNhanVienBox.addItem(Integer.toString(nhanVien.getMaNhanVien()));
+        
+        maNhanVienBox.setSelectedIndex(-1);
+        tenNhanVienField.setText("");
+    }
+    
+    private void UpdateTenMaNhanVienBox(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateTenMaNhanVienBox
+        if(maNhanVienBox.getSelectedIndex() != -1){
+            int selectedNhanVien = Integer.parseInt(maNhanVienBox.getSelectedItem().toString());
+            
+            NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+        
+            NhanVien_DTO nhanVien = new NhanVien_DTO();
+            nhanVien = nhanVien_BUS.GetNhanVienById(selectedNhanVien);
+            
+            tenNhanVienField.setText(nhanVien.getHoTen());
+        }
+    }//GEN-LAST:event_UpdateTenMaNhanVienBox
+    
 }

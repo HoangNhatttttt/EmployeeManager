@@ -1,4 +1,5 @@
 package com.em.BUS;
+import com.em.DTO.HopDong_DTO;
 import com.em.DTO.NhanVien_DTO;
 import com.toedter.calendar.JDateChooser;
 import java.util.Calendar;
@@ -261,5 +262,66 @@ public class Validates_BUS{
             return "Tên chức không bắt đầu bằng khoảng trắng";
         
         return null;
+    }
+    
+    //
+    // Hợp đồng
+    //
+    
+    public String ValidateMaNhanVien(JComboBox maNhanVienBox){
+        if (maNhanVienBox.getSelectedItem() == null)
+            return "Mã nhân viên không được để trống";
+        
+        return null;
+    }
+    
+    public String ValidateNgayBatDau_NgayKetThuc(JDateChooser ngayBatDateChooser, JDateChooser ngayKetThucChooser){
+        
+        Date ngayBatDau = ngayBatDateChooser.getDate();
+        Date ngayKetThuc = ngayKetThucChooser.getDate();
+        Date today = new Date();
+        
+        // Check rỗng
+        if(ngayBatDau == null)
+            return "Ngày bắt đầu không được để trống";
+        if(ngayKetThuc == null)
+            return "Ngày kết thúc không được để trống";
+        
+        if(ngayBatDau.before(today)){
+            return "Hợp đồng phải bắt đầu tối thiểu ngày hôm nay.";
+        }
+        
+        if(ngayKetThuc.before(ngayBatDau))
+            return "Ngày kết thúc phải sau ngày bất đầu";
+        
+        return null;
+    }
+    
+    public String ValidateHopDong(JComboBox maNhanVienBox, JDateChooser ngayBatDauChooser, JDateChooser ngayKetThucChooser){
+        String error;
+        
+        error = ValidateMaNhanVien(maNhanVienBox);
+        if(error != null) {
+            maNhanVienBox.requestFocus();
+            return error;
+        }
+         
+        error = ValidateNgayBatDau_NgayKetThuc(ngayBatDauChooser, ngayKetThucChooser);
+        if(error != null){
+            ngayBatDauChooser.requestFocus();
+            return error;
+        }
+        
+        return null;
+    }
+    
+    public HopDong_DTO ReturnHopDong(JComboBox maNhanVienBox, JDateChooser ngayBatDateChooser, JDateChooser ngayKetThucChooser){
+        int maNhanVien = Integer.parseInt(maNhanVienBox.getSelectedItem().toString());
+        Date ngayBatDau = ngayBatDateChooser.getDate();
+        Date ngayKetThuc = ngayKetThucChooser.getDate();
+        
+        HopDong_DTO hopDong = new HopDong_DTO(maNhanVien, ngayBatDau, ngayKetThuc);
+        
+        return hopDong;
     }
 }

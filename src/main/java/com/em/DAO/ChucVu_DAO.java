@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class ChucVu_DAO{
+public class ChucVu_DAO{    
     public boolean AddChucVu(ChucVu_DTO chucVu) {
         String sql = "INSERT INTO chucvu (tenChucVu) VALUES (?)";
         
