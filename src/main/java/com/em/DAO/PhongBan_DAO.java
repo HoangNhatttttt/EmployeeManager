@@ -10,6 +10,14 @@ import java.util.ArrayList;
 
 public class PhongBan_DAO{
     
+    /*
+    SQL Database: 
+    CREATE TABLE `phongban` (
+        `maPhongBan` int(11) NOT NULL,
+        `tenPhongBan` varchar(50) NOT NULL
+    )
+    */
+    
     public boolean AddPhongBan(PhongBan_DTO phongBan) {
         String sql = "INSERT INTO phongban (tenPhongBan) VALUES (?)";
         

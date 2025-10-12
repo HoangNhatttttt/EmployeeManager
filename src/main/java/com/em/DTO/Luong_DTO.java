@@ -21,12 +21,12 @@ public class Luong_DTO{
     public void setMaLuong(int maLuong){ this.maLuong = maLuong; } 
     public void setMaNhanVien(int maNhanVien){ this.maNhanVien = maNhanVien; }   
     public void setLuongCoBan(int luongCoBan){ this.luongCoBan = luongCoBan; }
-    public void setGioCoBan(int soGioCoBan){ this.soGioCoban = soGioCoBan; }
+    public void setSoGioCoBan(int soGioCoBan){ this.soGioCoban = soGioCoBan; }
     
     public int getMaLuong(){ return maLuong; } 
     public int getMaNhanVien(){ return maNhanVien; }   
     public int getLuongCoBan(){ return luongCoBan; }
-    public int getGioCoBan(){ return soGioCoban; }
+    public int getSoGioCoBan(){ return soGioCoban; }
    
     public void OutputLuong(){
         System.out.println("Mã lương: " + maLuong);

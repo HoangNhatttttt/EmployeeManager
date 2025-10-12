@@ -31,7 +31,7 @@ public class HopDong_DTO{
     public Date getNgayBatDau(){ return ngayBatDau; } 
     public Date getNgayKetThuc(){ return ngayKetThuc; } 
     
-    public void OutputLuong(){
+    public void OutputHopDong(){
         System.out.println("Mã hợp đồng: " + maHopDong);
         System.out.println("Mã nhân viên: " + maNhanVien);
         System.out.println("Ngày bắt đầu: " + ngayBatDau); // YYYY/MM/DD

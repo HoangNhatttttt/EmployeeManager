@@ -1,6 +1,7 @@
+
 package com.em.DAO;
 
-import com.em.DTO.Luong_DTO;
+import com.em.DTO.ChamCong_DTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,23 +9,25 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-
-public class Luong_DAO{
-    public boolean AddLuong(Luong_DTO luong) {
-        String sql = "INSERT INTO luong (maNhanVien, luongCoBan, soGioCoBan) VALUES (?, ?, ?)";
+public class ChamCong_DAO{
+    public boolean AddChamCong(ChamCong_DTO chamCong) {
+        String sql = "INSERT INTO chamcong (maNhanVien, ngayBatDau, ngayKetThuc) VALUES (?, ?, ?)";
         
         try (Connection connection = DatabaseConnect.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
-                        
-            preparedStatement.setInt(1, luong.getMaNhanVien());
-            preparedStatement.setInt(2, luong.getLuongCoBan());
-            preparedStatement.setInt(3, luong.getSoGioCoBan());
+            
+            java.sql.Date sqlNgaybatDau = new java.sql.Date(chamCong.getNgayBatDau().getTime());
+            java.sql.Date sqlNgayKetThuc = new java.sql.Date(chamCong.getNgayKetThuc().getTime());
+            
+            preparedStatement.setInt(1, chamCong.getMaNhanVien());
+            preparedStatement.setDate(2, sqlNgaybatDau);
+            preparedStatement.setDate(3, sqlNgayKetThuc);
                         
             int rowsInserted = preparedStatement.executeUpdate(); 
             if (rowsInserted > 0) { 
                 try (ResultSet resultSet = preparedStatement.getGeneratedKeys()){ 
                     if (resultSet.next() == true) 
-                        luong.setMaLuong(resultSet.getInt(1)); 
+                        chamCong.setMaChamCong(resultSet.getInt(1)); 
                 }
             }
             
@@ -39,15 +42,19 @@ public class Luong_DAO{
         }
     }
     
-    public boolean EditLuong(Luong_DTO luong) {   
-        String sql = "UPDATE luong SET maNhanVien = ?, luongCoBan = ?, soGioCoBan = ? WHERE maLuong = ?";
+    public boolean EditChamCong(ChamCong_DTO chamCong) {   
+        String sql = "UPDATE chamcong SET maNhanVien = ?, ngayBatDau = ?, ngayKetThuc = ? WHERE maChamCong = ?";
         
         try (Connection connection = DatabaseConnect.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             
-            preparedStatement.setInt(1, luong.getMaNhanVien());
-            preparedStatement.setInt(2, luong.getLuongCoBan());
-            preparedStatement.setInt(3, luong.getSoGioCoBan());
+            java.sql.Date sqlNgaybatDau = new java.sql.Date( chamCong.getNgayBatDau().getTime());
+            java.sql.Date sqlNgayKetThuc = new java.sql.Date( chamCong.getNgayKetThuc().getTime());
+            
+            preparedStatement.setInt(1, chamCong.getMaNhanVien());
+            preparedStatement.setDate(2, sqlNgaybatDau);
+            preparedStatement.setDate(3, sqlNgayKetThuc);  
+            preparedStatement.setInt(4, chamCong.getMaChamCong());
 
             int rowsUpdated = preparedStatement.executeUpdate();
             
@@ -61,13 +68,13 @@ public class Luong_DAO{
         }
     }
     
-    public boolean DeleteLuong(int maLuong) {
-        String sql = "DELETE FROM luong WHERE maLuong = ?";
+    public boolean DeleteChamCong(int maChamCong) {
+        String sql = "DELETE FROM chamcong WHERE maChamCong = ?";
         
         try (Connection connection = DatabaseConnect.getConnection();
         PreparedStatement data = connection.prepareStatement(sql)) {
             
-            data.setInt(1, maLuong);
+            data.setInt(1, maChamCong);
             int rowsDeleted = data.executeUpdate();
             return rowsDeleted > 0;
             
@@ -77,56 +84,53 @@ public class Luong_DAO{
         }
     }
     
-    public ArrayList<Luong_DTO> GetAllLuong() {
-        ArrayList<Luong_DTO> luongList = new ArrayList<>();
-        String sql = "SELECT * FROM Luong";    
+    public ArrayList<ChamCong_DTO> GetAllChamCong() {
+        ArrayList<ChamCong_DTO> chamCongList = new ArrayList<>();
+        String sql = "SELECT * FROM ChamCong";    
         
         try (Connection connect = DatabaseConnect.getConnection();
             Statement statement = connect.createStatement();
             ResultSet resultSet = statement.executeQuery(sql)) {
             
             while (resultSet.next()){ 
-                Luong_DTO luong = new Luong_DTO();
+                ChamCong_DTO chamCong = new ChamCong_DTO();
                 
-                luong.setMaLuong(resultSet.getInt("maLuong"));
-                luong.setMaNhanVien(resultSet.getInt("maNhanVien"));
-                luong.setLuongCoBan(resultSet.getInt("luongCoBan"));
-                luong.setSoGioCoBan(resultSet.getInt("soGioCoBan"));
+                chamCong.setMaChamCong(resultSet.getInt("maChamCong"));
+                chamCong.setMaNhanVien(resultSet.getInt("maNhanVien"));
+                chamCong.setNgayBatDau(resultSet.getDate("ngayBatDau"));
+                chamCong.setNgayKetThuc(resultSet.getDate("ngayKetThuc"));
                 
-                luongList.add(luong);
+                chamCongList.add(chamCong);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         
-        return luongList;
+        return chamCongList;
     }
     
-    public Luong_DTO GetLuongByID(int maLuong) {
-        String sql = "SELECT * FROM luong WHERE maLuong = ?";
+    public ChamCong_DTO GetChamCongByID(int maChamCong) {
+        String sql = "SELECT * FROM chamcong WHERE maChamCong = ?";
         
-        Luong_DTO luong = new Luong_DTO();
+        ChamCong_DTO chamCong = new ChamCong_DTO();
         
         try (Connection connection = DatabaseConnect.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             
-            preparedStatement.setInt(1, maLuong);
+            preparedStatement.setInt(1, maChamCong);
             ResultSet resultSet = preparedStatement.executeQuery();
                  
             if (resultSet.next()) {
                 
-                luong.setMaLuong(resultSet.getInt("maLuong"));
-                luong.setMaNhanVien(resultSet.getInt("maNhanVien"));
-                luong.setLuongCoBan(resultSet.getInt("luongCoBan"));
-                luong.setSoGioCoBan(resultSet.getInt("soGioCoBan"));
+                chamCong.setMaChamCong(resultSet.getInt("maChamCong"));
+                chamCong.setMaNhanVien(resultSet.getInt("maNhanVien"));
+                chamCong.setNgayBatDau(resultSet.getDate("ngayBatDau"));
+                chamCong.setNgayKetThuc(resultSet.getDate("ngayKetThuc"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         
-        return luong;
-    }
-    
-    
-    
+        return chamCong;
+    } 
 }

@@ -1,5 +1,6 @@
 package com.em.BUS;
 import com.em.DTO.HopDong_DTO;
+import com.em.DTO.Luong_DTO;
 import com.em.DTO.NhanVien_DTO;
 import com.toedter.calendar.JDateChooser;
 import java.util.Calendar;
@@ -323,5 +324,84 @@ public class Validates_BUS{
         HopDong_DTO hopDong = new HopDong_DTO(maNhanVien, ngayBatDau, ngayKetThuc);
         
         return hopDong;
+    }
+    
+    //
+    // Lương
+    //
+    
+    public String ValidateLuongCoBan(JTextField luongCoBanField){
+        String luongCoBanText = luongCoBanField.getText();
+        
+        if(ValidateIsEmpty(luongCoBanText))
+            return "Lương cơ bản không được để trống";
+  
+        if(ValidateIsInteger(luongCoBanText) == false)
+            return "Lương cơ bản phải là số";
+        
+        if(ValidateIsStartWithWhitespace(luongCoBanText))
+            return "Lương cơ bản không được bắt đầu bằng dấu cách";
+        
+        int luongCoBan = Integer.parseInt(luongCoBanText);
+        
+        if(luongCoBan <= 0)
+            return "Lương cơ bản phải lớn hơn 0";
+        
+        return null;
+    }
+    
+    public String ValidateSoGioCoBan(JTextField soGioCoBanField){
+        String soGioCoBanText = soGioCoBanField.getText();
+        
+        if(ValidateIsEmpty(soGioCoBanText))
+            return "Số giờ cơ bản không được để trống";
+  
+        if(ValidateIsInteger(soGioCoBanText) == false)
+            return "Số giờ cơ bản phải là số";
+        
+        if(ValidateIsStartWithWhitespace(soGioCoBanText))
+            return "Số giờ cơ bản không được bắt đầu bằng dấu cách";
+        
+        int luongCoBan = Integer.parseInt(soGioCoBanText);
+        
+        if(luongCoBan <= 0)
+            return "Số giờ cơ bản phải lớn hơn 0";
+        
+        
+        return null;
+    }
+    
+    public String ValidateLuong(JComboBox maNhanVienBox, JTextField luongCoBanField, JTextField soGioCoBanField){
+        String error;
+        
+        error = ValidateMaNhanVien(maNhanVienBox);
+        if(error != null) {
+            maNhanVienBox.requestFocus();
+            return error;
+        }
+         
+        error = ValidateLuongCoBan(luongCoBanField);
+        if(error != null){
+            luongCoBanField.requestFocus();
+            return error;
+        }
+        
+        error = ValidateSoGioCoBan(soGioCoBanField);
+        if(error != null){
+            soGioCoBanField.requestFocus();
+            return error;
+        }
+        
+        return null;
+    }
+    
+    public Luong_DTO ReturnLuong(JComboBox maNhanVienBox, JTextField luongCoBanField, JTextField soGioCoBanField){
+        int maNhanVien = Integer.parseInt(maNhanVienBox.getSelectedItem().toString());
+        int luongCoBan = Integer.parseInt(luongCoBanField.getText());
+        int soGioCoBan = Integer.parseInt(soGioCoBanField.getText());
+        
+        Luong_DTO luong = new Luong_DTO(maNhanVien, luongCoBan, soGioCoBan);
+        
+        return luong;
     }
 }

@@ -22,7 +22,7 @@ public class PhongBan_DTO{
     public int getMaPhongBan(){ return maPhongBan; } 
     public String getTenPhongBan(){ return tenPhongBan; }   
    
-    public void OutputLuong(){
+    public void OutputPhongBan(){
         System.out.println("Mã phòng ban: " + maPhongBan);
         System.out.println("Tên phòng ban: " + tenPhongBan);
     }

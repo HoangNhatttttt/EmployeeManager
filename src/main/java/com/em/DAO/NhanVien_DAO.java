@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class NhanVien_DAO{
+   
     
     public boolean AddNhanVien(NhanVien_DTO nhanvien) {
         String sql = "INSERT INTO nhanvien (hoTen, ngaySinh, gioiTinh, diaChi, soDienThoai, maPhongBan, maChucVu, trangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -28,13 +29,13 @@ public class NhanVien_DAO{
             preparedStatement.setInt(7, nhanvien.getMaChucVu());
             preparedStatement.setString(8, nhanvien.getTrangThai());
             
-            int rowsInserted = preparedStatement.executeUpdate(); // Hiện số dòng đã chèn vào database
+            int rowsInserted = preparedStatement.executeUpdate();
             
             if (rowsInserted > 0) { 
-                try (ResultSet resultSet = preparedStatement.getGeneratedKeys()){
-                    if (resultSet.next() == true)
-                        nhanvien.setMaNhanVien(resultSet.getInt(1));
-
+                try (ResultSet resultSet = preparedStatement.getGeneratedKeys()){ // getGeneratedKeys trích xuất Id được tạo tự động khi insert nhanvien vào database
+                    if (resultSet.next() == true) // true khi có dòng kế tiếp (dòng id được tạo tự động), không trả về false
+                        nhanvien.setMaNhanVien(resultSet.getInt(1)); // resultSet.getInt(1) trich xuất giá trị integer tại cột 1 (cột maNhanVien)
+                        
                 }
             }
             
@@ -107,11 +108,6 @@ public class NhanVien_DAO{
         try (Connection connect = DatabaseConnect.getConnection();
             Statement statement = connect.createStatement();
             ResultSet resultSet = statement.executeQuery(sql)) {
-            
-            // Trong trường hợp này resultSet chứa toàn bộ data của nhanvien trong database
-            /* Row 1: [id=1, hoTen="Nguyễn Văn A", ...]
-               Row 2: [id=2, hoTen="Nguyễn Văn B", ...]
-               Row 3: [id=3, hoTen="Nguyễn Văn C", ...] */
             
             while (resultSet.next()){ // Loop qua từng dòng nhanvien, trích xuất thông tin nhanvien trong dòng đó
                 NhanVien_DTO nhanvien = new NhanVien_DTO();

@@ -36,6 +36,11 @@
             <artifactId>jcalendar</artifactId>
             <version>1.4</version>
         </dependency>
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>JTimeChooser_0.1.0</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
     </dependencies>
     <name>EmployeeManager</name>
 </project>
