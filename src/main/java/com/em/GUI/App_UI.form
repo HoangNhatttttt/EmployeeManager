@@ -33,7 +33,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="bangMenu" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="1133" max="32767" attributes="0"/>
+              <EmptySpace pref="1130" max="32767" attributes="0"/>
           </Group>
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
@@ -163,7 +163,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="menuButton5">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jButton5"/>
+            <Property name="text" type="java.lang.String" value="L&#x1b0;&#x1a1;ng"/>
           </Properties>
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
@@ -171,7 +171,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="menuButton6">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jButton6"/>
+            <Property name="text" type="java.lang.String" value="Ch&#x1ea5;m c&#xf4;ng"/>
           </Properties>
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
@@ -179,7 +179,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="menuButton7">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jButton7"/>
+            <Property name="text" type="java.lang.String" value="T&#x103;ng ca"/>
           </Properties>
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
@@ -187,7 +187,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="menuButton8">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jButton8"/>
+            <Property name="text" type="java.lang.String" value="Ngh&#x1ec9; ph&#xe9;p"/>
           </Properties>
           <AccessibilityProperties>
             <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
@@ -1104,10 +1104,10 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="menuHopDong" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="bangHopDong" alignment="1" min="-2" pref="370" max="-2" attributes="0"/>
+                          <Component id="menuHopDong" min="-2" max="-2" attributes="0"/>
+                          <Component id="bangHopDong" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="danhSachHopDong" min="-2" pref="236" max="-2" attributes="0"/>
@@ -1134,11 +1134,22 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="JLabel16" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="JLabel15" alignment="0" min="-2" pref="104" max="-2" attributes="0"/>
+                              <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="tenPhongBanField3" alignment="0" pref="324" max="32767" attributes="0"/>
-                              <Component id="maPhongBanField2" alignment="0" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                                  <Component id="maHopDongField" min="-2" pref="324" max="-2" attributes="0"/>
+                                  <Component id="maNhanVienBox" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Group type="103" groupAlignment="1" attributes="0">
+                                      <Component id="ngayKetThucChooser" min="-2" max="-2" attributes="0"/>
+                                      <Component id="ngayBatDauChooser" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="234" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace pref="418" max="32767" attributes="0"/>
                       </Group>
@@ -1150,14 +1161,24 @@
                           <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="JLabel15" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="maPhongBanField2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="maHopDongField" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="JLabel16" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tenPhongBanField3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="maNhanVienBox" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="289" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
+                              <Component id="ngayBatDauChooser" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
+                              <Component id="ngayKetThucChooser" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace pref="208" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1165,20 +1186,47 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="JLabel15">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="M&#xe3; ph&#xf2;ng ban"/>
+                    <Property name="text" type="java.lang.String" value="M&#xe3; h&#x1ee3;p &#x111;&#x1ed3;ng"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="JLabel16">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="T&#xea;n ph&#xf2;ng ban"/>
+                    <Property name="text" type="java.lang.String" value="M&#xe3; nh&#xe2;n vi&#xea;n"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="maPhongBanField2">
+                <Component class="javax.swing.JLabel" name="jLabel17">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Ng&#xe0;y b&#x1eaf;t &#x111;&#x1ea7;u"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="jLabel18">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Ng&#xe0;y k&#x1ebf;t th&#xfa;c"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="maHopDongField">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="tenPhongBanField3">
+                <Component class="javax.swing.JComboBox" name="maNhanVienBox">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                      <StringArray count="4">
+                        <StringItem index="0" value="Item 1"/>
+                        <StringItem index="1" value="Item 2"/>
+                        <StringItem index="2" value="Item 3"/>
+                        <StringItem index="3" value="Item 4"/>
+                      </StringArray>
+                    </Property>
+                  </Properties>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                  </AuxValues>
+                </Component>
+                <Component class="com.toedter.calendar.JDateChooser" name="ngayBatDauChooser">
+                </Component>
+                <Component class="com.toedter.calendar.JDateChooser" name="ngayKetThucChooser">
                 </Component>
               </SubComponents>
             </Container>

@@ -791,6 +791,7 @@ public class App_UI extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+
         genderButtonGroup = new javax.swing.ButtonGroup();
         bangMenu = new javax.swing.JPanel();
         menuButton1 = new javax.swing.JButton();
@@ -865,8 +866,12 @@ public class App_UI extends javax.swing.JFrame {
         bangHopDong = new javax.swing.JPanel();
         JLabel15 = new javax.swing.JLabel();
         JLabel16 = new javax.swing.JLabel();
-        maPhongBanField2 = new javax.swing.JTextField();
-        tenPhongBanField3 = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        maHopDongField = new javax.swing.JTextField();
+        maNhanVienBox = new javax.swing.JComboBox<>();
+        ngayBatDauChooser = new com.toedter.calendar.JDateChooser();
+        ngayKetThucChooser = new com.toedter.calendar.JDateChooser();
         danhSachHopDong = new javax.swing.JScrollPane();
         hopDongTable = new javax.swing.JTable();
         menuHopDong = new javax.swing.JPanel();
@@ -910,13 +915,13 @@ public class App_UI extends javax.swing.JFrame {
             }
         });
 
-        menuButton5.setText("jButton5");
+        menuButton5.setText("Lương");
 
-        menuButton6.setText("jButton6");
+        menuButton6.setText("Chấm công");
 
-        menuButton7.setText("jButton7");
+        menuButton7.setText("Tăng ca");
 
-        menuButton8.setText("jButton8");
+        menuButton8.setText("Nghỉ phép");
 
         javax.swing.GroupLayout bangMenuLayout = new javax.swing.GroupLayout(bangMenu);
         bangMenu.setLayout(bangMenuLayout);
@@ -1532,11 +1537,17 @@ public class App_UI extends javax.swing.JFrame {
 
         bangHopDong.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        JLabel15.setText("Mã phòng ban");
+        JLabel15.setText("Mã hợp đồng");
 
-        JLabel16.setText("Tên phòng ban");
+        JLabel16.setText("Mã nhân viên");
 
-        maPhongBanField2.setEditable(false);
+        jLabel17.setText("Ngày bắt đầu");
+
+        jLabel18.setText("Ngày kết thúc");
+
+        maHopDongField.setEditable(false);
+
+        maNhanVienBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout bangHopDongLayout = new javax.swing.GroupLayout(bangHopDong);
         bangHopDong.setLayout(bangHopDongLayout);
@@ -1546,11 +1557,19 @@ public class App_UI extends javax.swing.JFrame {
                 .addGap(50, 50, 50)
                 .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(JLabel16)
-                    .addComponent(JLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(44, 44, 44)
-                .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(tenPhongBanField3, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
-                    .addComponent(maPhongBanField2))
+                    .addComponent(JLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel17)
+                    .addComponent(jLabel18))
+                .addGap(32, 32, 32)
+                .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(maHopDongField, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(maNhanVienBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(bangHopDongLayout.createSequentialGroup()
+                        .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(ngayKetThucChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ngayBatDauChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(234, 234, 234)))
                 .addContainerGap(418, Short.MAX_VALUE))
         );
         bangHopDongLayout.setVerticalGroup(
@@ -1559,12 +1578,20 @@ public class App_UI extends javax.swing.JFrame {
                 .addGap(11, 11, 11)
                 .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JLabel15)
-                    .addComponent(maPhongBanField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(maHopDongField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(15, 15, 15)
                 .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JLabel16)
-                    .addComponent(tenPhongBanField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(289, 289, 289))
+                    .addComponent(maNhanVienBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel17)
+                    .addComponent(ngayBatDauChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel18)
+                    .addComponent(ngayKetThucChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(208, Short.MAX_VALUE))
         );
 
         hopDongTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -1668,10 +1695,10 @@ public class App_UI extends javax.swing.JFrame {
         HopDongCardLayout.setVerticalGroup(
             HopDongCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(HopDongCardLayout.createSequentialGroup()
-                .addGap(32, 32, 32)
+                .addContainerGap()
                 .addGroup(HopDongCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(menuHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bangHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bangHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(danhSachHopDong, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1686,7 +1713,7 @@ public class App_UI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(bangMenu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1133, Short.MAX_VALUE))
+                .addContainerGap(1130, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addContainerGap(157, Short.MAX_VALUE)
@@ -1758,12 +1785,15 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JRadioButton gioiTinhNu;
     private javax.swing.JTextField hoTenField;
     private javax.swing.JTable hopDongTable;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JComboBox<String> maChucVuBox;
     private javax.swing.JTextField maChucVuField;
+    private javax.swing.JTextField maHopDongField;
+    private javax.swing.JComboBox<String> maNhanVienBox;
     private javax.swing.JTextField maNhanVienField;
     private javax.swing.JComboBox<String> maPhongBanBox;
     private javax.swing.JTextField maPhongBanField;
-    private javax.swing.JTextField maPhongBanField2;
     private javax.swing.JButton menuButton1;
     private javax.swing.JButton menuButton2;
     private javax.swing.JButton menuButton3;
@@ -1780,6 +1810,8 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JButton newButton2;
     private javax.swing.JButton newButton3;
     private javax.swing.JButton newButton4;
+    private com.toedter.calendar.JDateChooser ngayBatDauChooser;
+    private com.toedter.calendar.JDateChooser ngayKetThucChooser;
     private com.toedter.calendar.JDateChooser ngaySinhChooser;
     private javax.swing.JTable nhanVienTable;
     private javax.swing.JTable phongBanTable;
@@ -1788,7 +1820,6 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JTextField tenChucVuField2;
     private javax.swing.JTextField tenPhongBanField;
     private javax.swing.JTextField tenPhongBanField2;
-    private javax.swing.JTextField tenPhongBanField3;
     private javax.swing.JComboBox<String> trangThaiBox;
     private javax.swing.JButton updateButton1;
     private javax.swing.JButton updateButton2;
