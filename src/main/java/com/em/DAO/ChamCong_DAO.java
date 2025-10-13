@@ -11,17 +11,17 @@ import java.util.ArrayList;
 
 public class ChamCong_DAO{
     public boolean AddChamCong(ChamCong_DTO chamCong) {
-        String sql = "INSERT INTO chamcong (maNhanVien, ngayBatDau, ngayKetThuc) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO chamcong (maNhanVien, ngayChamCong, thoiGianVao, thoiGianRa) VALUES (?, ?, ?, ?)";
         
         try (Connection connection = DatabaseConnect.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
             
-            java.sql.Date sqlNgaybatDau = new java.sql.Date(chamCong.getNgayBatDau().getTime());
-            java.sql.Date sqlNgayKetThuc = new java.sql.Date(chamCong.getNgayKetThuc().getTime());
+            java.sql.Date sqlNgayChamCong = new java.sql.Date(chamCong.getNgayChamCong().getTime());
             
             preparedStatement.setInt(1, chamCong.getMaNhanVien());
-            preparedStatement.setDate(2, sqlNgaybatDau);
-            preparedStatement.setDate(3, sqlNgayKetThuc);
+            preparedStatement.setDate(2, sqlNgayChamCong);
+            preparedStatement.setTime(3, chamCong.getThoiGianVao());
+            preparedStatement.setTime(4, chamCong.getThoiGianRa());
                         
             int rowsInserted = preparedStatement.executeUpdate(); 
             if (rowsInserted > 0) { 
@@ -43,18 +43,17 @@ public class ChamCong_DAO{
     }
     
     public boolean EditChamCong(ChamCong_DTO chamCong) {   
-        String sql = "UPDATE chamcong SET maNhanVien = ?, ngayBatDau = ?, ngayKetThuc = ? WHERE maChamCong = ?";
+        String sql = "UPDATE chamcong SET maNhanVien = ?, ngayChamCong = ?, thoiGianVao = ?, thoiGianRa = ? WHERE maChamCong = ?";
         
         try (Connection connection = DatabaseConnect.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
             
-            java.sql.Date sqlNgaybatDau = new java.sql.Date( chamCong.getNgayBatDau().getTime());
-            java.sql.Date sqlNgayKetThuc = new java.sql.Date( chamCong.getNgayKetThuc().getTime());
+            java.sql.Date sqlNgayChamCong = new java.sql.Date(chamCong.getNgayChamCong().getTime());
             
             preparedStatement.setInt(1, chamCong.getMaNhanVien());
-            preparedStatement.setDate(2, sqlNgaybatDau);
-            preparedStatement.setDate(3, sqlNgayKetThuc);  
-            preparedStatement.setInt(4, chamCong.getMaChamCong());
+            preparedStatement.setDate(2, sqlNgayChamCong);
+            preparedStatement.setTime(3, chamCong.getThoiGianVao());
+            preparedStatement.setTime(4, chamCong.getThoiGianRa());
 
             int rowsUpdated = preparedStatement.executeUpdate();
             
@@ -62,7 +61,9 @@ public class ChamCong_DAO{
                 return true;
             return false;
             
-        } catch (SQLException e) {
+        }
+        
+        catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
@@ -97,8 +98,9 @@ public class ChamCong_DAO{
                 
                 chamCong.setMaChamCong(resultSet.getInt("maChamCong"));
                 chamCong.setMaNhanVien(resultSet.getInt("maNhanVien"));
-                chamCong.setNgayBatDau(resultSet.getDate("ngayBatDau"));
-                chamCong.setNgayKetThuc(resultSet.getDate("ngayKetThuc"));
+                chamCong.setNgayChamCong(resultSet.getDate("ngayChamCong"));
+                chamCong.setThoiGianVao(resultSet.getTime("thoiGianVao"));
+                chamCong.setThoiGianRa(resultSet.getTime("thoiGianRa"));
                 
                 chamCongList.add(chamCong);
             }
@@ -124,8 +126,9 @@ public class ChamCong_DAO{
                 
                 chamCong.setMaChamCong(resultSet.getInt("maChamCong"));
                 chamCong.setMaNhanVien(resultSet.getInt("maNhanVien"));
-                chamCong.setNgayBatDau(resultSet.getDate("ngayBatDau"));
-                chamCong.setNgayKetThuc(resultSet.getDate("ngayKetThuc"));
+                chamCong.setNgayChamCong(resultSet.getDate("ngayChamCong"));
+                chamCong.setThoiGianVao(resultSet.getTime("thoiGianVao"));
+                chamCong.setThoiGianRa(resultSet.getTime("thoiGianRa"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

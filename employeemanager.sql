@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 12, 2025 at 12:21 PM
+-- Generation Time: Oct 13, 2025 at 06:39 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,6 +34,15 @@ CREATE TABLE `chamcong` (
   `thoiGianVao` time NOT NULL,
   `thoiGianRa` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `chamcong`
+--
+
+INSERT INTO `chamcong` (`maChamCong`, `maNhanVien`, `ngayChamCong`, `thoiGianVao`, `thoiGianRa`) VALUES
+(6, 3, '2025-10-13', '11:08:26', '11:08:26'),
+(7, 3, '2025-10-13', '12:08:26', '12:08:28'),
+(8, 3, '2025-10-13', '12:08:26', '12:08:28');
 
 -- --------------------------------------------------------
 
@@ -67,9 +76,16 @@ INSERT INTO `chucvu` (`maChucVu`, `tenChucVu`) VALUES
 CREATE TABLE `hopdong` (
   `maHopDong` int(11) NOT NULL,
   `maNhanVien` int(11) DEFAULT NULL,
-  `ngayBatDau` int(11) NOT NULL,
-  `ngayKetThuc` int(11) NOT NULL
+  `ngayBatDau` date NOT NULL,
+  `ngayKetThuc` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `hopdong`
+--
+
+INSERT INTO `hopdong` (`maHopDong`, `maNhanVien`, `ngayBatDau`, `ngayKetThuc`) VALUES
+(2, 3, '2025-10-26', '2025-10-31');
 
 -- --------------------------------------------------------
 
@@ -79,10 +95,18 @@ CREATE TABLE `hopdong` (
 
 CREATE TABLE `luong` (
   `maLuong` int(11) NOT NULL,
-  `maNhanVien` int(11) DEFAULT NULL,
+  `maNhanVien` int(11) NOT NULL,
   `luongCoBan` int(11) NOT NULL,
-  `soGioCoBan` int(11) NOT NULL
+  `soGioCoBan` int(11) NOT NULL,
+  `ngayNhanLuong` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `luong`
+--
+
+INSERT INTO `luong` (`maLuong`, `maNhanVien`, `luongCoBan`, `soGioCoBan`, `ngayNhanLuong`) VALUES
+(1, 3, 32323, 2323, '2025-01-01');
 
 -- --------------------------------------------------------
 
@@ -121,7 +145,7 @@ CREATE TABLE `nhanvien` (
 --
 
 INSERT INTO `nhanvien` (`maNhanVien`, `hoTen`, `ngaySinh`, `gioiTinh`, `diaChi`, `soDienThoai`, `maPhongBan`, `maChucVu`, `trangThai`) VALUES
-(3, 'dsadadsadsa', '2001-10-17', 'M', 'dadadsad', '0123456678', 7, 3, 'Yes');
+(3, 'dsadadsadsa', '2001-10-17', 'M', 'dadadsad', '0123456678', 7, 3, 'No');
 
 -- --------------------------------------------------------
 
@@ -244,7 +268,7 @@ ALTER TABLE `tangca`
 -- AUTO_INCREMENT for table `chamcong`
 --
 ALTER TABLE `chamcong`
-  MODIFY `maChamCong` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `maChamCong` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `chucvu`
@@ -256,13 +280,13 @@ ALTER TABLE `chucvu`
 -- AUTO_INCREMENT for table `hopdong`
 --
 ALTER TABLE `hopdong`
-  MODIFY `maHopDong` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `maHopDong` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `luong`
 --
 ALTER TABLE `luong`
-  MODIFY `maLuong` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `maLuong` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `nghiphep`

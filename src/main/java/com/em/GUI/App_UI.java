@@ -1,4 +1,5 @@
 package com.em.GUI;
+import com.em.BUS.ChamCong_BUS;
 import com.em.BUS.ChucVu_BUS;
 import com.em.BUS.HopDong_BUS;
 import com.em.BUS.Luong_BUS;
@@ -6,11 +7,13 @@ import com.em.BUS.NhanVien_BUS;
 import com.em.BUS.PhongBan_BUS;
 import javax.swing.*;
 import com.em.BUS.Validates_BUS;
+import com.em.DTO.ChamCong_DTO;
 import com.em.DTO.ChucVu_DTO;
 import com.em.DTO.HopDong_DTO;
 import com.em.DTO.Luong_DTO;
 import com.em.DTO.NhanVien_DTO;
 import com.em.DTO.PhongBan_DTO;
+import com.toedter.calendar.JDateChooser;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -70,6 +73,10 @@ public class App_UI extends javax.swing.JFrame {
         thoiGianRaSpinner.setModel(thoiGianRaModel);
         JSpinner.DateEditor raEditor = new JSpinner.DateEditor(thoiGianRaSpinner, "HH:mm:ss");
         thoiGianRaSpinner.setEditor(raEditor);
+        
+        InitChamCongTable();
+        UpdateChamCongTable();
+        UpdateTenMaNhanVienBox3();
                 
     }
             
@@ -77,7 +84,7 @@ public class App_UI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        genderButtonGroup = new javax.swing.ButtonGroup();
+        gioiTinhButtonGroup = new javax.swing.ButtonGroup();
         bangMenu = new javax.swing.JPanel();
         menuButton1 = new javax.swing.JButton();
         menuButton2 = new javax.swing.JButton();
@@ -153,12 +160,12 @@ public class App_UI extends javax.swing.JFrame {
         JLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
         maHopDongField = new javax.swing.JTextField();
-        maNhanVienBox = new javax.swing.JComboBox<>();
+        maNhanVienBox1 = new javax.swing.JComboBox<>();
         ngayBatDauChooser = new com.toedter.calendar.JDateChooser();
         ngayKetThucChooser = new com.toedter.calendar.JDateChooser();
-        jLabel19 = new javax.swing.JLabel();
-        tenNhanVienField = new javax.swing.JTextField();
+        tenNhanVienField1 = new javax.swing.JTextField();
         danhSachHopDong = new javax.swing.JScrollPane();
         hopDongTable = new javax.swing.JTable();
         menuHopDong = new javax.swing.JPanel();
@@ -174,11 +181,13 @@ public class App_UI extends javax.swing.JFrame {
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         maLuongField = new javax.swing.JTextField();
         maNhanVienBox2 = new javax.swing.JComboBox<>();
         tenNhanVienField2 = new javax.swing.JTextField();
         luongCoBanField = new javax.swing.JTextField();
         soGioCoBanField = new javax.swing.JTextField();
+        ngayNhanLuongChooser = new com.toedter.calendar.JDateChooser();
         danhSachLuong = new javax.swing.JScrollPane();
         luongTable = new javax.swing.JTable();
         menuLuong = new javax.swing.JPanel();
@@ -330,10 +339,10 @@ public class App_UI extends javax.swing.JFrame {
 
         maNhanVienField.setEditable(false);
 
-        genderButtonGroup.add(gioiTinhNam);
+        gioiTinhButtonGroup.add(gioiTinhNam);
         gioiTinhNam.setText("Male");
 
-        genderButtonGroup.add(gioiTinhNu);
+        gioiTinhButtonGroup.add(gioiTinhNu);
         gioiTinhNu.setText("Female");
 
         JLabel7.setText("Mã phòng ban");
@@ -884,12 +893,14 @@ public class App_UI extends javax.swing.JFrame {
 
         jLabel18.setText("Ngày kết thúc");
 
+        jLabel19.setText("Tên nhân viên");
+
         maHopDongField.setEditable(false);
 
-        maNhanVienBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        maNhanVienBox.addActionListener(new java.awt.event.ActionListener() {
+        maNhanVienBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        maNhanVienBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                UpdateTenMaNhanVienBox(evt);
+                UpdateTenMaNhanVienBox1(evt);
             }
         });
 
@@ -897,9 +908,7 @@ public class App_UI extends javax.swing.JFrame {
 
         ngayKetThucChooser.setPreferredSize(new java.awt.Dimension(100, 28));
 
-        jLabel19.setText("Tên nhân viên");
-
-        tenNhanVienField.setEditable(false);
+        tenNhanVienField1.setEditable(false);
 
         javax.swing.GroupLayout bangHopDongLayout = new javax.swing.GroupLayout(bangHopDong);
         bangHopDong.setLayout(bangHopDongLayout);
@@ -916,11 +925,11 @@ public class App_UI extends javax.swing.JFrame {
                 .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(maHopDongField, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(bangHopDongLayout.createSequentialGroup()
-                        .addComponent(maNhanVienBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(maNhanVienBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(64, 64, 64)
                         .addComponent(jLabel19)
                         .addGap(33, 33, 33)
-                        .addComponent(tenNhanVienField, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(tenNhanVienField1, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(ngayKetThucChooser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
                         .addComponent(ngayBatDauChooser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -936,9 +945,9 @@ public class App_UI extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JLabel16)
-                    .addComponent(maNhanVienBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maNhanVienBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel19)
-                    .addComponent(tenNhanVienField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tenNhanVienField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(28, 28, 28)
                 .addGroup(bangHopDongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel17)
@@ -1074,6 +1083,8 @@ public class App_UI extends javax.swing.JFrame {
 
         jLabel22.setText("Tên nhân viên");
 
+        jLabel1.setText("Ngày nhận lương");
+
         maLuongField.setEditable(false);
 
         maNhanVienBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -1100,7 +1111,8 @@ public class App_UI extends javax.swing.JFrame {
                     .addComponent(JLabel18)
                     .addComponent(JLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel20)
-                    .addComponent(jLabel21))
+                    .addComponent(jLabel21)
+                    .addComponent(jLabel1))
                 .addGroup(bangLuongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(bangLuongLayout.createSequentialGroup()
                         .addGap(32, 32, 32)
@@ -1111,14 +1123,14 @@ public class App_UI extends javax.swing.JFrame {
                                 .addGap(64, 64, 64)
                                 .addComponent(jLabel22)
                                 .addGap(33, 33, 33)
-                                .addComponent(tenNhanVienField2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(108, Short.MAX_VALUE))
+                                .addComponent(tenNhanVienField2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(bangLuongLayout.createSequentialGroup()
                         .addGap(23, 23, 23)
                         .addGroup(bangLuongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(ngayNhanLuongChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(luongCoBanField, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
-                            .addComponent(soGioCoBanField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(soGioCoBanField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(108, Short.MAX_VALUE))
         );
         bangLuongLayout.setVerticalGroup(
             bangLuongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1141,7 +1153,11 @@ public class App_UI extends javax.swing.JFrame {
                 .addGroup(bangLuongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel21)
                     .addComponent(soGioCoBanField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(216, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(bangLuongLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(ngayNhanLuongChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addContainerGap(170, Short.MAX_VALUE))
         );
 
         luongTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -1541,11 +1557,12 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JButton editButton4;
     private javax.swing.JButton editButton5;
     private javax.swing.JButton editButton6;
-    private javax.swing.ButtonGroup genderButtonGroup;
+    private javax.swing.ButtonGroup gioiTinhButtonGroup;
     private javax.swing.JRadioButton gioiTinhNam;
     private javax.swing.JRadioButton gioiTinhNu;
     private javax.swing.JTextField hoTenField;
     private javax.swing.JTable hopDongTable;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
@@ -1563,7 +1580,7 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JTextField maChucVuField;
     private javax.swing.JTextField maHopDongField;
     private javax.swing.JTextField maLuongField;
-    private javax.swing.JComboBox<String> maNhanVienBox;
+    private javax.swing.JComboBox<String> maNhanVienBox1;
     private javax.swing.JComboBox<String> maNhanVienBox2;
     private javax.swing.JComboBox<String> maNhanVienBox3;
     private javax.swing.JTextField maNhanVienField;
@@ -1592,6 +1609,7 @@ public class App_UI extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser ngayBatDauChooser;
     private com.toedter.calendar.JDateChooser ngayChamCongChooser;
     private com.toedter.calendar.JDateChooser ngayKetThucChooser;
+    private com.toedter.calendar.JDateChooser ngayNhanLuongChooser;
     private com.toedter.calendar.JDateChooser ngaySinhChooser;
     private javax.swing.JTable nhanVienTable;
     private javax.swing.JTable phongBanTable;
@@ -1599,7 +1617,7 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JTextField soGioCoBanField;
     private javax.swing.JTextField tenChucVuField;
     private javax.swing.JTextField tenChucVuField2;
-    private javax.swing.JTextField tenNhanVienField;
+    private javax.swing.JTextField tenNhanVienField1;
     private javax.swing.JTextField tenNhanVienField2;
     private javax.swing.JTextField tenNhanVienField3;
     private javax.swing.JTextField tenPhongBanField;
@@ -1615,13 +1633,29 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JButton updateButton6;
     // End of variables declaration//GEN-END:variables
 
-    public void ClearTextFields(Container container) {
+    public void ClearAllField(Container container) {
         for (Component c : container.getComponents()) {
-            if (c instanceof JTextField) 
+            if (c instanceof JTextField) {
                 ((JTextField) c).setText("");
-
-            else if (c instanceof Container) 
-                ClearTextFields((Container) c);      
+            }
+            else if (c instanceof JDateChooser) {
+                ((JDateChooser) c).setDate(null);
+            }
+            else if (c instanceof JComboBox) {
+                ((JComboBox<?>) c).setSelectedIndex(-1);
+            }
+            
+            else if (c instanceof JSpinner) {
+            // Reset spinner value to current time if it's a time spinner
+            if (((JSpinner) c).getModel() instanceof SpinnerDateModel) {
+                ((JSpinner) c).setValue(new java.util.Date());
+            }
+            // Skip recursion into spinner internals
+            continue;
+        }
+        else if (c instanceof Container) {
+            ClearAllField((Container) c);
+        }
         }
     }
     
@@ -1749,7 +1783,8 @@ public class App_UI extends javax.swing.JFrame {
     }
     
     private void NewNhanVien(){
-        ClearTextFields(NhanVienCard);
+        gioiTinhButtonGroup.clearSelection();
+        ClearAllField(NhanVienCard);
     }
     
     private void AddNhanVien() {                                                                             
@@ -1763,12 +1798,12 @@ public class App_UI extends javax.swing.JFrame {
         }
         
         Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, gioiTinhButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
         
         NhanVien_DTO nhanVien = new NhanVien_DTO();
         
         if(result == null)
-            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, gioiTinhButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
              
         else{
             JOptionPane.showMessageDialog(this, result, "Nhân Viên Validation", JOptionPane.WARNING_MESSAGE);
@@ -1795,12 +1830,12 @@ public class App_UI extends javax.swing.JFrame {
         }
         
         Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+        String result = validate.ValidateNhanVien(hoTenField, ngaySinhChooser, gioiTinhButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
         
         NhanVien_DTO nhanVien = new NhanVien_DTO();
         
         if(result == null){
-            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, genderButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
+            nhanVien = validate.ReturnNhanVien(hoTenField, ngaySinhChooser, gioiTinhButtonGroup, diaChiField, soDienThoaiField, maPhongBanBox, maChucVuBox, trangThaiBox);
             nhanVien.setMaNhanVien(Integer.parseInt(maNhanVien));
         }
             
@@ -1869,8 +1904,9 @@ public class App_UI extends javax.swing.JFrame {
         cardLayout.show(cardPanel, "nhanVienCard");
         UpdateTenPhongBanBox();
         UpdateTenChucVuBox();
-        UpdateTenMaNhanVienBox();
+        UpdateTenMaNhanVienBox1();
         UpdateTenMaNhanVienBox2();
+        UpdateTenMaNhanVienBox3();
     }//GEN-LAST:event_NhanVienCardButton
 
     private void newButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton1
@@ -2011,7 +2047,7 @@ public class App_UI extends javax.swing.JFrame {
     }
     
     private void NewPhongBan(){
-        ClearTextFields(PhongBanCard);
+        ClearAllField(PhongBanCard);
     }
 
     private void AddPhongBan() {                                                                             
@@ -2156,7 +2192,7 @@ public class App_UI extends javax.swing.JFrame {
     //!
     
     private void NewChucVu(){
-        ClearTextFields(ChucVuCard);
+        ClearAllField(ChucVuCard);
     }
     
     private DefaultTableModel defaultChucVuTableModel = new DefaultTableModel();
@@ -2358,12 +2394,12 @@ public class App_UI extends javax.swing.JFrame {
     private DefaultTableModel defaultHopDongTableModel = new DefaultTableModel();
     public void InitHopDongTable(){
         
-        hopDongTable.setModel(defaultChamCongTableModel);
+        hopDongTable.setModel(defaultHopDongTableModel);
         
-        defaultChamCongTableModel.addColumn("Mã hợp đồng");
-        defaultChamCongTableModel.addColumn("Mã nhân viên");
-        defaultChamCongTableModel.addColumn("Ngày bắt đầu");
-        defaultChamCongTableModel.addColumn("Ngày kết thúc");
+        defaultHopDongTableModel.addColumn("Mã hợp đồng");
+        defaultHopDongTableModel.addColumn("Mã nhân viên");
+        defaultHopDongTableModel.addColumn("Ngày bắt đầu");
+        defaultHopDongTableModel.addColumn("Ngày kết thúc");
 
         ListSelectionModel listSelectionModel = hopDongTable.getSelectionModel();
         listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -2396,7 +2432,7 @@ public class App_UI extends javax.swing.JFrame {
                     }  
                     
                     maHopDongField.setText(maHopDong);
-                    maNhanVienBox.setSelectedItem(maNhanVien);  
+                    maNhanVienBox1.setSelectedItem(maNhanVien);  
                 }
             }
         });
@@ -2406,7 +2442,7 @@ public class App_UI extends javax.swing.JFrame {
             HopDong_BUS hopDong_BUS = new HopDong_BUS();
             ArrayList<HopDong_DTO> hopDongList = hopDong_BUS.GetAllHopDong();
             
-            defaultChamCongTableModel.setRowCount(0);            
+            defaultHopDongTableModel.setRowCount(0);            
             for (HopDong_DTO hopDong : hopDongList) {
                 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -2416,7 +2452,7 @@ public class App_UI extends javax.swing.JFrame {
                 ngayBatDauFormatted = dateFormat.format(hopDong.getNgayBatDau());
                 ngayKetThucFormatted = dateFormat.format(hopDong.getNgayKetThuc());
                 
-                defaultChamCongTableModel.addRow(new Object[]{
+                defaultHopDongTableModel.addRow(new Object[]{
                     hopDong.getMaHopDong(),
                     hopDong.getMaNhanVien(),
                     ngayBatDauFormatted,
@@ -2439,7 +2475,7 @@ public class App_UI extends javax.swing.JFrame {
     }
     
     private void NewHopDong(){
-        ClearTextFields(HopDongCard);
+        ClearAllField(HopDongCard);
     }
 
     private void AddHopDong() {                                                                             
@@ -2451,12 +2487,12 @@ public class App_UI extends javax.swing.JFrame {
         }
         
         Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateHopDong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+        String result = validate.ValidateHopDong(maNhanVienBox1, ngayBatDauChooser, ngayKetThucChooser);
         
         HopDong_DTO hopDong = new HopDong_DTO();
         
         if(result == null)
-            hopDong = validate.ReturnHopDong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+            hopDong = validate.ReturnHopDong(maNhanVienBox1, ngayBatDauChooser, ngayKetThucChooser);
       
         else{
             JOptionPane.showMessageDialog(this, result, "Hợp đồng Validation", JOptionPane.WARNING_MESSAGE);
@@ -2483,12 +2519,12 @@ public class App_UI extends javax.swing.JFrame {
         }
         
         Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateHopDong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+        String result = validate.ValidateHopDong(maNhanVienBox1, ngayBatDauChooser, ngayKetThucChooser);
         
         HopDong_DTO hopDong = new HopDong_DTO();
         
         if(result == null)
-            hopDong = validate.ReturnHopDong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+            hopDong = validate.ReturnHopDong(maNhanVienBox1, ngayBatDauChooser, ngayKetThucChooser);
       
         else{
             JOptionPane.showMessageDialog(this, result, "Hợp đồng Validation", JOptionPane.WARNING_MESSAGE);
@@ -2552,7 +2588,7 @@ public class App_UI extends javax.swing.JFrame {
     
     private void HopDongCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HopDongCardButton
         cardLayout.show(cardPanel, "hopDongCard");
-        UpdateTenMaNhanVienBox();
+        UpdateTenMaNhanVienBox1();
     }//GEN-LAST:event_HopDongCardButton
 
     private void newButton4(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton4
@@ -2579,31 +2615,31 @@ public class App_UI extends javax.swing.JFrame {
     }//GEN-LAST:event_updateButton4
 
     
-    private void UpdateTenMaNhanVienBox() {                                        
+    private void UpdateTenMaNhanVienBox1() {                                        
         NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
         ArrayList<NhanVien_DTO> nhanVienList = nhanVien_BUS.GetAllNhanVien();
     
-        maNhanVienBox.removeAllItems();
+        maNhanVienBox1.removeAllItems();
     
         for (NhanVien_DTO nhanVien : nhanVienList)
-            maNhanVienBox.addItem(Integer.toString(nhanVien.getMaNhanVien()));
+            maNhanVienBox1.addItem(Integer.toString(nhanVien.getMaNhanVien()));
         
-        maNhanVienBox.setSelectedIndex(-1);
-        tenNhanVienField.setText("");
+        maNhanVienBox1.setSelectedIndex(-1);
+        tenNhanVienField1.setText("");
     }
     
-    private void UpdateTenMaNhanVienBox(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateTenMaNhanVienBox
-        if(maNhanVienBox.getSelectedIndex() != -1){
-            int selectedNhanVien = Integer.parseInt(maNhanVienBox.getSelectedItem().toString());
+    private void UpdateTenMaNhanVienBox1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateTenMaNhanVienBox1
+        if(maNhanVienBox1.getSelectedIndex() != -1){
+            int selectedNhanVien = Integer.parseInt(maNhanVienBox1.getSelectedItem().toString());
             
             NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
         
             NhanVien_DTO nhanVien = new NhanVien_DTO();
             nhanVien = nhanVien_BUS.GetNhanVienById(selectedNhanVien);
             
-            tenNhanVienField.setText(nhanVien.getHoTen());
+            tenNhanVienField1.setText(nhanVien.getHoTen());
         }
-    }//GEN-LAST:event_UpdateTenMaNhanVienBox
+    }//GEN-LAST:event_UpdateTenMaNhanVienBox1
     
     //!
     //! Lương
@@ -2618,6 +2654,7 @@ public class App_UI extends javax.swing.JFrame {
         defaultLuongTableModel.addColumn("Mã nhân viên");
         defaultLuongTableModel.addColumn("Lương cơ bản");
         defaultLuongTableModel.addColumn("Số giờ cơ bản");
+        defaultLuongTableModel.addColumn("Ngày nhận lương");
 
         ListSelectionModel listSelectionModel = luongTable.getSelectionModel();
         listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -2632,11 +2669,24 @@ public class App_UI extends javax.swing.JFrame {
                     String maNhanVien = luongTable.getValueAt(rowIndex, 1).toString();
                     String luongCoBan = luongTable.getValueAt(rowIndex, 2).toString();
                     String soGioCoBan = luongTable.getValueAt(rowIndex, 3).toString();
+                    String ngayNhanLuong = luongTable.getValueAt(rowIndex, 4).toString();
+                    
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    
+                    try {
+                        Date ngayNhanLuongFormat = dateFormat.parse(ngayNhanLuong);
                         
-                    maLuongField.setText(maLuong);
-                    maNhanVienBox.setSelectedItem(maNhanVien);  
+                        ngayNhanLuongChooser.setDateFormatString("dd/MM/yyyy");
+                        ngayNhanLuongChooser.setDate(ngayNhanLuongFormat);
+                    }                    
+                    catch (ParseException d) {
+                        d.printStackTrace();               
+                    }  
+                        
+                    maLuongField.setText(maLuong); 
                     luongCoBanField.setText(luongCoBan);
                     soGioCoBanField.setText(soGioCoBan);
+                    maNhanVienBox2.setSelectedItem(maNhanVien);
                 }
             }
         });
@@ -2647,12 +2697,19 @@ public class App_UI extends javax.swing.JFrame {
             ArrayList<Luong_DTO> luongList = Luong_BUS.GetAllLuong();
             
             defaultLuongTableModel.setRowCount(0);            
-            for (Luong_DTO luong : luongList) {   
+            for (Luong_DTO luong : luongList) {
+                
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                
+                String ngayNhanLuongFormat = "";
+                ngayNhanLuongFormat = dateFormat.format(luong.getNgayNhanLuong());
+                
                 defaultLuongTableModel.addRow(new Object[]{
                     luong.getMaLuong(),
                     luong.getMaNhanVien(),
                     luong.getLuongCoBan(),
                     luong.getSoGioCoBan(),
+                    ngayNhanLuongFormat,
                 });
             }
         }
@@ -2671,7 +2728,7 @@ public class App_UI extends javax.swing.JFrame {
     }
     
     private void NewLuong(){
-        ClearTextFields(LuongCard);
+        ClearAllField(LuongCard);
     }
 
     private void AddLuong() {                                                                             
@@ -2683,12 +2740,12 @@ public class App_UI extends javax.swing.JFrame {
         }
         
         Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateLuong(maNhanVienBox, luongCoBanField, soGioCoBanField);
+        String result = validate.ValidateLuong(maNhanVienBox1, luongCoBanField, soGioCoBanField, ngayNhanLuongChooser);
         
         Luong_DTO luong = new Luong_DTO();
         
         if(result == null)
-            luong = validate.ReturnLuong(maNhanVienBox, luongCoBanField, soGioCoBanField);
+            luong = validate.ReturnLuong(maNhanVienBox1, luongCoBanField, soGioCoBanField, ngayNhanLuongChooser);
       
         else{
             JOptionPane.showMessageDialog(this, result, "Lương Validation", JOptionPane.WARNING_MESSAGE);
@@ -2715,12 +2772,12 @@ public class App_UI extends javax.swing.JFrame {
         }
         
         Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateLuong(maNhanVienBox, luongCoBanField, soGioCoBanField);
+        String result = validate.ValidateLuong(maNhanVienBox1, luongCoBanField, soGioCoBanField, ngayNhanLuongChooser);
         
         Luong_DTO luong = new Luong_DTO();
         
         if(result == null)
-            luong = validate.ReturnLuong(maNhanVienBox, luongCoBanField, soGioCoBanField);
+            luong = validate.ReturnLuong(maNhanVienBox1, luongCoBanField, soGioCoBanField, ngayNhanLuongChooser);
       
         else{
             JOptionPane.showMessageDialog(this, result, "Lương Validation", JOptionPane.WARNING_MESSAGE);
@@ -2845,7 +2902,7 @@ public class App_UI extends javax.swing.JFrame {
         
         chamCongTable.setModel(defaultChamCongTableModel);
         
-        defaultChamCongTableModel.addColumn("Mã hợp đồng");
+        defaultChamCongTableModel.addColumn("Mã chấm công");
         defaultChamCongTableModel.addColumn("Mã nhân viên");
         defaultChamCongTableModel.addColumn("Ngày chấm công");
         defaultChamCongTableModel.addColumn("Thời gian vào");
@@ -2880,7 +2937,7 @@ public class App_UI extends javax.swing.JFrame {
                     }  
                     
                     maChamCongField.setText(maChamCong);
-                    maNhanVienBox.setSelectedItem(maNhanVien);
+                    maNhanVienBox3.setSelectedItem(maNhanVien);
                     
                     java.sql.Time sqlThoiGianVao = java.sql.Time.valueOf(thoiGianVao);
                     java.sql.Time sqlThoiGianRa = java.sql.Time.valueOf(thoiGianRa);
@@ -2901,9 +2958,10 @@ public class App_UI extends javax.swing.JFrame {
                 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");            
                 String ngayChamCongFormatted = "";
-                ngayChamCongFormatted = dateFormat.format(chamCong.getNgayBatDau());
+                ngayChamCongFormatted = dateFormat.format(chamCong.getNgayChamCong());
 
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                
                 java.sql.Time sqlThoiGianVao = chamCong.getThoiGianVao();
                 java.sql.Time sqlThoiGianRa = chamCong.getThoiGianRa();
                 
@@ -2922,7 +2980,7 @@ public class App_UI extends javax.swing.JFrame {
         
         catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                "Lỗi trích xuất thông tin phòng ban: " + e.getMessage(),
+                "Lỗi trích xuất thông tin chấm công: " + e.getMessage(),
                 "Lỗi",
                 JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -2934,7 +2992,8 @@ public class App_UI extends javax.swing.JFrame {
     }
     
     private void NewChamCong(){
-        ClearTextFields(ChamCongCard);
+        maNhanVienBox3.setSelectedIndex(-1);
+        ClearAllField(ChamCongCard);
     }
 
     private void AddChamCong() {                                                                             
@@ -2946,12 +3005,12 @@ public class App_UI extends javax.swing.JFrame {
         }
         
         Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateChamCong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+        String result = validate.ValidateChamCong(maNhanVienBox3, ngayChamCongChooser, thoiGianVaoSpinner, thoiGianRaSpinner);
         
         ChamCong_DTO chamCong = new ChamCong_DTO();
         
         if(result == null)
-            chamCong = validate.ReturnChamCong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+            chamCong = validate.ReturnChamCong(maNhanVienBox3, ngayChamCongChooser, thoiGianVaoSpinner, thoiGianRaSpinner);
       
         else{
             JOptionPane.showMessageDialog(this, result, "Chấm công Validation", JOptionPane.WARNING_MESSAGE);
@@ -2978,12 +3037,12 @@ public class App_UI extends javax.swing.JFrame {
         }
         
         Validates_BUS validate = new Validates_BUS();
-        String result = validate.ValidateChamCong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+        String result = validate.ValidateChamCong(maNhanVienBox3, ngayChamCongChooser, thoiGianVaoSpinner, thoiGianRaSpinner);
         
         ChamCong_DTO chamCong = new ChamCong_DTO();
         
         if(result == null)
-            chamCong = validate.ReturnChamCong(maNhanVienBox, ngayBatDauChooser, ngayKetThucChooser);
+            chamCong = validate.ReturnChamCong(maNhanVienBox3, ngayChamCongChooser, thoiGianVaoSpinner, thoiGianRaSpinner);
       
         else{
             JOptionPane.showMessageDialog(this, result, "Chấm công Validation", JOptionPane.WARNING_MESSAGE);
@@ -3044,33 +3103,51 @@ public class App_UI extends javax.swing.JFrame {
             return;
         }
     }
-    
+                
     private void UpdateTenMaNhanVienBox3() {                                         
-        // TODO add your handling code here:
+        NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+        ArrayList<NhanVien_DTO> nhanVienList = nhanVien_BUS.GetAllNhanVien();
+    
+        maNhanVienBox3.removeAllItems();
+    
+        for (NhanVien_DTO nhanVien : nhanVienList)
+            maNhanVienBox3.addItem(Integer.toString(nhanVien.getMaNhanVien()));
+        
+        maNhanVienBox3.setSelectedIndex(-1);
+        tenNhanVienField3.setText("");
     } 
     
     private void UpdateTenMaNhanVienBox3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateTenMaNhanVienBox3
-        // TODO add your handling code here:
+        if(maNhanVienBox3.getSelectedIndex() != -1){
+            int selectedNhanVien = Integer.parseInt(maNhanVienBox3.getSelectedItem().toString());
+            
+            NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+        
+            NhanVien_DTO nhanVien = new NhanVien_DTO();
+            nhanVien = nhanVien_BUS.GetNhanVienById(selectedNhanVien);
+            
+            tenNhanVienField3.setText(nhanVien.getHoTen());
+        }
     }//GEN-LAST:event_UpdateTenMaNhanVienBox3
 
     private void addButton6(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton6
-        // TODO add your handling code here:
+        AddChamCong();
     }//GEN-LAST:event_addButton6
 
     private void deleteButton6(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton6
-        // TODO add your handling code here:
+        DeleteChamCong();
     }//GEN-LAST:event_deleteButton6
 
     private void updateButton6(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton6
-        // TODO add your handling code here:
+        UpdateChamCongTable();
     }//GEN-LAST:event_updateButton6
 
     private void newButton6(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton6
-        // TODO add your handling code here:
+        NewChamCong();
     }//GEN-LAST:event_newButton6
 
     private void editButton6(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton6
-        // TODO add your handling code here:
+        EditChamCong();
     }//GEN-LAST:event_editButton6
 
     private void ChamCongCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChamCongCardButton

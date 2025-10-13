@@ -2,7 +2,7 @@
 package com.em.DTO;
 
 import java.sql.Time;
-import java.util.Date;
+import java.sql.Date;
 
 public class ChamCong_DTO{
     private int maChamCong, maNhanVien;
@@ -31,11 +31,11 @@ public class ChamCong_DTO{
     public void setThoiGianVao(Time thoiGianVao){ this.thoiGianVao = thoiGianVao; }
     public void setThoiGianRa(Time thoiGianRa){ this.thoiGianRa = thoiGianRa; } 
     
-    public int setMaChamCong(){ return this.maChamCong; } 
-    public int setMaNhanVien(){ return this.maNhanVien; }
-    public Date setNgayChamCong(){ return this.ngayChamCong; } 
-    public Time setThoiGianVao(){ return this.thoiGianVao; }
-    public Time setThoiGianRa(){ return this.thoiGianRa; } 
+    public int getMaChamCong(){ return this.maChamCong; } 
+    public int getMaNhanVien(){ return this.maNhanVien; }
+    public Date getNgayChamCong(){ return this.ngayChamCong; } 
+    public Time getThoiGianVao(){ return this.thoiGianVao; }
+    public Time getThoiGianRa(){ return this.thoiGianRa; } 
     
     public void OutputChamCong(){
         System.out.println("Mã hợp đồng: " + maChamCong);

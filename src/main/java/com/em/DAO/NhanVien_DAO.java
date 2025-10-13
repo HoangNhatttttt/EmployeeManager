@@ -9,7 +9,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class NhanVien_DAO{
-   
     
     public boolean AddNhanVien(NhanVien_DTO nhanvien) {
         String sql = "INSERT INTO nhanvien (hoTen, ngaySinh, gioiTinh, diaChi, soDienThoai, maPhongBan, maChucVu, trangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -20,8 +19,7 @@ public class NhanVien_DAO{
               
             // setString(int parameterIndex, String x) ; int parameterIndex: Vị trí để nhập dữ liệu
             preparedStatement.setString(1, nhanvien.getHoTen());
-            java.sql.Date sqlNgaySinh = new java.sql.Date(nhanvien.getNgaySinh().getTime()); // Chuyển util.Date sang sql.Date
-            preparedStatement.setDate(2, sqlNgaySinh);
+            preparedStatement.setDate(2, nhanvien.getNgaySinh());
             preparedStatement.setString(3, nhanvien.getGioiTinh());
             preparedStatement.setString(4, nhanvien.getDiaChi());
             preparedStatement.setString(5, nhanvien.getSoDienThoai());
@@ -29,13 +27,11 @@ public class NhanVien_DAO{
             preparedStatement.setInt(7, nhanvien.getMaChucVu());
             preparedStatement.setString(8, nhanvien.getTrangThai());
             
-            int rowsInserted = preparedStatement.executeUpdate();
-            
-            if (rowsInserted > 0) { 
-                try (ResultSet resultSet = preparedStatement.getGeneratedKeys()){ // getGeneratedKeys trích xuất Id được tạo tự động khi insert nhanvien vào database
-                    if (resultSet.next() == true) // true khi có dòng kế tiếp (dòng id được tạo tự động), không trả về false
-                        nhanvien.setMaNhanVien(resultSet.getInt(1)); // resultSet.getInt(1) trich xuất giá trị integer tại cột 1 (cột maNhanVien)
-                        
+            int rowsInserted = preparedStatement.executeUpdate(); // Hiện số dòng đã chèn vào database
+            if (rowsInserted > 0) { // rowsInserted > 0 --> data được thêm thành công vào database
+                try (ResultSet resultSet = preparedStatement.getGeneratedKeys()){
+                    if (resultSet.next() == true)
+                        nhanvien.setMaNhanVien(resultSet.getInt(1));
                 }
             }
             
@@ -59,8 +55,7 @@ public class NhanVien_DAO{
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             
             preparedStatement.setString(1, nhanVien.getHoTen());
-            java.sql.Date sqlNgaySinh = new java.sql.Date(nhanVien.getNgaySinh().getTime()); // Chuyển util.Date sang sql.Date
-            preparedStatement.setDate(2, sqlNgaySinh);
+            preparedStatement.setDate(2, nhanVien.getNgaySinh());
             preparedStatement.setString(3, nhanVien.getGioiTinh());
             preparedStatement.setString(4, nhanVien.getDiaChi());
             preparedStatement.setString(5, nhanVien.getSoDienThoai());

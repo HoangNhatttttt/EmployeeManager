@@ -1,12 +1,16 @@
 package com.em.BUS;
+import com.em.DTO.ChamCong_DTO;
 import com.em.DTO.HopDong_DTO;
 import com.em.DTO.Luong_DTO;
 import com.em.DTO.NhanVien_DTO;
 import com.toedter.calendar.JDateChooser;
 import java.util.Calendar;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDate;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
 
 public class Validates_BUS{
@@ -66,36 +70,39 @@ public class Validates_BUS{
         return null;
     }
     
-    public String ValidateNgaySinh(JDateChooser ngaySinh){
-        Date ngaySinhNV = ngaySinh.getDate();
-        Date today = new Date();
+    public String ValidateNgaySinh(JDateChooser ngaySinhChooser){
+        
+        java.util.Date ngaySinh = ngaySinhChooser.getDate();
+        Date sqlNgaySinh = new Date(ngaySinh.getTime());
+        
+        Date today = new Date(System.currentTimeMillis());
         
         // Check rỗng
-        if(ngaySinhNV == null)
+        if(sqlNgaySinh == null)
             return "Ngày sinh không được để trống";
         
         // Check nhân viên đã sinh ra chưa
-        if(ngaySinhNV.after(today)){
+        if(sqlNgaySinh.after(today)){
             return "Nhân viên phải được sinh ra trước.";
         }
         
 
-        Calendar ngaySinhNVCalendar = Calendar.getInstance(); // Tạo Calender (lịch) chứa thời gian mà dòng code này được chạy
-        ngaySinhNVCalendar.setTime(ngaySinhNV); // Set ngày của lịch thành ngày sinh của nhân viên
+        Calendar ngaySinhCalendar = Calendar.getInstance(); // Tạo Calender (lịch) chứa thời gian mà dòng code này được chạy
+        ngaySinhCalendar.setTime(sqlNgaySinh); // Set ngày của lịch thành ngày sinh của nhân viên
 
         Calendar todayCalendar = Calendar.getInstance();
         todayCalendar.setTime(today);
 
-        int age = todayCalendar.get(Calendar.YEAR) - ngaySinhNVCalendar.get(Calendar.YEAR);
+        int age = todayCalendar.get(Calendar.YEAR) - ngaySinhCalendar.get(Calendar.YEAR);
 
         // Kiểm tra ngày sinh trong năm đã diễn ra chưa
         // Nếu tháng sinh < tháng hiện tại thì chưa đến ngày sinh nhật
-        if (todayCalendar.get(Calendar.MONTH) < ngaySinhNVCalendar.get(Calendar.MONTH))
+        if (todayCalendar.get(Calendar.MONTH) < ngaySinhCalendar.get(Calendar.MONTH))
             age--;
          
         // Nếu trùng tháng nhưng ngày < ngày hiện tại thì chưa đến ngày sinh nhật
-        else if (todayCalendar.get(Calendar.MONTH) == ngaySinhNVCalendar.get(Calendar.MONTH)) 
-            if (todayCalendar.get(Calendar.DAY_OF_MONTH) < ngaySinhNVCalendar.get(Calendar.DAY_OF_MONTH)) 
+        else if (todayCalendar.get(Calendar.MONTH) == ngaySinhCalendar.get(Calendar.MONTH)) 
+            if (todayCalendar.get(Calendar.DAY_OF_MONTH) < ngaySinhCalendar.get(Calendar.DAY_OF_MONTH)) 
                 age--;
    
         // Kiểm tra tuổi
@@ -213,18 +220,21 @@ public class Validates_BUS{
         return null;
     }
     
-    public NhanVien_DTO ReturnNhanVien(JTextField hoTen, JDateChooser ngaySinh, ButtonGroup gioiTinh, JTextField diaChi, JTextField soDienThoai, JComboBox maPhongBanBox, JComboBox maChucVuBox, JComboBox trangThaiBox){
-       String hoTenNV = CleanString(hoTen.getText());
-       Date ngaySinhNV = ngaySinh.getDate();
-       String gioiTinhNV = gioiTinh.getSelection().getActionCommand();
-       String diaChiNV = CleanString(diaChi.getText());
-       String soDienThoaiNV = soDienThoai.getText();
-       int maPhongBanNV = Integer.parseInt(maPhongBanBox.getSelectedItem().toString());
-       int maChucVuNV = Integer.parseInt(maChucVuBox.getSelectedItem().toString());
-       String trangThaiNV = trangThaiBox.getSelectedItem().toString();
-       NhanVien_DTO nhanVien = new NhanVien_DTO(hoTenNV, ngaySinhNV, gioiTinhNV, diaChiNV, soDienThoaiNV, maPhongBanNV, maChucVuNV, trangThaiNV);
+    public NhanVien_DTO ReturnNhanVien(JTextField hoTenField, JDateChooser ngaySinhChooser, ButtonGroup gioiTinhButtonGroup, JTextField diaChiField, JTextField soDienThoaiField, JComboBox maPhongBanBox, JComboBox maChucVuBox, JComboBox trangThaiBox){
+       String hoTen = CleanString(hoTenField.getText());
        
-       return nhanVien;
+        java.util.Date ngaySinh = ngaySinhChooser.getDate();
+        Date sqlNgaySinh = new Date(ngaySinh.getTime());
+        
+        String gioiTinh = gioiTinhButtonGroup.getSelection().getActionCommand();
+        String diaChi = CleanString(diaChiField.getText());
+        String soDienThoai = soDienThoaiField.getText();
+        int maPhongBanNV = Integer.parseInt(maPhongBanBox.getSelectedItem().toString());
+        int maChucVuNV = Integer.parseInt(maChucVuBox.getSelectedItem().toString());
+        String trangThaiNV = trangThaiBox.getSelectedItem().toString();
+        NhanVien_DTO nhanVien = new NhanVien_DTO(hoTen, sqlNgaySinh, gioiTinh, diaChi, soDienThoai, maPhongBanNV, maChucVuNV, trangThaiNV);
+       
+        return nhanVien;
     }
     
     //
@@ -276,24 +286,29 @@ public class Validates_BUS{
         return null;
     }
     
-    public String ValidateNgayBatDau_NgayKetThuc(JDateChooser ngayBatDateChooser, JDateChooser ngayKetThucChooser){
+    public String ValidateNgayBatDau_NgayKetThuc(JDateChooser ngayBatDauChooser, JDateChooser ngayKetThucChooser){
         
-        Date ngayBatDau = ngayBatDateChooser.getDate();
-        Date ngayKetThuc = ngayKetThucChooser.getDate();
-        Date today = new Date();
+        java.util.Date ngayBatDau = ngayBatDauChooser.getDate();
+        Date sqlNgayBatDau = new Date(ngayBatDau.getTime());
+        
+        java.util.Date ngayKetThuc = ngayKetThucChooser.getDate();
+        Date sqlNgayKetThuc = new Date(ngayKetThuc.getTime());
+        
+        LocalDate localNgayBatDau = sqlNgayBatDau.toLocalDate();
+        LocalDate now = LocalDate.now();
+
         
         // Check rỗng
-        if(ngayBatDau == null)
+        if(sqlNgayBatDau == null)
             return "Ngày bắt đầu không được để trống";
-        if(ngayKetThuc == null)
+        if(sqlNgayKetThuc == null)
             return "Ngày kết thúc không được để trống";
-        
-        if(ngayBatDau.before(today)){
+        if(localNgayBatDau.equals(now) == false)
             return "Hợp đồng phải bắt đầu tối thiểu ngày hôm nay.";
-        }
-        
-        if(ngayKetThuc.before(ngayBatDau))
+        if(sqlNgayKetThuc.before(sqlNgayBatDau))
             return "Ngày kết thúc phải sau ngày bất đầu";
+        if(sqlNgayBatDau.equals(ngayKetThuc))
+            return "Ngày bắt đầu và ngày kết thúc phải khác nhau";
         
         return null;
     }
@@ -316,12 +331,16 @@ public class Validates_BUS{
         return null;
     }
     
-    public HopDong_DTO ReturnHopDong(JComboBox maNhanVienBox, JDateChooser ngayBatDateChooser, JDateChooser ngayKetThucChooser){
+    public HopDong_DTO ReturnHopDong(JComboBox maNhanVienBox, JDateChooser ngayBatDauChooser, JDateChooser ngayKetThucChooser){
         int maNhanVien = Integer.parseInt(maNhanVienBox.getSelectedItem().toString());
-        Date ngayBatDau = ngayBatDateChooser.getDate();
-        Date ngayKetThuc = ngayKetThucChooser.getDate();
         
-        HopDong_DTO hopDong = new HopDong_DTO(maNhanVien, ngayBatDau, ngayKetThuc);
+        java.util.Date ngayBatDau = ngayBatDauChooser.getDate();
+        java.util.Date ngayKetThuc = ngayKetThucChooser.getDate();
+        
+        Date sqlNgayBatDau = new Date(ngayBatDau.getTime());
+        Date sqlNgayKetThuc = new Date(ngayKetThuc.getTime());
+        
+        HopDong_DTO hopDong = new HopDong_DTO(maNhanVien, sqlNgayBatDau, sqlNgayKetThuc);
         
         return hopDong;
     }
@@ -371,7 +390,17 @@ public class Validates_BUS{
         return null;
     }
     
-    public String ValidateLuong(JComboBox maNhanVienBox, JTextField luongCoBanField, JTextField soGioCoBanField){
+    public String ValidateNgayNhanLuong(JDateChooser ngayNhanLuongChooser){
+        java.util.Date ngayNhanLuong = ngayNhanLuongChooser.getDate();
+        Date sqlNgayNhanLuong = new Date(ngayNhanLuong.getTime());
+        
+        if(sqlNgayNhanLuong == null)
+            return "Ngày nhận lương không được để trống";
+        
+        return null;
+    }
+    
+    public String ValidateLuong(JComboBox maNhanVienBox, JTextField luongCoBanField, JTextField soGioCoBanField, JDateChooser ngayNhanLuongChooser){
         String error;
         
         error = ValidateMaNhanVien(maNhanVienBox);
@@ -392,16 +421,100 @@ public class Validates_BUS{
             return error;
         }
         
+        error = ValidateNgayNhanLuong(ngayNhanLuongChooser);
+        if(error != null){
+            ngayNhanLuongChooser.requestFocus();
+            return error;
+        }
+        
         return null;
     }
     
-    public Luong_DTO ReturnLuong(JComboBox maNhanVienBox, JTextField luongCoBanField, JTextField soGioCoBanField){
+    public Luong_DTO ReturnLuong(JComboBox maNhanVienBox, JTextField luongCoBanField, JTextField soGioCoBanField, JDateChooser ngayNhanLuongChooser){
         int maNhanVien = Integer.parseInt(maNhanVienBox.getSelectedItem().toString());
         int luongCoBan = Integer.parseInt(luongCoBanField.getText());
         int soGioCoBan = Integer.parseInt(soGioCoBanField.getText());
         
-        Luong_DTO luong = new Luong_DTO(maNhanVien, luongCoBan, soGioCoBan);
+        java.util.Date ngayNhanLuong = ngayNhanLuongChooser.getDate();
+        Date sqlNgayNhanLuong = new Date(ngayNhanLuong.getTime());
+        
+        Luong_DTO luong = new Luong_DTO(maNhanVien, luongCoBan, soGioCoBan, sqlNgayNhanLuong);
         
         return luong;
+    }
+    
+    //
+    // Chấm công
+    //
+    
+    public String ValidateNgayChamCong(JDateChooser ngayChamCongChooser){
+        
+        java.util.Date ngayChamCong = ngayChamCongChooser.getDate();
+        Date sqlNgayChamCong = new Date(ngayChamCong.getTime());
+                     
+        LocalDate localNgayChamCong = sqlNgayChamCong.toLocalDate();
+        LocalDate now = LocalDate.now();
+
+        if (localNgayChamCong.equals(now) == false)
+            return "Ngày chấm công phải trong ngày";
+        
+        
+        return null;
+    }
+    
+    public String ValidateThoiGianVao_ThoiGianRa(JSpinner thoiGianVaoSpinner, JSpinner thoiGianRaSpinner){
+        java.util.Date thoiGianVao = (java.util.Date) thoiGianVaoSpinner.getValue();
+        Time sqlThoiGianVao = new Time(thoiGianVao.getTime());
+
+        java.util.Date thoiGianRa = (java.util.Date) thoiGianRaSpinner.getValue();
+        Time sqlThoiGianRa = new Time(thoiGianRa.getTime());
+        
+        if(sqlThoiGianVao.after(thoiGianRa))
+            return "Thời gian vào phải trước thời gian ra";
+        if(sqlThoiGianVao.equals(thoiGianRa))
+            return "Thời gian vào và thời gian ra phải khác nhau";
+        
+        
+        return null;
+    }
+    
+    public String ValidateChamCong(JComboBox maNhanVienBox, JDateChooser ngayChamCongChooser, JSpinner thoiGianVaoSpinner, JSpinner thoiGianRaSpinner){
+        String error;
+        
+        error = ValidateMaNhanVien(maNhanVienBox);
+        if(error != null) {
+            maNhanVienBox.requestFocus();
+            return error;
+        }
+         
+        error = ValidateNgayChamCong(ngayChamCongChooser);
+        if(error != null){
+            ngayChamCongChooser.requestFocus();
+            return error;
+        }
+        
+        error = ValidateThoiGianVao_ThoiGianRa(thoiGianVaoSpinner, thoiGianRaSpinner);
+        if(error != null){
+            thoiGianVaoSpinner.requestFocus();
+            return error;
+        }
+        
+        return null;
+    }
+    
+    public ChamCong_DTO ReturnChamCong(JComboBox maNhanVienBox, JDateChooser ngayChamCongChooser, JSpinner thoiGianVaoSpinner, JSpinner thoiGianRaSpinner){
+        int maNhanVien = Integer.parseInt(maNhanVienBox.getSelectedItem().toString());
+        java.util.Date ngayChamCong = ngayChamCongChooser.getDate();
+        Date sqlNgayChamCong = new Date(ngayChamCong.getTime());
+        
+        java.util.Date thoiGianVao = (java.util.Date) thoiGianVaoSpinner.getValue();
+        Time sqlThoiGianVao = new Time(thoiGianVao.getTime());
+
+        java.util.Date thoiGianRa = (java.util.Date) thoiGianRaSpinner.getValue();
+        Time sqlThoiGianRa = new Time(thoiGianRa.getTime());
+        
+        ChamCong_DTO chamCong = new ChamCong_DTO(maNhanVien, sqlNgayChamCong, sqlThoiGianVao, sqlThoiGianRa);
+        
+        return chamCong;
     }
 }

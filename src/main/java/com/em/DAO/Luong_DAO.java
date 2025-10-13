@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class Luong_DAO{
     public boolean AddLuong(Luong_DTO luong) {
-        String sql = "INSERT INTO luong (maNhanVien, luongCoBan, soGioCoBan) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO luong (maNhanVien, luongCoBan, soGioCoBan, ngayNhanLuong) VALUES (?, ?, ?, ?)";
         
         try (Connection connection = DatabaseConnect.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
@@ -19,6 +19,7 @@ public class Luong_DAO{
             preparedStatement.setInt(1, luong.getMaNhanVien());
             preparedStatement.setInt(2, luong.getLuongCoBan());
             preparedStatement.setInt(3, luong.getSoGioCoBan());
+            preparedStatement.setDate(4, luong.getNgayNhanLuong());
                         
             int rowsInserted = preparedStatement.executeUpdate(); 
             if (rowsInserted > 0) { 
@@ -40,7 +41,7 @@ public class Luong_DAO{
     }
     
     public boolean EditLuong(Luong_DTO luong) {   
-        String sql = "UPDATE luong SET maNhanVien = ?, luongCoBan = ?, soGioCoBan = ? WHERE maLuong = ?";
+        String sql = "UPDATE luong SET maNhanVien = ?, luongCoBan = ?, soGioCoBan = ?, ngayNhanLuong = ? WHERE maLuong = ?";
         
         try (Connection connection = DatabaseConnect.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -48,6 +49,7 @@ public class Luong_DAO{
             preparedStatement.setInt(1, luong.getMaNhanVien());
             preparedStatement.setInt(2, luong.getLuongCoBan());
             preparedStatement.setInt(3, luong.getSoGioCoBan());
+            preparedStatement.setDate(4, luong.getNgayNhanLuong());
 
             int rowsUpdated = preparedStatement.executeUpdate();
             
@@ -92,6 +94,7 @@ public class Luong_DAO{
                 luong.setMaNhanVien(resultSet.getInt("maNhanVien"));
                 luong.setLuongCoBan(resultSet.getInt("luongCoBan"));
                 luong.setSoGioCoBan(resultSet.getInt("soGioCoBan"));
+                luong.setNgayNhanLuong(resultSet.getDate("ngayNhanLuong"));
                 
                 luongList.add(luong);
             }
@@ -119,6 +122,7 @@ public class Luong_DAO{
                 luong.setMaNhanVien(resultSet.getInt("maNhanVien"));
                 luong.setLuongCoBan(resultSet.getInt("luongCoBan"));
                 luong.setSoGioCoBan(resultSet.getInt("soGioCoBan"));
+                luong.setNgayNhanLuong(resultSet.getDate("ngayNhanLuong"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

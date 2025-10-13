@@ -1,5 +1,5 @@
 package com.em.DTO;
-import java.util.Date;
+import java.sql.Date;
 
 public class HopDong_DTO{
 

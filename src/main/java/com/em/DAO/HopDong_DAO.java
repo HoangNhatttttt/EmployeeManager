@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class HopDong_DAO{
     
@@ -16,13 +15,9 @@ public class HopDong_DAO{
         
         try (Connection connection = DatabaseConnect.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
-            
-            java.sql.Date sqlNgaybatDau = new java.sql.Date(hopDong.getNgayBatDau().getTime());
-            java.sql.Date sqlNgayKetThuc = new java.sql.Date(hopDong.getNgayKetThuc().getTime());
-            
             preparedStatement.setInt(1, hopDong.getMaNhanVien());
-            preparedStatement.setDate(2, sqlNgaybatDau);
-            preparedStatement.setDate(3, sqlNgayKetThuc);
+            preparedStatement.setDate(2, hopDong.getNgayBatDau());
+            preparedStatement.setDate(3, hopDong.getNgayKetThuc());
                         
             int rowsInserted = preparedStatement.executeUpdate(); 
             if (rowsInserted > 0) { 
@@ -49,12 +44,10 @@ public class HopDong_DAO{
         try (Connection connection = DatabaseConnect.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             
-            java.sql.Date sqlNgaybatDau = new java.sql.Date( hopDong.getNgayBatDau().getTime());
-            java.sql.Date sqlNgayKetThuc = new java.sql.Date( hopDong.getNgayKetThuc().getTime());
-            
+
             preparedStatement.setInt(1, hopDong.getMaNhanVien());
-            preparedStatement.setDate(2, sqlNgaybatDau);
-            preparedStatement.setDate(3, sqlNgayKetThuc);  
+            preparedStatement.setDate(2, hopDong.getNgayBatDau());
+            preparedStatement.setDate(3, hopDong.getNgayKetThuc());  
             preparedStatement.setInt(4, hopDong.getMaHopDong());
 
             int rowsUpdated = preparedStatement.executeUpdate();
