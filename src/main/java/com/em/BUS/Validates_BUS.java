@@ -2,6 +2,7 @@ package com.em.BUS;
 import com.em.DTO.ChamCong_DTO;
 import com.em.DTO.HopDong_DTO;
 import com.em.DTO.Luong_DTO;
+import com.em.DTO.NghiPhep_DTO;
 import com.em.DTO.NhanVien_DTO;
 import com.em.DTO.TangCa_DTO;
 import com.toedter.calendar.JDateChooser;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class Validates_BUS{
@@ -287,7 +289,7 @@ public class Validates_BUS{
         return null;
     }
     
-    public String ValidateNgayBatDau_NgayKetThuc(JDateChooser ngayBatDauChooser, JDateChooser ngayKetThucChooser){
+    public String ValidateNgayBatDau_NgayKetThucHopDong(JDateChooser ngayBatDauChooser, JDateChooser ngayKetThucChooser){
         
         java.util.Date ngayBatDau = ngayBatDauChooser.getDate();
         Date sqlNgayBatDau = new Date(ngayBatDau.getTime());
@@ -304,7 +306,7 @@ public class Validates_BUS{
             return "Ngày bắt đầu không được để trống";
         if(sqlNgayKetThuc == null)
             return "Ngày kết thúc không được để trống";
-        if(localNgayBatDau.equals(now) == false)
+        if(localNgayBatDau.isBefore(now))
             return "Hợp đồng phải bắt đầu tối thiểu ngày hôm nay.";
         if(sqlNgayKetThuc.before(sqlNgayBatDau))
             return "Ngày kết thúc phải sau ngày bất đầu";
@@ -323,7 +325,7 @@ public class Validates_BUS{
             return error;
         }
          
-        error = ValidateNgayBatDau_NgayKetThuc(ngayBatDauChooser, ngayKetThucChooser);
+        error = ValidateNgayBatDau_NgayKetThucHopDong(ngayBatDauChooser, ngayKetThucChooser);
         if(error != null){
             ngayBatDauChooser.requestFocus();
             return error;
@@ -618,4 +620,86 @@ public class Validates_BUS{
         
         return tangCa;
     }
+    
+    //
+    // Nghỉ phép
+    //
+    
+    public String ValidateNgayBatDau_NgayKetThucNghiPhep(JDateChooser ngayBatDauChooser, JDateChooser ngayKetThucChooser){
+        
+        java.util.Date ngayBatDau = ngayBatDauChooser.getDate();
+        Date sqlNgayBatDau = new Date(ngayBatDau.getTime());
+        
+        java.util.Date ngayKetThuc = ngayKetThucChooser.getDate();
+        Date sqlNgayKetThuc = new Date(ngayKetThuc.getTime());
+        
+        LocalDate localNgayBatDau = sqlNgayBatDau.toLocalDate();
+        LocalDate now = LocalDate.now();
+    
+        // Check rỗng
+        if(sqlNgayBatDau == null)
+            return "Ngày bắt đầu không được để trống";
+        if(sqlNgayKetThuc == null)
+            return "Ngày kết thúc không được để trống";
+        if(localNgayBatDau.isBefore(now))
+            return "Ngày nghỉ phép phải bắt đầu tối thiểu ngày hôm nay.";
+        if(sqlNgayKetThuc.before(sqlNgayBatDau))
+            return "Ngày kết thúc phải sau ngày bất đầu";
+        
+        return null;
+    }
+    
+    public String ValidateLyDo(JTextField lyDoField){
+        String lyDo = lyDoField.getText();
+        
+        if(ValidateIsEmpty(lyDo))
+            return "Lý do không được để trống.";
+        if(ValidateHasSpecialCharacter(lyDo))
+            return "Lý do không được chứa ký tự đặc biệt.";
+        if(ValidateIsStartWithWhitespace(lyDo))
+            return "Lý do không được bắt đầu bằng khoảng trắng.";
+        
+        return null;
+    }
+    
+    public String ValidateNghiPhep(JComboBox maNhanVienBox, JDateChooser ngayBatDauChooser, JDateChooser ngayKetThucChooser, JTextField lyDoField){
+        String error;
+        
+        error = ValidateMaNhanVien(maNhanVienBox);
+        if(error != null) {
+            maNhanVienBox.requestFocus();
+            return error;
+        }
+         
+        error = ValidateNgayBatDau_NgayKetThucNghiPhep(ngayBatDauChooser, ngayKetThucChooser);
+        if(error != null){
+            ngayBatDauChooser.requestFocus();
+            return error;
+        }
+        
+        error = ValidateLyDo(lyDoField);
+        if(error != null){
+            lyDoField.requestFocus();
+            return error;
+        }
+        
+        return null;
+    }
+    
+    public NghiPhep_DTO ReturnNghiPhep(JComboBox maNhanVienBox, JDateChooser ngayBatDauChooser, JDateChooser ngayKetThucChooser, JTextField lyDoField){
+        int maNhanVien = Integer.parseInt(maNhanVienBox.getSelectedItem().toString());
+        
+        java.util.Date ngayBatDau = ngayBatDauChooser.getDate();
+        java.util.Date ngayKetThuc = ngayKetThucChooser.getDate();
+        
+        Date sqlNgayBatDau = new Date(ngayBatDau.getTime());
+        Date sqlNgayKetThuc = new Date(ngayKetThuc.getTime());
+        
+        String lyDo = CleanString(lyDoField.getText());
+        
+        NghiPhep_DTO nghiPhep = new NghiPhep_DTO(maNhanVien, sqlNgayBatDau, sqlNgayKetThuc, lyDo);
+        
+        return nghiPhep;
+    }
 }
+

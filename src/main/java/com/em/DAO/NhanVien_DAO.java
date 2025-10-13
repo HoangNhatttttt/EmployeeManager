@@ -8,7 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-public class NhanVien_DAO{
+public class NhanVien_DAO{       
+    
     public boolean AddNhanVien(NhanVien_DTO nhanvien) {
         String sql = "INSERT INTO nhanvien (hoTen, ngaySinh, gioiTinh, diaChi, soDienThoai, maPhongBan, maChucVu, trangThai) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         // Add thông tin Employee từ user input --> Dùng Prepared statement
@@ -26,11 +27,12 @@ public class NhanVien_DAO{
             preparedStatement.setInt(7, nhanvien.getMaChucVu());
             preparedStatement.setString(8, nhanvien.getTrangThai());
             
-            int rowsInserted = preparedStatement.executeUpdate();
-            if (rowsInserted > 0) {
+            int rowsInserted = preparedStatement.executeUpdate(); // Hiện số dòng đã chèn vào database
+            
+            if (rowsInserted > 0) { 
                 try (ResultSet resultSet = preparedStatement.getGeneratedKeys()){
-                    if (resultSet.next() == true)
-                        nhanvien.setMaNhanVien(resultSet.getInt(1));
+                    if (resultSet.next() == true) 
+                        nhanvien.setMaNhanVien(resultSet.getInt(1)); 
                 }
             }
             

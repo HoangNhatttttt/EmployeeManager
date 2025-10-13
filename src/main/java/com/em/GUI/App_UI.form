@@ -2381,8 +2381,7 @@
                           </Group>
                           <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
-                              <Component id="maNghiPhep" alignment="0" min="-2" pref="324" max="-2" attributes="0"/>
+                              <Component id="maNghiPhepField" alignment="0" min="-2" pref="324" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="maNhanVienBox5" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
@@ -2391,6 +2390,7 @@
                                   <Component id="tenNhanVienField5" min="-2" pref="305" max="-2" attributes="0"/>
                               </Group>
                               <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="lyDoField" alignment="0" max="32767" attributes="0"/>
                                   <Component id="ngayKetThucNghiChooser" alignment="0" pref="151" max="32767" attributes="0"/>
                                   <Component id="ngayBatDauNghiChooser" alignment="0" max="32767" attributes="0"/>
                               </Group>
@@ -2405,7 +2405,7 @@
                           <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="JLabel23" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="maNghiPhep" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="maNghiPhepField" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -2430,11 +2430,11 @@
                                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="lyDoField" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="72" max="32767" attributes="0"/>
+                          <EmptySpace pref="162" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -2470,7 +2470,7 @@
                     <Property name="text" type="java.lang.String" value="L&#xfd; do ngh&#x1ec9; ph&#xe9;p"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="maNghiPhep">
+                <Component class="javax.swing.JTextField" name="maNghiPhepField">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
                   </Properties>
@@ -2512,21 +2512,8 @@
                     <Property name="editable" type="boolean" value="false"/>
                   </Properties>
                 </Component>
-                <Container class="javax.swing.JScrollPane" name="jScrollPane1">
-                  <AuxValues>
-                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                  </AuxValues>
-
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                  <SubComponents>
-                    <Component class="javax.swing.JTextArea" name="lyDoNghiField">
-                      <Properties>
-                        <Property name="columns" type="int" value="20"/>
-                        <Property name="rows" type="int" value="5"/>
-                      </Properties>
-                    </Component>
-                  </SubComponents>
-                </Container>
+                <Component class="javax.swing.JTextField" name="lyDoField">
+                </Component>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JScrollPane" name="danhSachNghiPhep">
@@ -2536,7 +2523,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTable" name="hopDongTable1">
+                <Component class="javax.swing.JTable" name="nghiPhepTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="4" rowCount="4">

@@ -3,6 +3,7 @@ import com.em.BUS.ChamCong_BUS;
 import com.em.BUS.ChucVu_BUS;
 import com.em.BUS.HopDong_BUS;
 import com.em.BUS.Luong_BUS;
+import com.em.BUS.NghiPhep_BUS;
 import com.em.BUS.NhanVien_BUS;
 import com.em.BUS.PhongBan_BUS;
 import com.em.BUS.TangCa_BUS;
@@ -12,6 +13,7 @@ import com.em.DTO.ChamCong_DTO;
 import com.em.DTO.ChucVu_DTO;
 import com.em.DTO.HopDong_DTO;
 import com.em.DTO.Luong_DTO;
+import com.em.DTO.NghiPhep_DTO;
 import com.em.DTO.NhanVien_DTO;
 import com.em.DTO.PhongBan_DTO;
 import com.em.DTO.TangCa_DTO;
@@ -84,6 +86,11 @@ public class App_UI extends javax.swing.JFrame {
         InitTangCaTable();
         UpdateTangCaTable();
         UpdateTenMaNhanVienBox4();
+        
+        // NghiPhep Card
+        InitNghiPhepTable();
+        UpdateNghiPhepTable();
+        UpdateTenMaNhanVienBox5();
                 
     }
             
@@ -255,15 +262,14 @@ public class App_UI extends javax.swing.JFrame {
         jLabel31 = new javax.swing.JLabel();
         jLabel32 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        maNghiPhep = new javax.swing.JTextField();
+        maNghiPhepField = new javax.swing.JTextField();
         maNhanVienBox5 = new javax.swing.JComboBox<>();
         ngayBatDauNghiChooser = new com.toedter.calendar.JDateChooser();
         ngayKetThucNghiChooser = new com.toedter.calendar.JDateChooser();
         tenNhanVienField5 = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        lyDoNghiField = new javax.swing.JTextArea();
+        lyDoField = new javax.swing.JTextField();
         danhSachNghiPhep = new javax.swing.JScrollPane();
-        hopDongTable1 = new javax.swing.JTable();
+        nghiPhepTable = new javax.swing.JTable();
         menuNghiPhep = new javax.swing.JPanel();
         addButton8 = new javax.swing.JButton();
         deleteButton8 = new javax.swing.JButton();
@@ -1743,7 +1749,7 @@ public class App_UI extends javax.swing.JFrame {
 
         jLabel3.setText("Lý do nghỉ phép");
 
-        maNghiPhep.setEditable(false);
+        maNghiPhepField.setEditable(false);
 
         maNhanVienBox5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         maNhanVienBox5.addActionListener(new java.awt.event.ActionListener() {
@@ -1757,10 +1763,6 @@ public class App_UI extends javax.swing.JFrame {
         ngayKetThucNghiChooser.setPreferredSize(new java.awt.Dimension(100, 28));
 
         tenNhanVienField5.setEditable(false);
-
-        lyDoNghiField.setColumns(20);
-        lyDoNghiField.setRows(5);
-        jScrollPane1.setViewportView(lyDoNghiField);
 
         javax.swing.GroupLayout bangHopDong2Layout = new javax.swing.GroupLayout(bangHopDong2);
         bangHopDong2.setLayout(bangHopDong2Layout);
@@ -1776,8 +1778,7 @@ public class App_UI extends javax.swing.JFrame {
                     .addComponent(jLabel3))
                 .addGap(32, 32, 32)
                 .addGroup(bangHopDong2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maNghiPhep, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maNghiPhepField, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(bangHopDong2Layout.createSequentialGroup()
                         .addComponent(maNhanVienBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(64, 64, 64)
@@ -1785,6 +1786,7 @@ public class App_UI extends javax.swing.JFrame {
                         .addGap(33, 33, 33)
                         .addComponent(tenNhanVienField5, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(bangHopDong2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(lyDoField, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(ngayKetThucNghiChooser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
                         .addComponent(ngayBatDauNghiChooser, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(108, Short.MAX_VALUE))
@@ -1795,7 +1797,7 @@ public class App_UI extends javax.swing.JFrame {
                 .addGap(11, 11, 11)
                 .addGroup(bangHopDong2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JLabel23)
-                    .addComponent(maNghiPhep, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(maNghiPhepField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(15, 15, 15)
                 .addGroup(bangHopDong2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JLabel24)
@@ -1815,12 +1817,12 @@ public class App_UI extends javax.swing.JFrame {
                         .addGap(19, 19, 19)
                         .addComponent(jLabel3))
                     .addGroup(bangHopDong2Layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(72, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(lyDoField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(162, Short.MAX_VALUE))
         );
 
-        hopDongTable1.setModel(new javax.swing.table.DefaultTableModel(
+        nghiPhepTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -1831,7 +1833,7 @@ public class App_UI extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        danhSachNghiPhep.setViewportView(hopDongTable1);
+        danhSachNghiPhep.setViewportView(nghiPhepTable);
 
         menuNghiPhep.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -2044,7 +2046,6 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JRadioButton gioiTinhNu;
     private javax.swing.JTextField hoTenField;
     private javax.swing.JTable hopDongTable;
-    private javax.swing.JTable hopDongTable1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
@@ -2064,17 +2065,16 @@ public class App_UI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField luongCoBanField;
     private javax.swing.JTable luongTable;
     private javax.swing.JTextField luongTangCaField;
-    private javax.swing.JTextArea lyDoNghiField;
+    private javax.swing.JTextField lyDoField;
     private javax.swing.JTextField maChamCongField;
     private javax.swing.JComboBox<String> maChucVuBox;
     private javax.swing.JTextField maChucVuField;
     private javax.swing.JTextField maHopDongField;
     private javax.swing.JTextField maLuongField;
-    private javax.swing.JTextField maNghiPhep;
+    private javax.swing.JTextField maNghiPhepField;
     private javax.swing.JComboBox<String> maNhanVienBox1;
     private javax.swing.JComboBox<String> maNhanVienBox2;
     private javax.swing.JComboBox<String> maNhanVienBox3;
@@ -2116,6 +2116,7 @@ public class App_UI extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser ngayNhanLuongChooser;
     private com.toedter.calendar.JDateChooser ngaySinhChooser;
     private com.toedter.calendar.JDateChooser ngayTangCaChooser;
+    private javax.swing.JTable nghiPhepTable;
     private javax.swing.JTable nhanVienTable;
     private javax.swing.JTable phongBanTable;
     private javax.swing.JTextField soDienThoaiField;
@@ -2419,6 +2420,7 @@ public class App_UI extends javax.swing.JFrame {
         UpdateTenMaNhanVienBox2();
         UpdateTenMaNhanVienBox3();
         UpdateTenMaNhanVienBox4();
+        UpdateTenMaNhanVienBox5();
     }//GEN-LAST:event_NhanVienCardButton
 
     private void newButton1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton1
@@ -2975,7 +2977,7 @@ public class App_UI extends javax.swing.JFrame {
         
         catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                "Lỗi trích xuất thông tin phòng ban: " + e.getMessage(),
+                "Lỗi trích xuất thông tin hợp đồng: " + e.getMessage(),
                 "Lỗi",
                 JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -3014,9 +3016,9 @@ public class App_UI extends javax.swing.JFrame {
         HopDong_BUS hopDong_BUS = new HopDong_BUS();
         
         if(hopDong_BUS.AddHopDong(hopDong) == true)
-                JOptionPane.showMessageDialog(null, "Thêm phòng thành công!");   
+                JOptionPane.showMessageDialog(null, "Thêm hợp đồng thành công!");   
         else
-           JOptionPane.showMessageDialog(null, "Thêm phòng ban không thành công!"); 
+           JOptionPane.showMessageDialog(null, "Thêm hợp đồng không thành công!"); 
         
 
         UpdateHopDongTable();
@@ -3921,33 +3923,261 @@ public class App_UI extends javax.swing.JFrame {
     private void TangCaCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TangCaCardButton
         cardLayout.show(cardPanel, "tangCaCard");
     }//GEN-LAST:event_TangCaCardButton
+    
+    //!
+    //! Nghỉ phép
+    //!
+    
+    private DefaultTableModel defaultNghiPhepTableModel = new DefaultTableModel();
+    public void InitNghiPhepTable(){
+        
+        nghiPhepTable.setModel(defaultNghiPhepTableModel);
+        
+        defaultNghiPhepTableModel.addColumn("Mã hợp đồng");
+        defaultNghiPhepTableModel.addColumn("Mã nhân viên");
+        defaultNghiPhepTableModel.addColumn("Ngày bắt đầu");
+        defaultNghiPhepTableModel.addColumn("Ngày kết thúc");
+        defaultNghiPhepTableModel.addColumn("Lý do");
 
+        ListSelectionModel listSelectionModel = nghiPhepTable.getSelectionModel();
+        listSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        listSelectionModel.addListSelectionListener(new ListSelectionListener(){
+            @Override
+            public void valueChanged(ListSelectionEvent e){
+               
+                int rowIndex = nghiPhepTable.getSelectedRow();
+                if(rowIndex != -1){ 
+                    String maNghiPhep = nghiPhepTable.getValueAt(rowIndex, 0).toString();
+                    String maNhanVien = nghiPhepTable.getValueAt(rowIndex, 1).toString();
+                    String ngayBatDau = nghiPhepTable.getValueAt(rowIndex, 2).toString();
+                    String ngayKetThuc = nghiPhepTable.getValueAt(rowIndex, 3).toString();
+                    String lyDo = nghiPhepTable.getValueAt(rowIndex, 4).toString();
+                    
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    
+                    try {
+                        Date ngayBatDauNghiFormat = dateFormat.parse(ngayBatDau);
+                        Date ngayKetThucNghiFormat = dateFormat.parse(ngayKetThuc);
+                        
+                        ngayBatDauNghiChooser.setDateFormatString("dd/MM/yyyy");
+                        ngayBatDauNghiChooser.setDate(ngayBatDauNghiFormat);
+                        
+                        ngayKetThucNghiChooser.setDateFormatString("dd/MM/yyyy");
+                        ngayKetThucNghiChooser.setDate(ngayKetThucNghiFormat);
+                    }                    
+                    catch (ParseException d) {
+                        d.printStackTrace();               
+                    }  
+                    
+                    maNghiPhepField.setText(maNghiPhep);
+                    maNhanVienBox5.setSelectedItem(maNhanVien);
+                    lyDoField.setText(lyDo);
+                }
+            }
+        });
+    } 
+    private boolean UpdateNghiPhepTable(){
+        try {
+            NghiPhep_BUS nghiPhep_BUS = new NghiPhep_BUS();
+            ArrayList<NghiPhep_DTO> nghiPhepList = nghiPhep_BUS.GetAllNghiPhep();
+            
+            defaultNghiPhepTableModel.setRowCount(0);            
+            for (NghiPhep_DTO nghiPhep : nghiPhepList) {
+                
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                
+                String ngayBatDauFormatted = "";
+                String ngayKetThucFormatted = "";
+                ngayBatDauFormatted = dateFormat.format(nghiPhep.getNgayBatDau());
+                ngayKetThucFormatted = dateFormat.format(nghiPhep.getNgayKetThuc());
+                
+                defaultNghiPhepTableModel.addRow(new Object[]{
+                    nghiPhep.getMaNghiPhep(),
+                    nghiPhep.getMaNhanVien(),
+                    ngayBatDauFormatted,
+                    ngayKetThucFormatted,
+                    nghiPhep.getLyDo(),                 
+                });
+            }
+        }
+        
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Lỗi trích xuất thông tin nghỉ phép: " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private void NewNghiPhep(){
+        ClearAllField(NghiPhepCard);
+    }
+
+    private void AddNghiPhep() {                                                                             
+        String maNghiPhep = maNghiPhepField.getText();
+        if (maNghiPhep.isEmpty() == false){
+            String error = "Bấm nút 'New' trước khi thêm nghỉ phép.";
+            JOptionPane.showMessageDialog(this, error, "Add nghỉ phép", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateNghiPhep(maNhanVienBox5, ngayBatDauNghiChooser, ngayKetThucNghiChooser, lyDoField);
+        
+        NghiPhep_DTO nghiPhep = new NghiPhep_DTO();
+        
+        if(result == null)
+            nghiPhep = validate.ReturnNghiPhep(maNhanVienBox5, ngayBatDauNghiChooser, ngayKetThucNghiChooser, lyDoField);
+      
+        else{
+            JOptionPane.showMessageDialog(this, result, "Nghỉ phép Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        NghiPhep_BUS nghiPhep_BUS = new NghiPhep_BUS();
+        
+        if(nghiPhep_BUS.AddNghiPhep(nghiPhep) == true)
+                JOptionPane.showMessageDialog(null, "Thêm nghỉ phép thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Thêm nghỉ phép không thành công!"); 
+        
+
+        UpdateNghiPhepTable();
+    }
+    
+    private void EditNghiPhep(){
+        String maNghiPhep = maNghiPhepField.getText();
+        if (maNghiPhep.isEmpty() == false){
+            String error = "Bấm nút 'New' trước khi thêm nghỉ phép.";
+            JOptionPane.showMessageDialog(this, error, "Add nghỉ phép", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Validates_BUS validate = new Validates_BUS();
+        String result = validate.ValidateNghiPhep(maNhanVienBox5, ngayBatDauNghiChooser, ngayKetThucNghiChooser, lyDoField);
+        
+        NghiPhep_DTO nghiPhep = new NghiPhep_DTO();
+        
+        if(result == null)
+            nghiPhep = validate.ReturnNghiPhep(maNhanVienBox5, ngayBatDauNghiChooser, ngayKetThucNghiChooser, lyDoField);
+      
+        else{
+            JOptionPane.showMessageDialog(this, result, "Hợp đồng Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        NghiPhep_BUS nghiPhep_BUS = new NghiPhep_BUS();
+        
+        if(nghiPhep_BUS.EditNghiPhep(nghiPhep) == true)
+            JOptionPane.showMessageDialog(null, "Sửa nghỉ phép thành công!");   
+        else
+           JOptionPane.showMessageDialog(null, "Sửa nghỉ phép không thành công!"); 
+        
+
+        UpdateNghiPhepTable();
+    }
+    
+    private void DeleteNghiPhep(){
+        String maNghiPhep = maNghiPhepField.getText();
+        if (maNghiPhep.isEmpty() == true){
+            String error = "Chọn nghỉ phép trong danh sách trước khi xoá";
+            JOptionPane.showMessageDialog(this, error, "Delete nghỉ phép", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Show confirmation dialog
+        int confirm = JOptionPane.showConfirmDialog(
+            this,
+            "Bạn có chắc muốn xoá nghỉ phép ?",
+            "Xác nhận xoá",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+        );
+    
+        if (confirm == JOptionPane.YES_OPTION) {
+            // User clicked YES - proceed with deletion
+            NghiPhep_BUS nghiPhep_BUS = new NghiPhep_BUS();
+
+            if (nghiPhep_BUS.DeleteNghiPhep(Integer.parseInt(maNghiPhep)) == true) {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá nghỉ phép thành công.", 
+                    "Thành công", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                
+                UpdateNghiPhepTable();
+            } 
+            
+            else {
+                JOptionPane.showMessageDialog(this, 
+                    "Xoá nghỉ phép thất bại.", 
+                    "Lỗi", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } 
+        
+        else {
+            // User clicked NO or closed dialog - do nothing
+            return;
+        }
+    }
+    
+    private void UpdateTenMaNhanVienBox5() {                                                      
+        NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+        ArrayList<NhanVien_DTO> nhanVienList = nhanVien_BUS.GetAllNhanVien();
+    
+        maNhanVienBox5.removeAllItems();
+    
+        for (NhanVien_DTO nhanVien : nhanVienList)
+            maNhanVienBox5.addItem(Integer.toString(nhanVien.getMaNhanVien()));
+        
+        maNhanVienBox5.setSelectedIndex(-1);
+        tenNhanVienField5.setText("");
+    }   
+                  
     private void UpdateTenMaNhanVienBox5(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateTenMaNhanVienBox5
-        // TODO add your handling code here:
+        if(maNhanVienBox5.getSelectedIndex() != -1){
+            int selectedNhanVien = Integer.parseInt(maNhanVienBox5.getSelectedItem().toString());
+            
+            NhanVien_BUS nhanVien_BUS = new NhanVien_BUS();
+        
+            NhanVien_DTO nhanVien = new NhanVien_DTO();
+            nhanVien = nhanVien_BUS.GetNhanVienById(selectedNhanVien);
+            
+            tenNhanVienField5.setText(nhanVien.getHoTen());
+        }
     }//GEN-LAST:event_UpdateTenMaNhanVienBox5
 
     private void addButton8(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButton8
-        // TODO add your handling code here:
+        AddNghiPhep();
     }//GEN-LAST:event_addButton8
 
     private void deleteButton8(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButton8
-        // TODO add your handling code here:
+        DeleteNghiPhep();
     }//GEN-LAST:event_deleteButton8
 
     private void updateButton8(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton8
-        // TODO add your handling code here:
+        if(UpdateNghiPhepTable()){
+            String text = "Update thành công";
+            JOptionPane.showMessageDialog(this, text, "Update", JOptionPane.WIDTH);
+        }
     }//GEN-LAST:event_updateButton8
 
     private void newButton8(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButton8
-        // TODO add your handling code here:
+        NewNghiPhep();
     }//GEN-LAST:event_newButton8
 
     private void editButton8(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButton8
-        // TODO add your handling code here:
+        EditNghiPhep();
     }//GEN-LAST:event_editButton8
 
     private void NghiPhepCardButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NghiPhepCardButton
-        // TODO add your handling code here:
+        cardLayout.show(cardPanel, "nghiPhepCard");
     }//GEN-LAST:event_NghiPhepCardButton
-    
+
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 13, 2025 at 06:39 AM
+-- Generation Time: Oct 13, 2025 at 12:06 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -115,12 +115,21 @@ INSERT INTO `luong` (`maLuong`, `maNhanVien`, `luongCoBan`, `soGioCoBan`, `ngayN
 --
 
 CREATE TABLE `nghiphep` (
-  `maDonNghiPhep` int(11) NOT NULL,
+  `maNghiPhep` int(11) NOT NULL,
   `maNhanVien` int(11) NOT NULL,
   `ngayBatDau` date NOT NULL,
   `ngayKetThuc` date NOT NULL,
   `lyDo` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `nghiphep`
+--
+
+INSERT INTO `nghiphep` (`maNghiPhep`, `maNhanVien`, `ngayBatDau`, `ngayKetThuc`, `lyDo`) VALUES
+(2, 3, '2025-10-13', '2025-10-15', 'dsada'),
+(3, 3, '2025-10-15', '2025-10-15', 'dsada'),
+(4, 3, '2025-10-24', '2025-10-31', 'dsada');
 
 -- --------------------------------------------------------
 
@@ -190,10 +199,17 @@ CREATE TABLE `taikhoan` (
 CREATE TABLE `tangca` (
   `maTangCa` int(11) NOT NULL,
   `maNhanVien` int(11) NOT NULL,
-  `ngayTangCa` date NOT NULL,
+  `luongTangCa` int(11) NOT NULL,
   `soGioTangCa` int(11) NOT NULL,
-  `luongTangCa` int(11) NOT NULL
+  `ngayTangCa` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tangca`
+--
+
+INSERT INTO `tangca` (`maTangCa`, `maNhanVien`, `luongTangCa`, `soGioTangCa`, `ngayTangCa`) VALUES
+(1, 3, 3, 3, '2025-10-15');
 
 --
 -- Indexes for dumped tables
@@ -230,7 +246,7 @@ ALTER TABLE `luong`
 -- Indexes for table `nghiphep`
 --
 ALTER TABLE `nghiphep`
-  ADD PRIMARY KEY (`maDonNghiPhep`),
+  ADD PRIMARY KEY (`maNghiPhep`),
   ADD KEY `maNhanVien` (`maNhanVien`);
 
 --
@@ -292,7 +308,7 @@ ALTER TABLE `luong`
 -- AUTO_INCREMENT for table `nghiphep`
 --
 ALTER TABLE `nghiphep`
-  MODIFY `maDonNghiPhep` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `maNghiPhep` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `nhanvien`
@@ -310,7 +326,7 @@ ALTER TABLE `phongban`
 -- AUTO_INCREMENT for table `tangca`
 --
 ALTER TABLE `tangca`
-  MODIFY `maTangCa` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `maTangCa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
