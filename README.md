@@ -1,2 +1,3 @@
 resolution: 1280 x 720  
-Cần làm đẹp code
+Hoàn thành các chức năng chính  
+Sẽ làm đẹp code sau  
