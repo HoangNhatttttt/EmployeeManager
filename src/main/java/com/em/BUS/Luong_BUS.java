@@ -5,7 +5,7 @@ import com.em.DTO.Luong_DTO;
 import java.util.ArrayList;
 
 public class Luong_BUS{
-       private Luong_DAO Luong_DAO = new Luong_DAO();
+    private Luong_DAO Luong_DAO = new Luong_DAO();
     
     public boolean AddLuong(Luong_DTO luong){     
         return(Luong_DAO.AddLuong(luong));

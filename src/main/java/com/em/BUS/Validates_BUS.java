@@ -3,6 +3,7 @@ import com.em.DTO.ChamCong_DTO;
 import com.em.DTO.HopDong_DTO;
 import com.em.DTO.Luong_DTO;
 import com.em.DTO.NhanVien_DTO;
+import com.em.DTO.TangCa_DTO;
 import com.toedter.calendar.JDateChooser;
 import java.util.Calendar;
 import java.sql.Date;
@@ -516,5 +517,105 @@ public class Validates_BUS{
         ChamCong_DTO chamCong = new ChamCong_DTO(maNhanVien, sqlNgayChamCong, sqlThoiGianVao, sqlThoiGianRa);
         
         return chamCong;
+    }
+    
+    //
+    // Tăng ca
+    //
+    
+    public String ValidateLuongTangCa(JTextField luongCoBanField){
+        String luongCoBanText = luongCoBanField.getText();
+        
+        if(ValidateIsEmpty(luongCoBanText))
+            return "Lương tăng ca không được để trống";
+  
+        if(ValidateIsInteger(luongCoBanText) == false)
+            return "Lương tăng ca phải là số";
+        
+        if(ValidateIsStartWithWhitespace(luongCoBanText))
+            return "Lương tăng ca không được bắt đầu bằng dấu cách";
+        
+        int luongCoBan = Integer.parseInt(luongCoBanText);
+        
+        if(luongCoBan <= 0)
+            return "Lương tăng ca phải lớn hơn 0";
+        
+        return null;
+    }
+    
+    public String ValidateSoGioTangCa(JTextField soGioCoBanField){
+        String soGioCoBanText = soGioCoBanField.getText();
+        
+        if(ValidateIsEmpty(soGioCoBanText))
+            return "Số giờ tăng ca không được để trống";
+  
+        if(ValidateIsInteger(soGioCoBanText) == false)
+            return "Số giờ tăng ca phải là số";
+        
+        if(ValidateIsStartWithWhitespace(soGioCoBanText))
+            return "Số giờ tăng ca không được bắt đầu bằng dấu cách";
+        
+        int luongCoBan = Integer.parseInt(soGioCoBanText);
+        
+        if(luongCoBan <= 0)
+            return "Số giờ tăng ca phải lớn hơn 0";
+        
+        if(luongCoBan > 24)
+            return "Số giờ tăng ca nhỏ hơn hoặc bằng 24.";
+        
+        return null;
+    }
+    
+    public String ValidateNgayTangCa(JDateChooser ngayTangCaChooser){
+        java.util.Date ngayTangCa = ngayTangCaChooser.getDate();
+        Date sqlNgayTangCa = new Date(ngayTangCa.getTime());
+        
+        if(sqlNgayTangCa == null)
+            return "Ngày tăng ca không được để trống";
+        
+        return null;
+    }
+    
+    public String ValidateTangCa(JComboBox maNhanVienBox, JTextField luongTangCaField, JTextField soGioTangCaField, JDateChooser ngayTangCaChooser){
+        String error;
+        
+        error = ValidateMaNhanVien(maNhanVienBox);
+        if(error != null) {
+            maNhanVienBox.requestFocus();
+            return error;
+        }
+         
+        error = ValidateLuongCoBan(luongTangCaField);
+        if(error != null){
+            luongTangCaField.requestFocus();
+            return error;
+        }
+        
+        error = ValidateSoGioCoBan(soGioTangCaField);
+        if(error != null){
+            soGioTangCaField.requestFocus();
+            return error;
+        }
+        
+        error = ValidateNgayNhanLuong(ngayTangCaChooser);
+        if(error != null){
+            ngayTangCaChooser.requestFocus();
+            return error;
+        }
+        
+        return null;
+    }
+    
+    public TangCa_DTO ReturnTangCa(JComboBox maNhanVienBox, JTextField luongTangCaField, JTextField soGioTangCaField, JDateChooser ngayTangCaChooser){
+        int maNhanVien = Integer.parseInt(maNhanVienBox.getSelectedItem().toString());
+        int luongTangCa = Integer.parseInt(luongTangCaField.getText());
+        int soGioTangCa = Integer.parseInt(soGioTangCaField.getText());
+        
+        java.util.Date ngayTangCa = ngayTangCaChooser.getDate();
+        Date sqlNgayTangCa = new Date(ngayTangCa.getTime());
+        
+        TangCa_DTO tangCa = new TangCa_DTO(maNhanVien, luongTangCa, soGioTangCa, sqlNgayTangCa);
+        
+        return tangCa;
     }
 }
