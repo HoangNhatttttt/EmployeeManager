@@ -43,9 +43,15 @@ public class Validates_BUS{
     }
     
     public boolean ValidateHasSpecialCharacter(String text){
-        // Nếu không matches --> Có special character --> Return true
-        // Có mataches --> Không có special chacacter --> Return false
-        return !text.matches("[a-zA-Z0-9 ]+"); 
+
+        // Kí tự đặc biệt thông dụng
+        String specials = "[!@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/\\\\|`~]";
+
+        if (text.matches(".*" + specials + ".*")) {
+            return true;
+        }
+        
+        return false;    
     }
     
     public boolean ValidateIsStartWithWhitespace(String text){
@@ -75,14 +81,16 @@ public class Validates_BUS{
     
     public String ValidateNgaySinh(JDateChooser ngaySinhChooser){
         
+        // Check rỗng
+        if(ngaySinhChooser.getDate() == null)
+            return "Ngày sinh không được để trống";
+        
         java.util.Date ngaySinh = ngaySinhChooser.getDate();
         Date sqlNgaySinh = new Date(ngaySinh.getTime());
         
         Date today = new Date(System.currentTimeMillis());
         
-        // Check rỗng
-        if(sqlNgaySinh == null)
-            return "Ngày sinh không được để trống";
+        
         
         // Check nhân viên đã sinh ra chưa
         if(sqlNgaySinh.after(today)){
@@ -291,6 +299,12 @@ public class Validates_BUS{
     
     public String ValidateNgayBatDau_NgayKetThucHopDong(JDateChooser ngayBatDauChooser, JDateChooser ngayKetThucChooser){
         
+        // Check rỗng
+        if(ngayBatDauChooser.getDate() == null)
+            return "Ngày bắt đầu không được để trống";
+        if(ngayKetThucChooser.getDate() == null)
+            return "Ngày kết thúc không được để trống";
+        
         java.util.Date ngayBatDau = ngayBatDauChooser.getDate();
         Date sqlNgayBatDau = new Date(ngayBatDau.getTime());
         
@@ -299,13 +313,7 @@ public class Validates_BUS{
         
         LocalDate localNgayBatDau = sqlNgayBatDau.toLocalDate();
         LocalDate now = LocalDate.now();
-
-        
-        // Check rỗng
-        if(sqlNgayBatDau == null)
-            return "Ngày bắt đầu không được để trống";
-        if(sqlNgayKetThuc == null)
-            return "Ngày kết thúc không được để trống";
+    
         if(localNgayBatDau.isBefore(now))
             return "Hợp đồng phải bắt đầu tối thiểu ngày hôm nay.";
         if(sqlNgayKetThuc.before(sqlNgayBatDau))
@@ -394,12 +402,12 @@ public class Validates_BUS{
     }
     
     public String ValidateNgayNhanLuong(JDateChooser ngayNhanLuongChooser){
-        java.util.Date ngayNhanLuong = ngayNhanLuongChooser.getDate();
-        Date sqlNgayNhanLuong = new Date(ngayNhanLuong.getTime());
-        
-        if(sqlNgayNhanLuong == null)
+        if(ngayNhanLuongChooser.getDate() == null)
             return "Ngày nhận lương không được để trống";
         
+        java.util.Date ngayNhanLuong = ngayNhanLuongChooser.getDate();
+        Date sqlNgayNhanLuong = new Date(ngayNhanLuong.getTime());
+          
         return null;
     }
     
@@ -451,6 +459,8 @@ public class Validates_BUS{
     //
     
     public String ValidateNgayChamCong(JDateChooser ngayChamCongChooser){
+        if(ngayChamCongChooser.getDate() == null)
+            return "Ngày chấm công không được bỏ trống";
         
         java.util.Date ngayChamCong = ngayChamCongChooser.getDate();
         Date sqlNgayChamCong = new Date(ngayChamCong.getTime());
@@ -466,6 +476,11 @@ public class Validates_BUS{
     }
     
     public String ValidateThoiGianVao_ThoiGianRa(JSpinner thoiGianVaoSpinner, JSpinner thoiGianRaSpinner){
+        if(thoiGianRaSpinner.getValue() == null)
+            return "Thời gian vào không được bỏ trống";
+        if(thoiGianRaSpinner.getValue() == null)
+            return "Thời gian ra không được bỏ trống";
+        
         java.util.Date thoiGianVao = (java.util.Date) thoiGianVaoSpinner.getValue();
         Time sqlThoiGianVao = new Time(thoiGianVao.getTime());
 
@@ -569,11 +584,11 @@ public class Validates_BUS{
     }
     
     public String ValidateNgayTangCa(JDateChooser ngayTangCaChooser){
+        if(ngayTangCaChooser.getDate() == null)
+            return "Ngày tăng ca không được để trống";
+        
         java.util.Date ngayTangCa = ngayTangCaChooser.getDate();
         Date sqlNgayTangCa = new Date(ngayTangCa.getTime());
-        
-        if(sqlNgayTangCa == null)
-            return "Ngày tăng ca không được để trống";
         
         return null;
     }
@@ -627,6 +642,12 @@ public class Validates_BUS{
     
     public String ValidateNgayBatDau_NgayKetThucNghiPhep(JDateChooser ngayBatDauChooser, JDateChooser ngayKetThucChooser){
         
+        // Check rỗng
+        if(ngayBatDauChooser.getDate() == null)
+            return "Ngày bắt đầu không được để trống";
+        if(ngayKetThucChooser.getDate() == null)
+            return "Ngày kết thúc không được để trống";
+        
         java.util.Date ngayBatDau = ngayBatDauChooser.getDate();
         Date sqlNgayBatDau = new Date(ngayBatDau.getTime());
         
@@ -636,11 +657,6 @@ public class Validates_BUS{
         LocalDate localNgayBatDau = sqlNgayBatDau.toLocalDate();
         LocalDate now = LocalDate.now();
     
-        // Check rỗng
-        if(sqlNgayBatDau == null)
-            return "Ngày bắt đầu không được để trống";
-        if(sqlNgayKetThuc == null)
-            return "Ngày kết thúc không được để trống";
         if(localNgayBatDau.isBefore(now))
             return "Ngày nghỉ phép phải bắt đầu tối thiểu ngày hôm nay.";
         if(sqlNgayKetThuc.before(sqlNgayBatDau))
